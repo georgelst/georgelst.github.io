@@ -1,47 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unsteady Aerodynamics</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnsAero</title>
+    <link rel="icon" type="image/png" href="icon.png">
 
-  <!-- icon -->
-  <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variáveis de Cores e Espaçamento */
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --primary-blue: #0f172a;
+            --accent-blue: #0284c7;
+            --footer-bg: #1e293b;
+            --footer-text: #94a3b8;
+            --muted-text: #64748b;
+            --footer-darker: #0f172a;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header e Navbar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .uns { color: var(--primary-blue); }
+        .aero { color: var(--accent-blue); }
+
+        .logo {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        /* Seletor de Idioma Clean */
+        .lang-switch {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--muted-text);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .lang-option svg {
+            border-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .lang-option:hover, .lang-option.active {
+            color: var(--primary-blue);
+        }
+
+        .lang-option:hover svg, .lang-option.active svg {
+            opacity: 1;
+        }
+
+        .lang-option.active {
+            border-bottom: 2px solid var(--accent-blue);
+            padding-bottom: 2px;
+        }
+
+        /* Conteúdo Principal (Container Flex) */
+        main {
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2.5rem 2rem 0 2rem; 
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative; 
+            width: 100%;
+        }
+
+        /* Ilha 1: Título colado no topo */
+        h1.main-title {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 2.8rem;
+            margin-bottom: 1rem; 
+            font-weight: 700;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        /* Controle Flex para distribuir as Ilhas Centrais */
+        .lang-content {
+            display: none;
+            width: 100%;
+            flex: 1; 
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        #content-en { display: flex; } 
+        
+        .lang-content.active { 
+            display: flex !important; 
+            flex-direction: column;
+            justify-content: space-evenly; 
+            align-items: center;
+            padding-bottom: 6rem; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ilha 2: Bloco das Frases */
+        .phrases-block {
+            text-align: center;
+            width: 100%;
+        }
+
+        p.description {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem; 
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 850px; 
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Linha Divisória Sutil */
+        .line-separator {
+            width: 40px; 
+            border-top: 2px solid var(--accent-blue); 
+            margin: 1rem auto; 
+            opacity: 0.7;
+        }
+
+        .highlight-free {
+            color: var(--accent-blue); 
+            font-weight: inherit; 
+        }
+
+        /* Ilha 3: Box "Under Development" */
+        .dev-box {
+            background-color: #e2e8f0;
+            border-radius: 12px;
+            padding: 1.8rem 2.5rem;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin: 1.5rem auto 0 auto;
+        }
+
+        .dev-title {
+            color: var(--primary-blue); 
+            font-size: 0.95rem; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px; 
+            margin-bottom: 1rem; 
+            display: block;
+        }
+
+        .dev-text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .dev-text a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(2, 132, 199, 0.3);
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .dev-text a:hover {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* Ilha 4: Citação com Biografia (Layout Flex) */
+        .quote-wrapper {
+            position: absolute;
+            bottom: 2rem; 
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.85;
+            transition: opacity 0.3s ease;
+            animation: fadeIn 0.5s ease-in-out; 
+        }
+
+        .quote-wrapper:hover {
+            opacity: 1;
+        }
+
+        .quote-content {
+            text-align: right;
+            max-width: 250px;
+        }
+
+        .quote-text {
+            color: var(--muted-text);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .quote-author {
+            display: block;
+            margin-top: 0.4rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-color);
+        }
+
+        .quote-divider {
+            width: 2px;
+            height: 55px;
+            background-color: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        /* Biografia Justificada */
+        .quote-bio {
+            width: 160px; 
+            font-size: 0.75rem;
+            color: var(--muted-text);
+            text-align: justify;
+            line-height: 1.4;
+            hyphens: auto; 
+            -webkit-hyphens: auto;
+        }
+
+        /* Estrutura do Footer */
+        footer {
+            width: 100%;
+            z-index: 10; 
+        }
+
+        .footer-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .footer-content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-main {
+            background-color: var(--footer-bg);
+            padding: 0.9rem 3rem;
+            width: 100%;
+        }
+
+        .tech-info {
+            text-align: left;
+            font-size: 0.85rem;
+            color: #f8fafc;
+            font-weight: 500;
+        }
+
+        .tech-info a.tech-link {
+            color: #f8fafc;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--muted-text);
+            transition: all 0.2s;
+        }
+
+        .tech-info a.tech-link:hover {
+            color: var(--accent-blue);
+            border-bottom-style: solid;
+            border-color: var(--accent-blue);
+        }
+
+        .footer-bottom {
+            background-color: var(--footer-darker);
+            padding: 0.4rem 3rem; 
+            border-top: 1px solid rgba(255,255,255,0.05);
+            width: 100%;
+        }
+
+        .creator-text {
+            font-size: 0.75rem;
+            color: var(--muted-text);
+        }
+
+        .author-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--muted-text); 
+            transition: all 0.2s;
+        }
+
+        .author-link:hover {
+            color: var(--accent-blue);
+            border-bottom-style: solid; 
+            border-color: var(--accent-blue);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header { padding: 1.2rem; flex-direction: column; gap: 1.2rem; }
+            h1.main-title { font-size: 1.8rem; margin-bottom: 2rem; } 
+            p.description { font-size: 0.95rem; padding: 0 1rem; }
+            
+            main { padding-top: 2rem; } 
+            
+            .lang-content.active { justify-content: flex-start; gap: 3rem; padding-bottom: 2rem; }
+
+            .footer-main { padding: 1rem; }
+            .footer-bottom { padding: 0.5rem 1rem; } 
+            
+            .footer-content-wrapper { justify-content: center; text-align: center; }
+
+            .quote-wrapper {
+                position: static;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+                justify-content: center;
+            }
+            .quote-content { text-align: right; }
+        }
+    </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">UnsAero</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">          
-          <!-- Numerical methods menu -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              Numerical Methods
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="integration.html">Integration</a></li>
-              <li><a class="dropdown-item" href="rootfinding.html">Root Finding</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
-  <div class="container mt-4">
-    <h2>Welcome,</h2>
-    <h6>to Unsteady Aerodynamics.</h6>
-  </div>
+    <header>
+        <div class="logo">
+            <span class="uns">UNS</span><span class="aero">AERO</span>
+        </div>
+        <div class="lang-switch">
+            <div id="btn-en" class="lang-option active" onclick="setLang('en')">
+                <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="16" fill="#fff"/>
+                    <rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/>
+                    <rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/>
+                    <rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/>
+                    <rect width="10" height="8.5" fill="#002868"/>
+                </svg>
+                EN
+            </div>
+            <div id="btn-pt" class="lang-option" onclick="setLang('pt')">
+                <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="16" fill="#009b3a"/>
+                    <polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/>
+                    <circle cx="12" cy="8" r="3.5" fill="#002776"/>
+                </svg>
+                PT
+            </div>
+        </div>
+    </header>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <main>
+        <h1 class="main-title">
+            <span class="uns">Unsteady</span> <span class="aero">Aerodynamics</span>
+        </h1>
+
+        <div id="content-pt" class="lang-content">
+            <div class="phrases-block">
+                <p class="description top-desc">
+                    Impulsionando a análise aerodinâmica por meio de modelos de ordem reduzida fisicamente consistentes.
+                </p>
+                <div class="line-separator"></div>
+                <p class="description bottom-desc">
+                    Uma simples contribuição à Ciência Aberta, disponibilizando soluções computacionais rápidas, robustas e <span class="highlight-free">gratuitas</span>.
+                </p>
+            </div>
+            <div class="dev-box">
+                <span class="dev-title">Em Desenvolvimento</span>
+                <div class="dev-text">
+                    Enquanto isso, explore a <a href="timeline.html">Linha do Tempo da Aerodinâmica</a>.
+                </div>
+            </div>
+        </div>
+
+        <div id="content-en" class="lang-content active">
+            <div class="phrases-block">
+                <p class="description top-desc">
+                    Empowering aerodynamic analysis through physics-based, reduced-order models.
+                </p>
+                <div class="line-separator"></div>
+                <p class="description bottom-desc">
+                    A simple contribution to an Open Science world, delivering fast, robust, and <span class="highlight-free">free</span> computational resources.
+                </p>
+            </div>
+            <div class="dev-box">
+                <span class="dev-title">Under Development</span>
+                <div class="dev-text">
+                    Meanwhile, explore the <a href="timeline.html">Timeline of Aerodynamics</a>.
+                </div>
+            </div>
+        </div>
+
+        <div id="quote-pt" class="quote-wrapper" style="display: none;">
+            <div class="quote-content">
+                <div class="quote-text">"Todos os modelos estão errados, mas alguns são úteis."</div>
+                <span class="quote-author">George E. P. Box</span>
+            </div>
+            <div class="quote-divider"></div>
+            <div class="quote-bio">Pioneiro na modelagem matemática e estatística moderna.</div>
+        </div>
+
+        <div id="quote-en" class="quote-wrapper">
+            <div class="quote-content">
+                <div class="quote-text">"All models are wrong, but some are useful."</div>
+                <span class="quote-author">George E. P. Box</span>
+            </div>
+            <div class="quote-divider"></div>
+            <div class="quote-bio">Pioneer of mathematical and modern statistical modeling.</div>
+        </div>
+    </main>
+
+    <footer>
+        <div id="footer-pt" class="footer-container" style="display:none;">
+            <div class="footer-main">
+                <div class="footer-content-wrapper">
+                    <div class="tech-info">
+                        Hospedado via <a href="https://pages.github.com/" target="_blank" class="tech-link">GitHub Pages</a> &copy; <span class="year-span"></span> UnsAero.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-content-wrapper">
+                    <span class="creator-text">Da mente inquieta de <a href="mailto:george.torres@usp.br" class="author-link">George L. S. Torres</a></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer-en" class="footer-container">
+            <div class="footer-main">
+                <div class="footer-content-wrapper">
+                    <div class="tech-info">
+                        Hosted via <a href="https://pages.github.com/" target="_blank" class="tech-link">GitHub Pages</a> &copy; <span class="year-span"></span> UnsAero.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-content-wrapper">
+                    <span class="creator-text">From the restless mind of <a href="mailto:george.torres@usp.br" class="author-link">George L. S. Torres</a></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const yearSpans = document.querySelectorAll('.year-span');
+        const currentYear = new Date().getFullYear();
+        yearSpans.forEach(span => span.textContent = currentYear);
+
+        function setLang(lang) {
+            document.getElementById('btn-pt').classList.remove('active');
+            document.getElementById('btn-en').classList.remove('active');
+            document.getElementById('content-pt').classList.remove('active');
+            document.getElementById('content-en').classList.remove('active');
+            
+            document.getElementById('content-pt').style.display = 'none'; 
+            document.getElementById('content-en').style.display = 'none'; 
+            document.getElementById('quote-pt').style.display = 'none';
+            document.getElementById('quote-en').style.display = 'none';
+
+            document.getElementById('btn-' + lang).classList.add('active');
+            document.getElementById('content-' + lang).classList.add('active');
+            document.getElementById('content-' + lang).style.display = 'flex'; 
+            document.getElementById('quote-' + lang).style.display = 'flex'; 
+
+            if (lang === 'pt') {
+                document.getElementById('footer-pt').style.display = 'flex';
+                document.getElementById('footer-en').style.display = 'none';
+                document.documentElement.lang = "pt-BR";
+            } else {
+                document.getElementById('footer-pt').style.display = 'none';
+                document.getElementById('footer-en').style.display = 'flex';
+                document.documentElement.lang = "en-US";
+            }
+        }
+
+        setLang('en');
+    </script>
 </body>
 </html>
