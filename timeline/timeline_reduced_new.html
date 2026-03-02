@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UnsAero | A brief chronology of Aerodynamics</title>
+<link href="../icon.png" rel="icon"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+<style>
+        /* --- CSS: Visual Styling --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; padding: 20px; overflow-x: hidden; }
+        header { text-align: left; margin: 0 auto 50px auto; padding: 30px; background: #2c3e50; color: white; border-radius: 8px; max-width: 1200px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        header h1 { margin-bottom: 10px; }
+        .timeline { position: relative; max-width: 1200px; margin: 0 auto; z-index: 0; }
+        .timeline::after { content: ''; position: absolute; width: 6px; background-color: #3498db; top: 0; bottom: 0; left: 50%; margin-left: -3px; border-radius: 3px; z-index: -1; pointer-events: none; }
+        .container { width: 100%; position: relative; padding: 10px 0; margin-bottom: 50px; opacity: 0; transform: translateY(50px); transition: all 0.7s ease-in-out; z-index: 1; }
+        .container.show { opacity: 1; transform: translateY(0); }
+        .century-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+        .century-header h2 { background: #2c3e50; color: white; padding: 12px 35px; border-radius: 30px; font-size: 1.5em; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px; text-align: center; }
+        .century-header h2 .century-years { color: #bdc3c7; font-weight: normal; font-size: 0.9em; margin-left: 5px; }
+        .century-dot { width: 16px; height: 16px; background-color: #e74c3c; border: 3px solid #f4f7f6; border-radius: 50%; z-index: 3; box-sizing: content-box; }
+        
+        /* Internal Half-Century Split */
+        .half-century-divider { background: #ecf0f1; color: #2c3e50; padding: 8px 25px; border-radius: 20px; font-size: 1.1em; font-weight: bold; text-align: center; margin: 30px auto 25px auto; width: max-content; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; z-index: 3; border: 1px solid #bdc3c7; }
+        
+        .century-boxes { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+        .box { width: 47%; padding: 25px; background-color: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; }
+        .category-title { color: #2980b9; font-size: 1.15em; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px; }
+        .persona { margin-bottom: 8px; padding: 10px 10px 10px 10px; border: 1px solid #e5edf3; border-radius: 6px; cursor: default !important; background-color: #ffffff; transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.05s; position: relative; 
+  cursor: default;}
+        .persona:hover { background-color: #f9fbfd; border-color: #cbd5dc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .persona:active { transform: translateY(1px); }
+        .persona:focus-visible { outline: 2px solid #3498db; outline-offset: 2px; }
+
+.persona-header { margin-bottom: 6px; font-size: 1.1em; line-height: 1.25; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .persona-header strong { color: #e74c3c; }
+        .short-years { color: #7f8c8d; font-weight: bold; font-size: 0.85em; margin-left: 5px; }
+        .persona-desc { line-height: 1.5; font-size: 1.05em; color: #444; }
+        .details { display: none; margin-top: 10px; padding: 10px 0 0 0; font-size: 0.95em; color: #333; line-height: 1.6; animation: fadeIn 0.3s ease-in-out; }
+        .persona.active .details { display: block; }
+        .details-card { background-color: #f1f5f8; padding: 12px; border-radius: 4px; margin-bottom: 5px; }
+        .details-grid { display: flex; justify-content: space-between; }
+        .details-col { min-width: 0; }
+        .details-col:first-child { flex: 0 0 50%; border-right: 1px dashed #c9d6df; padding-right: 15px; margin-right: 15px; }
+        .details-col:last-child { flex: 1 1 auto; }
+        .details-dates { font-weight: bold; color: #2c3e50; display: block; margin-bottom: 2px; }
+        .details-location { color: #555; font-size: 0.95em; display: flex; align-items: center; }
+        .flag { width: 16px; height: 12px; margin-right: 6px; border-radius: 2px; box-shadow: 0 0 1px rgba(0,0,0,0.3); object-fit: cover; }
+        
+        #backToTopBtn, #scrollToBottomBtn { display: flex; align-items: center; justify-content: center; position: relative; font-size: 18px; border: none; outline: none; background-color: var(--timeline-accent); color: white; cursor: pointer; padding: 15px; border-radius: 50%; width: 50px; height: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s, transform 0.3s; line-height: 0; opacity: 0; pointer-events: none; transform: translateY(10px);}
+.persona-header .life-years { color: #555; font-weight: 400; font-size: 0.95em; margin-left: 6px; }
+
+#backToTopBtn:hover, #scrollToBottomBtn:hover { background-color: #b84300; transform: scale(1.1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+
+        /* --- Sticky behavior (desktop): keep the main period pill sticky (dot stays anchored);
+   if there are half-century sub-divisions, also stack the sub-period pill beneath it. --- */
+@media screen and (min-width: 801px) {
+    /* Sticky headers break if any ancestor is transformed; the reveal animation uses transforms.
+       On desktop we keep the fade-in but disable transforms on the section container so sticky works. */
+    .container { transform: none !important; }
+    .container.show { transform: none !important; }
+
+    /* Keep the orange dot anchored in the timeline (non-sticky);
+       only the period "pill" (h2) should follow the reader. */
+    /* .century-header is display: contents on desktop (no box to position) */
+    /* IMPORTANT: make the period pill sticky relative to the whole section (container),
+       not constrained by the small .century-header box. Using display: contents
+       effectively lifts h2 and the dot into the container's flow on desktop. */
+    .container .century-header { display: contents; }
+
+    /* Re-create the previous centering (we lost flex when using display: contents). */
+    .container .century-header h2 { display: block; width: max-content; max-width: 100%; margin-left: auto; margin-right: auto; }
+    .container .century-dot { display: block; margin-left: auto; margin-right: auto; margin-bottom: 10px; }
+
+    .container.sticky-century .century-header h2 {
+        position: sticky;
+        top: 14px;
+        z-index: 30;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* If there are half-century sub-divisions, stick the sub-period pill *below* the main pill. */
+    .container.has-half-century .half-century-divider {
+        position: sticky;
+        top: calc(14px + var(--century-pill-height, 64px) + 10px);
+        z-index: 29;
+    }
+}
+
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 800px) {
+            .timeline::after { left: 31px; }
+            .container { padding: 10px 20px 10px 60px; width: 100%; margin-bottom: 30px;}
+
+            /* Century pill remains "desktop-like" but sticky for readability on phones */
+            .century-header { align-items: flex-start; margin-bottom: 10px; position: sticky; top: 12px; z-index: 25; }
+            .century-header h2 {
+                background: #2c3e50;
+                color: white;
+                padding: 10px 22px;
+                border-radius: 26px;
+                font-size: 1.35em;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                margin-bottom: 8px;
+                text-align: left;
+                width: max-content;
+                max-width: 100%;
+            }
+            .century-header h2 .century-years { color: #bdc3c7; font-weight: normal; font-size: 0.9em; margin-left: 5px; display: inline; }
+            .century-dot { display: none; }
+
+            /* Mobile timeline dot: keep the same orange used on desktop */
+            .container::after { content: ''; position: absolute; width: 14px; height: 14px; left: 24px; background-color: #e74c3c; top: 25px; border-radius: 50%; z-index: 3; }
+
+            /* Half-century pills stick below the century header (only when present) */
+            .container.has-half-century .half-century-divider { position: sticky; top: 72px; z-index: 24; }
+            .half-century-divider { margin: 20px 0 15px 0; font-size: 1em; text-align: left; }
+
+            .century-boxes { flex-direction: column; }
+            .box { width: 100%; margin-bottom: 20px; padding: 20px; }
+            .details-grid { flex-direction: column; }
+            /* Living personas: on small screens, use the same stacked layout as others */
+            .details-grid.living { flex-direction: column; }
+            .details-grid.living .details-col:first-child { flex: 1 1 auto; }
+            .details-grid.living .details-col:last-child  { flex: 1 1 auto; }
+            .details-col:first-child { border-right: none; border-bottom: 1px dashed #c9d6df; margin-right: 0; padding-bottom: 10px; margin-bottom: 10px; }
+            .short-years { display: block; margin-left: 0; margin-top: 2px; }
+            #backToTopBtn, #scrollToBottomBtn { bottom: 20px; right: 20px; width: 45px; height: 45px; font-size: 16px; padding: 10px; }
+        }
+
+        /* --- Debug / Validation --- */
+        /* Set EXPAND_ALL_DETAILS in the script to true to keep all details expanded. */
+        .details-grid.single-column .details-col:first-child { border-right: none; margin-right: 0; }
+        .details-grid.single-column .details-col:last-child { display: none; }
+
+        .multi-entry { margin-bottom: 10px; }
+        .multi-entry:last-child { margin-bottom: 0; }
+        .multi-name { font-weight: 700; color: #2c3e50; margin-bottom: 2px; }
+
+        /* --- Name flags (birth country) --- */
+        .persona-header img.name-flag { width: 16px; height: 12px; margin-left: 6px; border-radius: 2px; box-shadow: 0 0 1px rgba(0,0,0,0.3); object-fit: cover; vertical-align: -1px; }
+        .multi-name { display: inline-flex; align-items: center; gap: 6px; }
+        .multi-name img.name-flag { margin-left: 0; }
+
+
+
+        /* --- Header birth-country flags (before name) --- */
+        .persona-header .header-flags { display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; }
+        .persona-header img.name-flag { width: 16px; height: 12px; margin: 0; border-radius: 2px; box-shadow: 0 0 1px rgba(0,0,0,0.3); object-fit: cover; vertical-align: -1px; }
+
+        /* --- Multi-persona frames (aligned left/right per person) --- */
+        .multi-frames { background-color: #f1f5f8; padding: 12px; border-radius: 4px; margin-bottom: 5px; }
+        .multi-frame { display: flex; gap: 15px; padding: 10px 0; }
+        .multi-frame + .multi-frame { border-top: 1px solid #c9d6df; }
+        .multi-left { flex: 1; padding-right: 15px; border-right: 1px solid #c9d6df; }
+        .multi-right { flex: 1; padding-left: 0; }
+        .multi-name-full { font-weight: 800; color: #2c3e50; margin-bottom: 4px; }
+        .multi-meta .details-dates { font-weight: 700; color: #6c757d; display: block; margin-bottom: 2px; }
+        .multi-meta .details-location { color: #6c757d; font-size: 0.95em; display: flex; align-items: center; margin-bottom: 2px; }
+
+        /* --- Validation mode marks --- */
+        .validation-mark { font-weight: 900; margin-left: 6px; color: #e67e22; }
+        .validation-missing { color: #6c757d; font-style: italic; }
+        .validation-outline { outline: 2px dashed rgba(230, 126, 34, 0.55); outline-offset: 6px; }
+
+        /* Mobile: stack frames */
+        @media screen and (max-width: 800px) {
+            .multi-frame { flex-direction: column; gap: 10px; }
+            .multi-left { border-right: none; padding-right: 0; border-bottom: 1px solid #c9d6df; padding-bottom: 8px; }
+            .multi-right { padding-left: 0; }
+        }
+
+
+
+/* --- Full name inside expanded details --- */
+.details-fullname { font-weight: 900; color: #2c3e50; margin: 0 0 8px 0; font-size: 1.02em; }
+
+/* --- Personal life / human relations --- */
+.details-personal { margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e6eb; }
+.details-personal .personal-title { font-weight: 800; color: #2c3e50; margin-bottom: 4px; }
+.details-personal .personal-body { color: #555; font-size: 0.95em; line-height: 1.6; }
+
+/* --- Historical context blocks --- */
+.century-context{
+  margin: 10px 0 18px 0;
+  padding: 10px 12px;
+  border-left: 4px solid #2b6cb0;
+  background: #eaf2fb;
+  border-radius: 10px;
+  line-height: 1.35;
+  font-size: 0.93rem;
+  position: relative;
+  z-index: 4;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.century-context p{ margin: 6px 0; color: #1f2937; }
+.category-context{
+  margin: 8px 0 12px 0;
+  padding: 8px 10px;
+  border-left: 3px solid #64748b;
+  background: #eef2f6;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: #1f2937;
+  position: relative;
+  z-index: 3;
+}
+.category-context p{ margin: 0; }
+
+        /* --- Header refinement (v3) --- */
+        header {
+            text-align: left;
+            margin: 0 auto 56px auto;
+            padding: 34px 32px 28px 32px;
+            max-width: 1200px;
+            border-radius: 12px;
+            color: #ffffff;
+            background: #2c3e50;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        header .header-kicker {
+            font-size: 12px;
+            letter-spacing: 0.22em;
+            text-transform: lowercase;
+            color: rgba(255,255,255,0.78);
+            margin-bottom: 8px;
+        }
+        header h1 {
+            margin: 0 0 10px 0;
+            line-height: 1.06;
+            font-weight: 800;
+            font-size: clamp(2.0rem, 4vw, 3.1rem);
+            color: #ffffff;
+        }
+        header .header-title {
+            color: #ffffff;
+        }
+        header .last-updated {
+            margin-top: 2px;
+            font-size: 0.98rem;
+            color: rgba(255,255,255,0.78);
+        }
+
+
+
+/* --- Living persona layout adjustments --- */
+.details-grid.living { flex-direction: row; }
+.details-grid.living .details-col:first-child { flex: 0 0 33%; }
+.details-grid.living .details-col:last-child  { flex: 0 0 67%; }
+
+/* Mobile override: living personas stack like non-living (100% width blocks) */
+@media screen and (max-width: 800px) {
+  .details-grid.living {
+    flex-direction: column !important;
+  }
+  .details-grid.living .details-col {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+  .details-grid.living .details-col:first-child {
+    border-right: none !important;
+    border-bottom: 1px dashed #c9d6df !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 10px !important;
+  }
+}
+.affil-block { margin-bottom: 6px; }
+.affil-name { display: block; font-weight: 700; color: #2c3e50; margin-bottom: 2px; }
+.affil-loc { display: flex; align-items: center; color: #6c757d; font-size: 0.95em; }
+
+
+/* --- Overrides (stability + consistent accent) --- */
+:root { --timeline-accent: #d35400; --pure-accent: #2b6cb0; --applied-accent: #d35400; --pure-bg: #eaf2fb; --applied-bg: #fff3e6; } /* matches the timeline bullet accent */
+
+/* Use a single accent color (timeline bullet + highlights) */
+.century-dot { background-color: var(--timeline-accent); }
+.container::after { background-color: var(--timeline-accent); }
+.persona-header strong { color: var(--timeline-accent); }
+
+/* --- Pure vs Applied color themes (harmonized with existing palette) --- */
+.box.pure { border-top: 4px solid var(--pure-accent); }
+.box.applied { border-top: 4px solid var(--applied-accent); }
+
+.box.pure .category-title { color: var(--pure-accent); }
+.box.applied .category-title { color: var(--applied-accent); }
+
+.box.pure .category-context { border-left-color: var(--pure-accent); background: var(--pure-bg); }
+.box.applied .category-context { border-left-color: var(--applied-accent); background: var(--applied-bg); }
+
+.box.pure .persona-header strong { color: var(--pure-accent); }
+.box.applied .persona-header strong { color: var(--applied-accent); }
+
+/* --- Themed dashed details outline/separators (Pure vs Applied) --- */
+.box.pure .validation-outline { outline-color: rgba(43, 108, 176, 0.55); }
+.box.applied .validation-outline { outline-color: rgba(211, 84, 0, 0.55); }
+
+.box.pure .details-col:first-child { border-right-color: rgba(43, 108, 176, 0.35); }
+.box.applied .details-col:first-child { border-right-color: rgba(211, 84, 0, 0.35); }
+
+@media (max-width: 768px) {
+  .box.pure .details-col:first-child,
+  .box.pure .details-grid.living .details-col:first-child {
+    border-bottom-color: rgba(43, 108, 176, 0.35) !important;
+  }
+  .box.applied .details-col:first-child,
+  .box.applied .details-grid.living .details-col:first-child {
+    border-bottom-color: rgba(211, 84, 0, 0.35) !important;
+  }
+}
+
+
+/* Slightly smaller year range next to names */
+.persona-header .life-years { font-size: 0.76em; }
+
+.persona-header .life-years { line-height: 1; display: inline-flex; align-items: center; }
+
+/* Back-to-top / bottom buttons: hidden until scroll (JS toggles .show) */
+#backToTopBtn, #scrollToBottomBtn {
+  --dock-shift: 0px;
+  background-color: var(--timeline-accent);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(var(--dock-shift));
+  transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.3s;
+}
+#backToTopBtn.show, #scrollToBottomBtn.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+#backToTopBtn:hover, #scrollToBottomBtn:hover {
+  background-color: #b84300;
+  transform: translateY(var(--dock-shift)) scale(1.06);
+}
+
+/* Scroll navigation buttons (↑ / ↓) */
+#scrollNav {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  --nav-btn-size: 50px;
+  --nav-gap: 12px;
+}
+#scrollNav #backToTopBtn,
+#scrollNav #scrollToBottomBtn {
+  position: static;
+  width: var(--nav-btn-size);
+  height: var(--nav-btn-size);
+}
+/* When the reader reaches the bottom, move ↑ into the ↓ slot */
+#scrollNav.at-bottom #backToTopBtn {
+  --dock-shift: calc(var(--nav-btn-size) + var(--nav-gap));
+}
+
+@media screen and (max-width: 800px) {
+  #scrollNav { right: 20px; bottom: 20px; --nav-btn-size: 45px; }
+}
+
+/* Scroll buttons: CSS fallback so at least ↓ is visible if JS fails */
+body:not(.js-ready) #scrollToBottomBtn { opacity: 1; pointer-events: auto; }
+body:not(.js-ready) #backToTopBtn { opacity: 0; pointer-events: none; }
+
+
+/* Persona toggle: only header + short description behave as the toggle button */
+.persona-header, .persona-desc { cursor: pointer; }
+.persona-header:focus-visible, .persona-desc:focus-visible { outline: 2px dashed var(--timeline-accent); outline-offset: 3px; }
+
+/* Scroll buttons: CSS fallback so at least ↓ is visible if JS fails */
+body:not(.js-ready) #scrollToBottomBtn { opacity: 1; pointer-events: auto; transform: translateY(0); }
+body:not(.js-ready) #backToTopBtn { opacity: 0; pointer-events: none; }
+
+/* Details area: keep cursor neutral (space reserved for future links) */
+.details, .details * { cursor: default !important; }
+
+
+/* --- Award icons on persona headers (Font Awesome) --- */
+.persona-header {
+  justify-content: space-between;
+  align-items: center; /* keep flags, name, and awards vertically aligned */
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* Birth-country flag (before name): nudge down slightly and prevent baseline quirks */
+.persona-header .header-flags { align-self: center; transform: translate(1px, 1px); }
+.persona-header .header-flags img { display: block; }
+.persona-header .persona-header-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.persona-header .award-icons {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  color: #2c3e50;
+  opacity: 0.95;
+  line-height: 1;
+}
+.persona-header .award-icons i {
+  font-size: 0.82em;
+}
+.persona-header .award-icons i:hover {
+  transform: translateY(-1px);
+}
+@media (max-width: 600px) {
+  .persona-header .award-icons { gap: 6px; }
+  .persona-header .award-icons i { font-size: 0.78em; }
+}
+
+/* --- Prize details block --- */
+.details-awards {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid #d7e2ea;
+  color: #425466;
+  font-size: 0.95em;
+}
+.details-awards-label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.details-awards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 0;
+}
+.details-award-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.3;
+}
+.details-award-item i {
+  width: 15px;
+  text-align: center;
+  color: #2c3e50;
+  opacity: 0.95;
+  font-size: 0.9em;
+  flex: 0 0 15px;
+}
+
+
+
+/* Award details layout */
+.details-awards-list {
+  gap: 6px;
+}
+.details-award-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.details-award-item i {
+  margin-top: 2px;
+}
+.details-award-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.details-award-main {
+  font-weight: 600;
+  color: #34495e;
+  line-height: 1.28;
+  font-size: 0.99em;
+}
+.details-award-desc {
+  color: #556b7a;
+  line-height: 1.34;
+  font-size: 0.99em;
+}
+
+
+/* --- v6: Birth-order two-column stacked layout --- */
+/* Replace Pure/Applied split: list personas by birth (chronological) into two vertical stacks.
+   Fill order:
+     Oldest → ~half of names: LEFT stack; remainder: RIGHT stack.
+     (Both stacks keep chronological order.) */
+
+/* keep half-century/period blocks */
+.century-boxes {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.birth-two-col {
+  position: relative;
+  margin-top: 6px;
+  display: flex;
+  width: 100%;
+}
+
+.birth-col {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 8px; /* small vertical spacing between persona cards */
+}
+
+.birth-col.left {
+  align-items: flex-end;
+  padding-right: 44px; /* keep away from center line */
+}
+
+.birth-col.right {
+  align-items: flex-start;
+  padding-left: 44px;  /* keep away from center line */
+}
+
+/* Let the persona card size itself inside each column, with no external margins */
+.birth-col .persona {
+  width: min(560px, 100%);
+  margin: 0 !important; /* override global .persona margin-bottom */
+}
+
+@media screen and (max-width: 800px) {
+  .birth-two-col {
+    flex-direction: column;
+  }
+  .birth-col {
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    align-items: stretch;
+  }
+  .birth-col .persona {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+<header id="page-top"><div class="header-kicker">A brief chronology of</div><h1><span class="header-title">Aerodynamics</span></h1><p class="last-updated">Last updated: 24 February 2026</p></header>
+<div class="timeline">
+<div class="container">
+<div class="century-header">
+<h2>Antiquity <span class="century-years">(BCE)</span></h2>
+<div class="century-dot"></div>
+</div><div class="century-context"><p>With hand computation, simple instruments, and knowledge carried by fragile manuscript networks, ancient scholars turned geometry into a culture of proof and measurement; patronage, war, and religious–political shifts often decided what survived, so continuity of transmission mattered almost as much as discovery. Formal continuum fluid dynamics—and the calculus needed to write it—still lay far ahead.</p></div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Axiomatic geometry, conics, and early trigonometric reasoning created the language of proof and structure that later supports PDE, potential theory, and discretization.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Egypt" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/eg.png" title="Egypt"/></span><span class="persona-header-main">
+<strong>Euclid</strong>
+<span class="life-years"> (300 BC - 270 BC)</span></span></div>
+<div class="persona-desc">Formalized spatial geometry and deductive proofs, establishing the strict mathematical boundaries used in all fluid control volumes. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Euclid</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: c. 300 BC</span>
+<span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/eg.png"/> Alexandria, Egypt</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: c. 270 BC (30 years)</span>
+<span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/eg.png"/> Alexandria, Egypt</span>
+</div>
+</div></div>
+</div>
+</div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Turkey" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/tr.png" title="Turkey"/></span><span class="persona-header-main"><strong>A. Perga</strong> <span class="life-years"> (262 BC - 190 BC)</span></span></div><div class="persona-desc">Systematized conic sections, a geometric foundation for airfoil-like shapes and analytic potential-flow constructions.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Apollonius of Perga</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: c. 262 BC</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/tr.png"/> Perga, Turkey</span></div><div class="details-col"><span class="details-dates">Died: c. 190 BC (72 years)</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/eg.png"/> Alexandria, Egypt</span></div></div></div></div></div>
+</div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Hydrostatics, statics, and mechanical devices introduced the first pressure–force balances and a culture of measurement—primitive, but already the mindset of models that predict.</p></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Greece" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gr.png" title="Greece"/></span><span class="persona-header-main"><strong>Aristotle</strong> <span class="life-years"> (384 BC - 322 BC)</span></span></div><div class="persona-desc">Early systematic thinking about motion and causes that framed later physical theories of fluids and continua.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Aristotle</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 384 BC</span><span class="details-location"><img alt="Greece" class="flag" src="https://flagcdn.com/w20/gr.png"/> Stagira, Greece</span></div><div class="details-col"><span class="details-dates">Died: 322 BC (62 years)</span><span class="details-location"><img alt="Greece" class="flag" src="https://flagcdn.com/w20/gr.png"/> Chalcis, Greece</span></div></div></div></div></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main"><strong>Archimedes</strong> <span class="life-years"> (287 BC - 212 BC)</span></span></div><div class="persona-desc">Founded hydrostatics and buoyancy, giving the first quantitative pressure-force balance that underlies lift and stability. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Archimedes</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: c. 287 BC</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/it.png"/> Syracuse, Italy</span></div><div class="details-col"><span class="details-dates">Died: c. 212 BC (75 years)</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/it.png"/> Syracuse, Italy</span></div></div></div></div></div></div>
+</div>
+</div>
+<div class="container">
+<div class="century-header">
+<h2>15th &amp; 16th Century <span class="century-years">(1401 - 1600)</span></h2>
+<div class="century-dot"></div>
+</div><div class="century-context"><p>Printing, navigation, surveying, and artillery pushed mathematics out of the monastery and into the workshop: states funded practical mechanics for trade and war, while religious conflict and censorship could slow or redirect inquiry—a tension that nonetheless sharpened methods for measurement, computation, and engineering design. Without calculus, fluid laws remained largely qualitative, but instruments, kinematics, and engineering practice matured into a quantitative craft.</p></div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Symbolic algebra and revived classical geometry reorganized calculation and representation, enabling the algebraic manipulation that will later power analytic mechanics and closed-form aerodynamic derivations.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main">
+<strong>N. Tartaglia</strong>
+<span class="life-years"> (1499 - 1557)</span></span></div>
+<div class="persona-desc">Found the first general solutions to cubic equations, forcing mathematicians to confront the existence of imaginary numbers. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Niccolò Tartaglia</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 1499</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Brescia, Republic of Venice</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 13/12/1557 (58 years)</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Venice, Republic of Venice</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main">
+<strong>G. Cardano</strong>
+<span class="life-years"> (1501 - 1576)</span></span></div>
+<div class="persona-desc">Formally introduced complex numbers, an absolute prerequisite for the conformal mapping tools that designed early airfoils.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Gerolamo Cardano</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 24/09/1501</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Pavia, Duchy of Milan</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 21/09/1576 (74 years)</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Rome, Papal States</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main"><strong>F. Viète</strong> <span class="life-years"> (1540 - 1603)</span></span></div><div class="persona-desc">Introduced systematic symbolic algebra, enabling compact analytic manipulations pervasive in theoretical aerodynamics. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">François Viète</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 1540</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Fontenay-le-Comte, France</span></div><div class="details-col"><span class="details-dates">Died: 13/12/1603 (63 years)</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span></div></div></div></div></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>R. Descartes</strong>
+<span class="life-years"> (1596 - 1650)</span></span></div>
+<div class="persona-desc">Invented Cartesian coordinates, allowing spatial fluid domains to be strictly described by algebraic equations. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">René Descartes</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 31/03/1596</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> La Haye en Touraine, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 11/02/1650 (53 years)</span>
+<span class="details-location"><img alt="Sweden" class="flag" src="https://flagcdn.com/w20/se.png"/> Stockholm, Sweden</span>
+</div>
+</div></div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Ballistics, surveying, and craft engineering demanded workable formulas; early kinematics and instrument-building seeded the empirical habits that eventually become aerodynamic experimentation.</p></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main"><strong>L. da Vinci</strong> <span class="life-years"> (1452 - 1519)</span></span></div><div class="persona-desc">Produced pioneering sketches and observations of flow and lifting surfaces, foreshadowing experimental aerodynamics centuries ahead.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Leonardo da Vinci</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 15/04/1452</span><span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Vinci, Republic of Florence</span></div><div class="details-col"><span class="details-dates">Died: 02/05/1519 (67 years)</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Amboise, Kingdom of France</span></div></div></div></div></div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Scotland" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-sct.png" title="Scotland"/></span><span class="persona-header-main"><strong>J. Napier</strong> <span class="life-years"> (1550 - 1617)</span></span></div><div class="persona-desc">Introduced logarithms, a computational revolution that permeates analytic solutions and similarity laws in aerodynamics. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">John Napier</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 1550</span><span class="details-location"><img alt="Scotland" class="flag" src="https://flagcdn.com/w20/gb-sct.png"/> Merchiston, Scotland</span></div><div class="details-col"><span class="details-dates">Died: 04/04/1617 (67 years)</span><span class="details-location"><img alt="Scotland" class="flag" src="https://flagcdn.com/w20/gb-sct.png"/> Edinburgh, Scotland</span></div></div></div></div></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main"><strong>Galileo</strong> <span class="life-years"> (1564 - 1642)</span></span></div><div class="persona-desc">Established quantitative laws of motion and experimental method, anchoring inertial reasoning used throughout aerodynamic modeling. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Galileo Galilei</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 15/02/1564</span><span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Pisa, Italy</span></div><div class="details-col"><span class="details-dates">Died: 08/01/1642 (77 years)</span><span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Arcetri, Italy</span></div></div></div></div></div>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="century-header">
+<h2>17th Century <span class="century-years">(1601 - 1700)</span></h2>
+<div class="century-dot"></div>
+</div><div class="century-context"><p>Precision clocks, telescopes, and laboratory practice made nature measurable, and the new calculus let motion and fluids be written as laws; academies and correspondence networks accelerated verification, even as confessional politics and rival courts shaped who could publish, travel, and be heard.</p></div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Analytic geometry, logarithms, infinite series, and the emerging calculus created a new computational engine for turning physical intuition into solvable equations.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>G. Leibniz</strong>
+<span class="life-years"> (1646 - 1716)</span></span></div>
+<div class="persona-desc">Co-invented Calculus, providing the elegant differential notation that makes fluid dynamic governing equations readable today. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Gottfried Wilhelm Leibniz</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 01/07/1646</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Leipzig, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 14/11/1716 (70 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Hanover, Germany</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span>
+<span class="persona-header-main"><strong>B. Taylor</strong><span class="life-years"> (1685 - 1731)</span></span>
+</div>
+<div class="persona-desc">Introduced Taylor’s theorem and the Taylor series, the core local-expansion tool behind linearization, perturbation methods, and small-disturbance aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Brook Taylor</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 18/08/1685</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Edmonton, Middlesex, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 29/12/1731 (46 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> London, England</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Pressure, gas behavior, elasticity, and classical mechanics became quantifiable; these ingredients will later reappear as governing equations, boundary conditions, and stability constraints in flow problems.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>I. Newton</strong>
+<span class="life-years"> (1643 - 1727)</span></span></div>
+<div class="persona-desc">Published the "sine-squared law" for air resistance, attempting the first mathematical model to predict aerodynamic drag. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Isaac Newton</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 04/01/1643</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Woolsthorpe, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 31/03/1727 (84 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Kensington, England</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Netherlands" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/nl.png" title="Netherlands"/></span><span class="persona-header-main">
+<strong>D. Bernoulli</strong>
+<span class="life-years"> (1700 - 1782)</span></span></div>
+<div class="persona-desc">Authored Hydrodynamica , establishing the critical mathematical link between fluid pressure and velocity along a streamline. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Daniel Bernoulli</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 08/02/1700</span>
+<span class="details-location"><img alt="Netherlands" class="flag" src="https://flagcdn.com/w20/nl.png"/> Groningen, Dutch Republic</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/03/1782 (82 years)</span>
+<span class="details-location"><img alt="Switzerland" class="flag" src="https://flagcdn.com/w20/ch.png"/> Basel, Switzerland</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span>
+<span class="persona-header-main"><strong>E. Torricelli</strong><span class="life-years"> (1608 - 1647)</span></span>
+</div>
+<div class="persona-desc">Established Torricelli’s law and the barometer, linking pressure and outflow speed—early quantitative stepping stones toward Bernoulli-type energy balances in fluid mechanics.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Evangelista Torricelli</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 15/10/1608</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Rome, Papal States</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 25/10/1647 (39 years)</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Florence, Grand Duchy of Tuscany</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="container">
+<div class="century-header">
+<h2>18th Century <span class="century-years">(1701 - 1800)</span></h2>
+<div class="century-dot"></div>
+</div><div class="century-context"><p>The Enlightenment institutionalized science through academies and state engineering projects: calculus became operational, differential equations moved from curiosity to tool, and mathematical physics began to treat fluids as continua—laying the intellectual roadbed for potential flow, stability analysis, and later boundary-layer thinking.</p></div>
+<div class="half-century-divider">1701 - 1750</div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Differential equations, variational principles, and orthogonal expansions hardened into a toolkit for building and analyzing continuum models with controlled approximations.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Switzerland" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ch.png" title="Switzerland"/></span><span class="persona-header-main">
+<strong>L. Euler</strong>
+<span class="life-years"> (1707 - 1783)</span></span></div>
+<div class="persona-desc">Developed the calculus of variations, creating the inviscid fluid dynamic conservation equations that bear his name. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Leonhard Euler</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 15/04/1707</span>
+<span class="details-location"><img alt="Switzerland" class="flag" src="https://flagcdn.com/w20/ch.png"/> Basel, Switzerland</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 18/09/1783 (76 years)</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> St. Petersburg, Russia</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main">
+<strong>J. Lagrange</strong>
+<span class="life-years"> (1736 - 1813)</span></span></div>
+<div class="persona-desc">Created Lagrangian mechanics; his particle-tracking perspective forms one of the two core frameworks in computational fluids. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Joseph-Louis Lagrange</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 25/01/1736</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Turin, Piedmont-Sardinia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 10/04/1813 (77 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>P. Laplace</strong>
+<span class="life-years"> (1749 - 1827)</span></span></div>
+<div class="persona-desc">Formulated Laplace's equation, the absolute bedrock model for solving all irrotational, incompressible potential flows. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Pierre-Simon Laplace</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 23/03/1749</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Beaumont-en-Auge, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 05/03/1827 (77 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div></div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Inviscid flow, energy balances, and early stability reasoning began to cohere into fluid mechanics—setting the stage for lift theory and the limits of purely potential models.</p></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main"><strong>d’Alembert</strong> <span class="life-years"> (1717 - 1783)</span></span></div><div class="persona-desc">Formulated the d’Alembert paradox and the wave equation, central to inviscid potential flow and unsteady response models.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Jean le Rond d’Alembert</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 16/11/1717</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span></div><div class="details-col"><span class="details-dates">Died: 29/10/1783 (65 years)</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span></div></div></div></div></div>
+</div>
+</div>
+<div class="half-century-divider">1751 - 1800</div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Differential equations, variational principles, and orthogonal expansions hardened into a toolkit for building and analyzing continuum models with controlled approximations.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>J. Fourier</strong>
+<span class="life-years"> (1768 - 1830)</span></span></div>
+<div class="persona-desc">Invented Fourier series, an essential mathematical tool for solving unsteady aerodynamic problems and acoustic wave equations.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Joseph Fourier</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 21/03/1768</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Auxerre, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 16/05/1830 (62 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>C. Gauss</strong>
+<span class="life-years"> (1777 - 1855)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div>
+<div class="persona-desc">Formulated the divergence theorem, the strict mathematical basis for deriving all mass and momentum conservation laws. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Carl Friedrich Gauss</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 30/04/1777</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Brunswick, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 23/02/1855 (77 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Göttingen, Germany</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1838)</div><div class="details-award-desc">Honored in 1838 at age 61, while directing the Göttingen Observatory, after decades in geodesy, least‑squares estimation, and potential theory—tools that later become routine in aerodynamic data reduction, panel methods, and reduced‑order identification.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>S. Poisson</strong>
+<span class="life-years"> (1781 - 1840)</span></span></div>
+<div class="persona-desc">Formulated Poisson's equation, generalizing Laplace's theory to allow the analysis of flows containing internal vorticity sources. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Siméon Denis Poisson</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 21/06/1781</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Pithiviers, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 25/04/1840 (58 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Sceaux, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>F. Bessel</strong>
+<span class="life-years"> (1784 - 1846)</span></span></div>
+<div class="persona-desc">Formulated Bessel functions, providing the rigorous analytical solutions needed to compute unsteady cylindrical wake flows and evaluate Theodorsen's function.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Friedrich Bessel</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 22/07/1784</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Minden, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/03/1846 (61 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Königsberg, Prussia</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>A. Cauchy</strong>
+<span class="life-years"> (1789 - 1857)</span></span></div>
+<div class="persona-desc">Pioneered complex analysis; the Cauchy-Riemann equations form the strict conditions that validate 2D potential flow theory. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Augustin-Louis Cauchy</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 21/08/1789</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 23/05/1857 (67 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Sceaux, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>G. Green</strong>
+<span class="life-years"> (1793 - 1841)</span></span></div>
+<div class="persona-desc">Developed Green's functions, representing the mathematical heart of all modern aerodynamic boundary element and panel methods.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">George Green</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 14/07/1793</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Nottingham, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 31/05/1841 (47 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Nottingham, England</span>
+</div>
+</div></div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Inviscid flow, energy balances, and early stability reasoning began to cohere into fluid mechanics—setting the stage for lift theory and the limits of purely potential models.</p></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main"><strong>G. Cayley</strong>
+<span class="life-years"> (1773 - 1857)</span></span></div>
+<div class="persona-desc">Pioneered the modern concept of the airplane by separating lift, drag, thrust, and weight, and by arguing for cambered wings and tail stability. These ideas foreshadow reduced‑order unsteady aerodynamics: fast force models built from a small set of physically meaningful coefficients.</div>
+<div class="details"><div class="details-card validation-outline"><div class="details-fullname">Sir George Cayley</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 27/12/1773</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Scarborough, England</span></div><div class="details-col"><span class="details-dates">Died: 15/12/1857 (83 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Brompton, England</span></div></div></div></div></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>C. Navier</strong>
+<span class="life-years"> (1785 - 1836)</span></span></div>
+<div class="persona-desc">Introduced viscosity into fluid equations, creating the early foundation of the Navier-Stokes equations for real fluid flow. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Claude-Louis Navier</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 10/02/1785</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Dijon, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 21/08/1836 (51 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span>
+<span class="persona-header-main"><strong>J.-L. Poiseuille</strong><span class="life-years"> (1797 - 1869)</span></span>
+</div>
+<div class="persona-desc">Derived the Hagen–Poiseuille law for laminar viscous flow, a canonical benchmark for viscosity, friction losses, and boundary-condition modeling.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Jean Léonard Marie Poiseuille</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 22/04/1797</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 26/12/1869 (72 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="container">
+<div class="century-header">
+<h2>19th Century <span class="century-years">(1801 - 1900)</span></h2>
+<div class="century-dot"></div>
+</div><div class="century-context"><p>Industrialization and professional universities scaled experiments and manufacturing, forcing theory to become predictive; rigorous analysis (complex variables, special functions, transforms, linear algebra) matured alongside continuum mechanics, while national competition and war both accelerated applied research and steered priorities.</p></div>
+<div class="half-century-divider">1801 - 1850</div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Complex analysis, transforms, special functions, and matrix theory expanded what could be solved and how solutions could be represented—exactly the mathematics later exploited by airfoil theory, spectral methods, and integral equations.</p></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Ireland" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ie.png" title="Ireland"/></span><span class="persona-header-main"><strong>W. Hamilton</strong> <span class="life-years"> (1805 - 1865)</span></span></div><div class="persona-desc">Introduced Hamiltonian mechanics and quaternions, foundational for variational formulations and rigid-body kinematics in aero models and ROMs.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">William Rowan Hamilton</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 03/08/1805</span><span class="details-location"><img alt="Ireland" class="flag" src="https://flagcdn.com/w20/ie.png"/> Dublin, Ireland</span></div><div class="details-col"><span class="details-dates">Died: 02/09/1865 (60 years)</span><span class="details-location"><img alt="Ireland" class="flag" src="https://flagcdn.com/w20/ie.png"/> Dunsink, Ireland</span></div></div></div></div></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Russia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ru.png" title="Russia"/></span><span class="persona-header-main">
+<strong>P. Chebyshev</strong>
+<span class="life-years"> (1821 - 1894)</span></span></div>
+<div class="persona-desc">Created Chebyshev polynomials, the mathematical basis used for the numerical discretization of continuous aerodynamic panel loads.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Pafnuty Chebyshev</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 16/05/1821</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Okatovo, Russia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 08/12/1894 (73 years)</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> St. Petersburg, Russia</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>H. von Helmholtz</strong>
+<span class="life-years"> (1821 - 1894)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div>
+<div class="persona-desc">Developed the theorems of vortex dynamics, explaining the conservation of circulation and the birth of vorticity in fluid flows.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Hermann von Helmholtz</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 31/08/1821</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Potsdam, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 08/09/1894 (73 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Berlin, Germany</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1873)</div><div class="details-award-desc">Awarded in 1873 at age 52, soon after moving to Berlin, recognizing the energy-conservation program and (for fluids) the vortex theorems that underpin circulation-based aerodynamics and the logic behind vortex-sheet / wake models.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United Kingdom" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb.png" title="United Kingdom"/></span><span class="persona-header-main">
+<strong>Lord Kelvin</strong>
+<span class="life-years"> (1824 - 1907)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div>
+<div class="persona-desc">Formulated Kelvin's circulation theorem and co-discovered the Kelvin-Helmholtz instability, pivotal for understanding wake sheets.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">William Thomson (Lord Kelvin)</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 26/06/1824</span>
+<span class="details-location"><img alt="UK" class="flag" src="https://flagcdn.com/w20/gb.png"/> Belfast, Ireland</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/12/1907 (83 years)</span>
+<span class="details-location"><img alt="Scotland" class="flag" src="https://flagcdn.com/w20/gb-sct.png"/> Largs, Scotland</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1883)</div><div class="details-award-desc">Recognized in 1883 at age 59, as Glasgow’s long‑time professor and a central Victorian engineer-scientist: Kelvin’s circulation theorem and wave/instability analyses remain core invariants behind inviscid airfoil theory, vortex dynamics, and reduced‑order wake models.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>B. Riemann</strong>
+<span class="life-years"> (1826 - 1866)</span></span></div>
+<div class="persona-desc">Advanced complex analysis, providing the exact geometric conformal mapping tools later used to mathematically design early airfoils.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Bernhard Riemann</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 17/09/1826</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Breselenz, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 20/07/1866 (39 years)</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Selasca, Italy</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>H. Schwarz</strong>
+<span class="life-years"> (1843 - 1921)</span></span></div>
+<div class="persona-desc">Co-developed the Schwarz-Christoffel mapping, vital for calculating potential flow over arbitrary polygonal wing profiles. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Hermann Schwarz</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 25/01/1843</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Hermsdorf, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 30/11/1921 (78 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Berlin, Germany</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>O. Heaviside</strong>
+<span class="life-years"> (1850 - 1925)</span></span></div>
+<div class="persona-desc">Created the Heaviside step function and operational calculus, mathematically necessary to model sudden unsteady aerodynamic gusts.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Oliver Heaviside</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 18/05/1850</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> London, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 03/02/1925 (74 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Torquay, England</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span>
+<span class="persona-header-main"><strong>K. Weierstrass</strong><span class="life-years"> (1815 - 1897)</span></span>
+</div>
+<div class="persona-desc">Put analysis on a rigorous ε–δ foundation, clarifying convergence and approximation—conceptual prerequisites for stable series, transforms, and numerical schemes in aero.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Karl Weierstrass</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 31/10/1815</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Ennigerloh (Ostenfelde), Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 19/02/1897 (81 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Berlin, German Empire</span>
+</div>
+</div>
+</div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span>
+<span class="persona-header-main"><strong>R. Lipschitz</strong><span class="life-years"> (1832 - 1903)</span></span>
+</div>
+<div class="persona-desc">Formalized Lipschitz continuity and existence/uniqueness theory for ODEs—core to stability, time-marching, and error control in unsteady aerodynamic solvers.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Rudolf Otto Sigismund Lipschitz</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 14/05/1832</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Königsberg, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 07/10/1903 (71 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Bonn, Germany</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Viscous governing equations, vorticity theorems, instability ideas, and dimensional thinking moved fluids toward predictive science, preparing the ground for Reynolds scaling, boundary layers, and compressibility.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Ireland" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ie.png" title="Ireland"/></span><span class="persona-header-main">
+<strong>G. Stokes</strong>
+<span class="life-years"> (1819 - 1903)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div>
+<div class="persona-desc">Finalized the Navier-Stokes equations and formulated the exact mathematical laws describing viscous drag and flow separation. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">George Gabriel Stokes</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 13/08/1819</span>
+<span class="details-location"><img alt="Ireland" class="flag" src="https://flagcdn.com/w20/ie.png"/> County Sligo, Ireland</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 01/02/1903 (83 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Cambridge, England</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1893)</div><div class="details-award-desc">Awarded in 1893 at age 74, as Lucasian Professor at Cambridge, for the viscous-flow framework (Stokes flow, boundary conditions, and the Navier–Stokes legacy) that anchors drag laws and the asymptotics behind modern aerodynamics at low Reynolds numbers.</div></div></div></div></div></div>
+</div>
+</div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Czechia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/cz.png" title="Czechia"/></span><span class="persona-header-main"><strong>E. Mach</strong> <span class="life-years"> (1838 - 1916)</span></span></div><div class="persona-desc">Clarified compressibility effects through the Mach number, linking similarity laws to high-speed aerodynamic regimes. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Ernst Mach</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 18/02/1838</span><span class="details-location"><img alt="Czechia" class="flag" src="https://flagcdn.com/w20/cz.png"/> Chrlice, Czechia</span></div><div class="details-col"><span class="details-dates">Died: 19/02/1916 (78 years)</span><span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Munich, Germany</span></div></div></div></div></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Ireland" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ie.png" title="Ireland"/></span><span class="persona-header-main"><strong>O. Reynolds</strong> <span class="life-years"> (1842 - 1912)</span></span></div><div class="persona-desc">Formalized the Reynolds number and clarified laminar–turbulent transition, introducing the standard scaling law that governs viscous similarity in aerodynamics. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Osborne Reynolds</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 23/08/1842</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/ie.png"/> Belfast, Ireland</span></div><div class="details-col"><span class="details-dates">Died: 21/02/1912 (69 years)</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Watchet, Somerset, England</span></div></div></div></div></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>Lord Rayleigh</strong>
+<span class="life-years"> (1842 - 1919)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Nobel Prize (Physics)" class="fa-solid fa-trophy" title="Nobel Prize (Physics)"></i><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div>
+<div class="persona-desc">Pioneered the mathematical study of flow instabilities, acoustic theory, and aerodynamic drag on bluff bodies. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">John William Strutt (Lord Rayleigh)</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 12/11/1842</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Langford Grove, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 30/06/1919 (76 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Witham, England</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1899)</div><div class="details-award-desc">Honored in 1899 at age 57 for a style that fused exact analysis with experiment; in fluids, Rayleigh’s methods and stability criteria became standard lenses for vortices, separation, and wave–flow interaction central to aerodynamics.</div></div></div><div class="details-award-item"><i aria-label="Nobel Prize (Physics)" class="fa-solid fa-trophy" title="Nobel Prize (Physics)"></i><div class="details-award-text"><div class="details-award-main">Nobel Prize, Physics (1904)</div><div class="details-award-desc">Awarded in 1904 at age 62 for ultra‑precise density measurements that revealed argon; the same precision‑first methodology echoes in wind‑tunnel metrology and in validating reduced‑order aerodynamic models against carefully controlled data.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Russia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ru.png" title="Russia"/></span><span class="persona-header-main">
+<strong>Joukowski</strong>
+<span class="life-years"> (1847 - 1921)</span></span></div>
+<div class="persona-desc">Formulated the Kutta-Joukowski theorem, using conformal mapping to mathematically prove that lift is directly proportional to circulation.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Nikolai Zhukovsky (Joukowski)</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 17/01/1847</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Orekhovo, Russia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/03/1921 (74 years)</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Moscow, Russia</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Bohemia (now Czech Republic)" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/cz.png" title="Bohemia (now Czech Republic)"/></span><span class="persona-header-main"><strong>V. Strouhal</strong> <span class="life-years"> (1850 - 1922)</span></span></div><div class="persona-desc">Established the Strouhal scaling for periodic vortex shedding, providing the key nondimensional frequency parameter used across unsteady aerodynamics and bluff-body wakes.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Vincenc Strouhal</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 10/04/1850</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/cz.png"/> Seč, Bohemia (now Czech Republic)</span></div><div class="details-col"><span class="details-dates">Died: 26/01/1922 (71 years)</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/cz.png"/> Prague, Czechoslovakia (now Czech Republic)</span></div></div></div></div></div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span>
+<span class="persona-header-main"><strong>G. Kirchhoff</strong><span class="life-years"> (1824 - 1887)</span></span>
+</div>
+<div class="persona-desc">Advanced mathematical physics (waves, radiation, boundary-value formulations) that later informs integral representations and far-field modeling in fluid/acoustic problems.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Gustav Robert Kirchhoff</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 12/03/1824</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Königsberg, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/10/1887 (63 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Berlin, Germany</span>
+</div>
+</div>
+</div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span>
+<span class="persona-header-main"><strong>J. Boussinesq</strong><span class="life-years"> (1842 - 1929)</span></span>
+</div>
+<div class="persona-desc">Developed the Boussinesq approximation and foundational water-wave/turbulence models, bridging inviscid theory with buoyancy, viscosity, and closure effects.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Joseph Valentin Boussinesq</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 13/03/1842</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Saint-André-de-Sangonis, Hérault, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 19/02/1929 (86 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div>
+</div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Austria" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/at.png" title="Austria"/></span>
+<span class="persona-header-main"><strong>L. Boltzmann</strong><span class="life-years"> (1844 - 1906)</span></span>
+</div>
+<div class="persona-desc">Created statistical mechanics and the Boltzmann equation, grounding kinetic theory that underpins rarefied-gas aerodynamics and transport closures.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Ludwig Boltzmann</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 20/02/1844</span>
+<span class="details-location"><img alt="Austria" class="flag" src="https://flagcdn.com/w20/at.png"/> Vienna, Austria</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 05/09/1906 (62 years)</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Duino (near Trieste), Austria (now Italy)</span>
+</div>
+</div>
+</div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span>
+<span class="persona-header-main"><strong>O. Lilienthal</strong><span class="life-years"> (1848 - 1896)</span></span>
+</div>
+<div class="persona-desc">Performed the first repeatable, well-documented glider flights and systematic measurements, turning lift/drag knowledge into practical aircraft design.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Otto Lilienthal</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 23/05/1848</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Anklam, Prussia (now Germany)</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 10/08/1896 (48 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Berlin, Germany</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+<div class="half-century-divider">1851 - 1900</div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Complex analysis, transforms, special functions, and matrix theory expanded what could be solved and how solutions could be represented—exactly the mathematics later exploited by airfoil theory, spectral methods, and integral equations.</p></div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main"><strong>H. Poincaré</strong> <span class="life-years"> (1854 - 1912)</span></span></div><div class="persona-desc">Developed qualitative dynamics and perturbation theory, informing stability analysis and reduced-order representations of nonlinear systems.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Henri Poincaré</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 29/04/1854</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Nancy, France</span></div><div class="details-col"><span class="details-dates">Died: 17/07/1912 (58 years)</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span></div></div></div></div></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main">
+<strong>V. Volterra</strong>
+<span class="life-years"> (1860 - 1940)</span></span></div>
+<div class="persona-desc">Pioneered the theory of integral equations, constituting the rigorous mathematical backbone of modern aerodynamic panel methods.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Vito Volterra</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 03/05/1860</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Ancona, Papal States</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 11/10/1940 (80 years)</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Rome, Italy</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Russia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ru.png" title="Russia"/></span><span class="persona-header-main">
+<strong>D. Hilbert</strong>
+<span class="life-years"> (1862 - 1943)</span></span></div>
+<div class="persona-desc">Pioneered functional analysis; Hilbert spaces are fundamental for establishing convergence and proofs in computational fluid dynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">David Hilbert</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 23/01/1862</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Königsberg, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 14/02/1943 (81 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Göttingen, Germany</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>J. Hadamard</strong>
+<span class="life-years"> (1865 - 1963)</span></span></div>
+<div class="persona-desc">Introduced the Hadamard finite part integral, mathematically resolving the non-integrable downwash singularities found in modern lifting surface theory.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Jacques Hadamard</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 08/12/1865</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Versailles, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/10/1963 (97 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Sweden" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/se.png" title="Sweden"/></span><span class="persona-header-main">
+<strong>E. Fredholm</strong>
+<span class="life-years"> (1866 - 1927)</span></span></div>
+<div class="persona-desc">Developed Fredholm integral equations, providing the solid mathematical basis to solve potential flow problems around 3D bodies.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Erik Ivar Fredholm</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 07/04/1866</span>
+<span class="details-location"><img alt="Sweden" class="flag" src="https://flagcdn.com/w20/se.png"/> Stockholm, Sweden</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 17/08/1927 (61 years)</span>
+<span class="details-location"><img alt="Sweden" class="flag" src="https://flagcdn.com/w20/se.png"/> Mörby, Sweden</span>
+</div>
+</div></div>
+</div>
+</div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Slovenia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/si.png" title="Slovenia"/></span><span class="persona-header-main"><strong>J. Plemelj</strong>
+<span class="life-years"> (1873 - 1967)</span></span></div>
+<div class="persona-desc">Formalized the Sokhotski–Plemelj jump relations, clarifying how Cauchy-type singular integrals produce boundary limits. This is the mathematical core behind panel methods and thin‑airfoil kernels, where wake and surface singularities are handled through controlled integral-equation limits.</div>
+<div class="details"><div class="details-card validation-outline"><div class="details-fullname">Josip Plemelj</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 11/12/1873</span>
+<span class="details-location"><img alt="Slovenia" class="flag" src="https://flagcdn.com/w20/si.png"/> Bled, Slovenia</span></div><div class="details-col"><span class="details-dates">Died: 22/05/1967 (93 years)</span>
+<span class="details-location"><img alt="Slovenia" class="flag" src="https://flagcdn.com/w20/si.png"/> Ljubljana, Slovenia</span></div></div></div></div></div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main"><strong>H. Lebesgue</strong> <span class="life-years"> (1875 - 1941)</span></span></div><div class="persona-desc">Created measure and integration theory, underpinning modern functional analysis used to study PDE and singular integral operators.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Henri Lebesgue</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 28/06/1875</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Beauvais, France</span></div><div class="details-col"><span class="details-dates">Died: 26/07/1941 (66 years)</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span></div></div></div></div></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Russia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ru.png" title="Russia"/></span><span class="persona-header-main">
+<strong>S. Bernstein</strong>
+<span class="life-years"> (1880 - 1968)</span></span></div>
+<div class="persona-desc">Introduced Bernstein polynomials, which later became the mathematical foundation for aerodynamic parametric shape optimization. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Sergei Bernstein</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 05/03/1880</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Odessa, Russian Empire</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 26/10/1968 (88 years)</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Moscow, Soviet Union</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span>
+<span class="persona-header-main"><strong>C. Runge</strong><span class="life-years"> (1856 - 1927)</span></span>
+</div>
+<div class="persona-desc">Co-developed the Runge–Kutta family of ODE integrators, essential for robust time-marching of unsteady aerodynamic state-space and wake models.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Carl Runge</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 30/08/1856</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Bremen, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 03/01/1927 (70 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Göttingen, Germany</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Viscous governing equations, vorticity theorems, instability ideas, and dimensional thinking moved fluids toward predictive science, preparing the ground for Reynolds scaling, boundary layers, and compressibility.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>M. Kutta</strong>
+<span class="life-years"> (1867 - 1944)</span></span></div>
+<div class="persona-desc">Established the Kutta condition, providing the mathematical justification for the origin of circulation and lift at an airfoil's trailing edge.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Martin Wilhelm Kutta</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 03/11/1867</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Pitschen, Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 25/12/1944 (77 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Fürstenfeldbruck, Germany</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Austria" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/at.png" title="Austria"/></span><span class="persona-header-main"><strong>R. Knoller</strong> <span class="life-years"> (1869 - 1926)</span></span></div><div class="persona-desc">Theorized the Knoller-Betz effect, establishing the fundamental principle that a flapping airfoil generates positive thrust, inspiring biological flight aerodynamics.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Richard Knoller</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 25/04/1869</span><span class="details-location"><img alt="Austria" class="flag" src="https://flagcdn.com/w20/at.png"/> Vienna, Austria</span></div><div class="details-col"><span class="details-dates">Died: 04/03/1926 (56 years)</span><span class="details-location"><img alt="Austria" class="flag" src="https://flagcdn.com/w20/at.png"/> Vienna, Austria</span></div></div></div></div></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>L. Prandtl</strong>
+<span class="life-years"> (1875 - 1953)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i></span></div>
+<div class="persona-desc">Created boundary layer theory (1904), allowing mathematicians to simplify Navier-Stokes equations to accurately predict drag. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Ludwig Prandtl</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 04/02/1875</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Freising, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 15/08/1953 (78 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Göttingen, Germany</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i><div class="details-award-text"><div class="details-award-main">Daniel Guggenheim Medal (1930)</div><div class="details-award-desc">In 1930, at age 55, while leading the Göttingen school, Prandtl was honored for boundary‑layer theory and the systematic linking of viscous near‑wall physics to inviscid outer flow—exactly the separation of scales ROMs exploit.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Hungary" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/hu.png" title="Hungary"/></span><span class="persona-header-main">
+<strong>T. von Kármán</strong>
+<span class="life-years"> (1881 - 1963)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i></span></div>
+<div class="persona-desc">Theorized the Kármán vortex street and made crucial mathematical advances in turbulence and supersonic flow phenomena.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Theodore von Kármán</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 11/05/1881</span>
+<span class="details-location"><img alt="Hungary" class="flag" src="https://flagcdn.com/w20/hu.png"/> Budapest, Hungary</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 06/05/1963 (81 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Aachen, Germany</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i><div class="details-award-text"><div class="details-award-main">Daniel Guggenheim Medal (1955)</div><div class="details-award-desc">Awarded in 1955 at age 74, as GALCIT’s founding figure; his vortex‑street work, turbulence thinking, and compressible‑flow theory shaped how engineers build tractable, model‑based predictions of unsteady loads and aeroelasticity.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>H. Blasius</strong>
+<span class="life-years"> (1883 - 1970)</span></span></div>
+<div class="persona-desc">Derived the Blasius solution, delivering the first exact mathematical solution to Prandtl's boundary layer equations for flow over a flat plate. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Heinrich Blasius</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 09/08/1883</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Berlin, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 24/04/1970 (86 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Hamburg, Germany</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main"><strong>A. Betz</strong> <span class="life-years"> (1885 - 1968)</span></span></div><div class="persona-desc">Theorized the Knoller-Betz effect, establishing the fundamental principle that a flapping airfoil generates positive thrust, inspiring biological flight aerodynamics.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Albert Betz</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 25/12/1885</span><span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Schweinfurt, Bavaria, Germany</span></div><div class="details-col"><span class="details-dates">Died: 16/04/1968 (82 years)</span><span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Göttingen, Germany</span></div></div></div></div></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>M. Munk</strong>
+<span class="life-years"> (1890 - 1986)</span></span></div>
+<div class="persona-desc">Developed Thin Airfoil Theory, reducing complex wing geometries to mean camber lines for direct analytical integration.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Max Munk</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 22/10/1890</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Hamburg, Germany</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 03/06/1986 (95 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Ocean City, USA</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>H. Glauert</strong>
+<span class="life-years"> (1892 - 1934)</span></span></div>
+<div class="persona-desc">Advanced lifting-line theory and derived the Prandtl-Glauert rule to mathematically correct for compressibility in subsonic flight.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Hermann Glauert</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 04/10/1892</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Sheffield, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 04/08/1934 (41 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Farnborough, England</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Norway" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/no.png" title="Norway"/></span><span class="persona-header-main">
+<strong>T. Theodorsen</strong>
+<span class="life-years"> (1897 - 1978)</span></span></div>
+<div class="persona-desc">Formulated the exact mathematical theory for unsteady aerodynamics and flutter, allowing safe design of flexible aircraft wings.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Theodore Theodorsen</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 08/01/1897</span>
+<span class="details-location"><img alt="Norway" class="flag" src="https://flagcdn.com/w20/no.png"/> Sandefjord, Norway</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 05/11/1978 (81 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Long Island, USA</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Austria" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/at.png" title="Austria"/></span><span class="persona-header-main">
+<strong>H. Wagner</strong>
+<span class="life-years"> (1900 - 1982)</span></span></div>
+<div class="persona-desc">Derived the Wagner function, detailing the exact unsteady lift response of an airfoil undergoing a step change in angle of attack.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Herbert A. Wagner</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 22/05/1900</span>
+<span class="details-location"><img alt="Austria" class="flag" src="https://flagcdn.com/w20/at.png"/> Graz, Austria</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 28/05/1982 (82 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Newport Beach, USA</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main">
+<strong>H. Küssner</strong>
+<span class="life-years"> (1900 - 1984)</span></span></div>
+<div class="persona-desc">Derived the Küssner effect, modeling the unsteady aerodynamic lift buildup of an airfoil entering a sharp transverse gust.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Hans Georg Küssner</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 14/10/1900</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Bartenstein, East Prussia</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 05/06/1984 (83 years)</span>
+<span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Kassel, Germany</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span>
+<span class="persona-header-main"><strong>M. Couette</strong><span class="life-years"> (1858 - 1943)</span></span>
+</div>
+<div class="persona-desc">Established Couette flow and precision viscometry, giving canonical shear-flow benchmarks and validating no-slip boundary behavior.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Maurice Marie Alfred Couette</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 09/01/1858</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Tours, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 18/08/1943 (85 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Angers, France</span>
+</div>
+</div>
+</div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span>
+<span class="persona-header-main"><strong>F. Lanchester</strong><span class="life-years"> (1868 - 1946)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i></span>
+</div>
+<div class="persona-desc">Anticipated circulation-based lift and vortex concepts that fed directly into lifting-line theory and practical aerodynamic design methods.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Frederick William Lanchester</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 23/10/1868</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> St John's Wood, London, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 08/03/1946 (77 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Birmingham, England</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i><div class="details-award-text"><div class="details-award-main">Daniel Guggenheim Medal (1931)</div><div class="details-award-desc">Honored in 1931 at age 62 for making the circulation picture engineering‑usable: induced drag, trailing‑vortex reasoning, and wing‑system thinking that later feed lifting‑line methods, VLM/panel discretizations, and the intuition behind wake‑based ROMs.</div></div></div></div></div>
+</div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="Romania" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ro.png" title="Romania"/></span>
+<span class="persona-header-main"><strong>H. Coandă</strong><span class="life-years"> (1886 - 1972)</span></span>
+</div>
+<div class="persona-desc">Identified the Coandă effect (jet attachment), a key mechanism in flow control, entrainment, and propulsion/airframe integration.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Henri Marie Coandă</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 07/06/1886</span>
+<span class="details-location"><img alt="Romania" class="flag" src="https://flagcdn.com/w20/ro.png"/> Bucharest, Romania</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 25/11/1972 (86 years)</span>
+<span class="details-location"><img alt="Romania" class="flag" src="https://flagcdn.com/w20/ro.png"/> Bucharest, Romania</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="container">
+<div class="century-header">
+<h2>20th Century <span class="century-years">(1901 - 2000)</span></h2>
+<div class="century-dot"></div>
+</div><div class="century-context"><p>Wind tunnels, rockets, high-speed facilities, and digital computers turned aerodynamics into a three-legged discipline—analysis, experiment, and simulation—spanning incompressible to hypersonic regimes; world wars and the Cold War built vast labs and industrial ecosystems, concentrating expertise while reshaping international lineages. After mid‑century, discrete‑vortex thinking, robust lifting‑line formulations, and high‑resolution CFD turned aerodynamic prediction into a routine design instrument.</p></div>
+<div class="half-century-divider">1901 - 1950</div>
+<div class="century-boxes">
+<div class="box pure">
+<h3 class="category-title">Pure Science</h3><div class="category-context"><p>Functional analysis, distributions, numerical linear algebra, and asymptotics supplied the modern language for shocks, turbulence closures, and stable discretization—mathematics designed to survive computation.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>P. Dirac</strong>
+<span class="life-years"> (1902 - 1984)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Nobel Prize (Physics)" class="fa-solid fa-trophy" title="Nobel Prize (Physics)"></i><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div>
+<div class="persona-desc">Introduced the Dirac delta function, the absolute foundation for mathematically modeling point sources and vortices in fluid domains. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Paul Dirac</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 08/08/1902</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Bristol, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 20/10/1984 (82 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Tallahassee, USA</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Nobel Prize (Physics)" class="fa-solid fa-trophy" title="Nobel Prize (Physics)"></i><div class="details-award-text"><div class="details-award-main">Nobel Prize, Physics (1933)</div><div class="details-award-desc">Awarded in 1933 at age 31 (by then Lucasian Professor at Cambridge) for relativistic quantum mechanics; for fluids/airfoils, Dirac’s delta-function formalism became the clean language for point vortices, vortex sheets, and Green‑function forcing in unsteady models.</div></div></div><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1952)</div><div class="details-award-desc">Honored in 1952 at age 50 for the broader architecture of quantum theory (operators, transformations, distributions). Those same operator ideas permeate linear systems, Fourier/Hilbert tools, and modal/ROM formalisms used in modern unsteady aerodynamics.</div></div></div></div></div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Norway" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/no.png" title="Norway"/></span><span class="persona-header-main">
+<strong>L. Onsager</strong>
+<span class="life-years"> (1903 - 1976)</span>
+</span><span aria-label="Awards" class="award-icons"><i aria-label="Nobel Prize (Chemistry)" class="fa-solid fa-trophy" title="Nobel Prize (Chemistry)"></i></span></div>
+<div class="persona-desc">Established Onsager reciprocal relations and linear response ideas that formalize operator symmetries—recurring building blocks in reduced-order modeling.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Lars Onsager</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 27/11/1903</span>
+<span class="details-location"><img alt="Norway" class="flag" src="https://flagcdn.com/w20/no.png"/> Oslo, Norway</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 05/10/1976 (72 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Coral Gables, USA</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Nobel Prize (Chemistry)" class="fa-solid fa-trophy" title="Nobel Prize (Chemistry)"></i><div class="details-award-text"><div class="details-award-main">Nobel Prize, Chemistry (1968)</div><div class="details-award-desc">Awarded in 1968 at age 65, while at Yale, for reciprocity relations that turned transport into a symmetry‑constrained theory—an intellectual ancestor of modern closure modeling for diffusion, mixing, and (in fluids) linear response near equilibrium.</div></div></div></div></div>
+</div>
+</div>
+</div>
+<div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Russia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ru.png" title="Russia"/></span><span class="persona-header-main"><strong>S. Sobolev</strong> <span class="life-years"> (1908 - 1989)</span></span></div><div class="persona-desc">Introduced Sobolev spaces and weak derivatives, foundational for PDE well-posedness and variational discretizations. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Sergei Sobolev</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 06/10/1908</span><span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> St. Petersburg, Russia</span></div><div class="details-col"><span class="details-dates">Died: 03/01/1989 (80 years)</span><span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Moscow, Russia</span></div></div></div></div></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>L. Schwartz</strong>
+<span class="life-years"> (1915 - 2002)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Fields Medal" class="fa-solid fa-medal" title="Fields Medal"></i></span></div>
+<div class="persona-desc">Invented the Theory of Distributions, finalizing the rigorous mathematical justification for using singularity methods in potential flow. These ideas resurface in the kernels and transforms used by panel methods and reduced‑order models for unsteady lift and wake response.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Laurent Schwartz</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 05/03/1915</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 04/07/2002 (87 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Fields Medal" class="fa-solid fa-medal" title="Fields Medal"></i><div class="details-award-text"><div class="details-award-main">Fields Medal (1950)</div><div class="details-award-desc">Honored in 1950 at age 35 for distribution theory, which gives rigor to impulse/step forcing, vortex-sheet singularities, and Green‑function formulations—workhorse mathematics behind thin‑airfoil theory and many reduced‑order wake models.</div></div></div></div></div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main"><strong>S. Lighthill</strong> <span class="life-years"> (1924 - 1998)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i></span></div><div class="persona-desc">Unified wave-based analysis across fluids (aeroacoustics, compressible waves), shaping both theoretical and applied aerodynamics. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Sir James Lighthill</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 08/01/1924</span><span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span></div><div class="details-col"><span class="details-dates">Died: 17/07/1998 (74 years)</span><span class="details-location"><img alt="UK" class="flag" src="https://flagcdn.com/w20/gb.png"/> London, England</span></div></div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Copley Medal" class="fa-solid fa-medal" title="Copley Medal"></i><div class="details-award-text"><div class="details-award-main">Copley Medal (1998)</div><div class="details-award-desc">Awarded in 1998 at age 74, after a career spanning Cambridge and London, recognizing wave/fluid analysis with direct engineering impact; his aeroacoustic analogy remains the canonical bridge from turbulence statistics to radiated sound from jets and blades.</div></div></div></div></div></div></div></div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="United Kingdom" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb.png" title="United Kingdom"/></span><span class="persona-header-main"><strong>G. B. Whitham</strong> <span class="life-years"> (1927 - 2014)</span></span></div><div class="persona-desc">Developed modulation theory for nonlinear waves, widely used in PDE models of dispersive and compressible phenomena. It later becomes part of the operator toolkit behind singular integrals, thin‑airfoil theory, and fast reduced‑order unsteady aerodynamics.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Gerald B. Whitham</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 13/11/1927</span><span class="details-location"><img alt="United Kingdom" class="flag" src="https://flagcdn.com/w20/gb.png"/> Halifax, United Kingdom</span></div><div class="details-col"><span class="details-dates">Died: 26/04/2014 (86 years)</span><span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Pasadena, USA</span></div></div></div></div></div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="USA" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="USA"/></span>
+<span class="persona-header-main"><strong>R. Feynman</strong><span class="life-years"> (1918 - 1988)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Nobel Prize (Physics)" class="fa-solid fa-trophy" title="Nobel Prize (Physics)"></i></span>
+</div>
+<div class="persona-desc">Developed modern theoretical tools (least-action viewpoints, diagrammatic reasoning) that shaped how physicists model complex dynamical systems and waves, including in fluids.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Richard Phillips Feynman</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 11/05/1918</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> New York City, USA</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 15/02/1988 (69 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Los Angeles, California, USA</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Nobel Prize (Physics)" class="fa-solid fa-trophy" title="Nobel Prize (Physics)"></i><div class="details-award-text"><div class="details-award-main">Nobel Prize, Physics (1965)</div><div class="details-award-desc">Awarded in 1965 at age 47, while at Caltech for quantum electrodynamics; his diagrammatic bookkeeping popularized systematic perturbation expansions—an organizing principle echoed in asymptotic unsteady-aerodynamics and in reduced models that keep only “dominant interactions.”</div></div></div></div></div>
+</div>
+</div>
+</div></div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Boundary-layer theory, turbulence modeling, compressible-flow physics, and high-order numerical schemes made aerodynamic prediction practical, and coupling ideas bridged inviscid elegance with viscous reality.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="England" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb-eng.png" title="England"/></span><span class="persona-header-main">
+<strong>L. Rosenhead</strong>
+<span class="life-years"> (1906 - 1984)</span></span></div>
+<div class="persona-desc">Authored the 1931 point-vortex simulation of the Kelvin-Helmholtz instability, marking the first-ever computational approach to discrete vortex dynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Louis Rosenhead</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 01/01/1906</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Leeds, England</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 10/11/1984 (78 years)</span>
+<span class="details-location"><img alt="England" class="flag" src="https://flagcdn.com/w20/gb-eng.png"/> Liverpool, England</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United States" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="United States"/></span><span class="persona-header-main">
+<strong>I. Garrick</strong>
+<span class="life-years"> (1910 - 1981)</span></span></div>
+<div class="persona-desc">Unlocked the mechanics of leading-edge suction force for oscillating wings, a major breakthrough in aeroelasticity and flutter prediction.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Isadore Edward Garrick</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 1910</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Chicago, USA</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 1981 (71 years)</span>
+<span class="details-location"> - </span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="France" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/fr.png" title="France"/></span><span class="persona-header-main">
+<strong>P. Bézier</strong>
+<span class="life-years"> (1910 - 1999)</span></span></div>
+<div class="persona-desc">Patented Bézier curves, translating Bernstein polynomials into a tool that revolutionized the parametric design of smooth aerodynamic surfaces. In practice, it feeds directly into the assumptions and closures that make reduced‑order unsteady aerodynamic models predictive.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Pierre Bézier</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 01/09/1910</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Paris, France</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 25/11/1999 (89 years)</span>
+<span class="details-location"><img alt="France" class="flag" src="https://flagcdn.com/w20/fr.png"/> Bures-sur-Yvette, France</span>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United States" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="United States"/></span><span class="persona-header-main">
+<strong>W. Sears</strong>
+<span class="life-years"> (1913 - 2002)</span></span><span aria-label="Awards" class="award-icons"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i></span></div>
+<div class="persona-desc">Developed the Sears function to accurately predict the unsteady lift of an airfoil flying through a continuous sinusoidal gust.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">William R. Sears</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 01/03/1913</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Minneapolis, USA</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 12/10/2002 (89 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Tucson, USA</span>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Daniel Guggenheim Medal" class="fa-solid fa-medal" title="Daniel Guggenheim Medal"></i><div class="details-award-text"><div class="details-award-main">Daniel Guggenheim Medal (1996)</div><div class="details-award-desc">Honored in 1996 at age 83, as a Cornell aerodynamics leader for giving engineers compact gust‑response tools (Sears and related functions) that still underlie gust loads, rotor inflow models, and frequency‑domain reduced‑order unsteady aerodynamics.</div></div></div></div></div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="header-flags"><img alt="Germany" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/de.png" title="Germany"/></span><span class="persona-header-main"><strong>J. Weissinger</strong> <span class="life-years"> (1913 - 1995)</span></span></div><div class="persona-desc">Advanced lifting-surface formulations (including the Weissinger L-method) that bridged Prandtl-style lifting-line concepts to practical 3D wing analysis.</div><div class="details"><div class="details-card validation-outline"><div class="details-fullname">Johannes Weissinger</div><div class="details-grid"><div class="details-col"><span class="details-dates">Born: 12/05/1913</span><span class="details-location"><img alt="" class="flag" src="https://flagcdn.com/w20/de.png"/> Naumburg, Germany</span></div><div class="details-col"><span class="details-dates">Died: 20/11/1995 (82 years)</span><span class="details-location"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Karlsruhe, Germany</span></div></div></div></div></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United States" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="United States"/></span><span class="persona-header-main">
+<strong>E. Polhamus</strong>
+<span class="life-years"> (1923 - 2001)</span></span></div>
+<div class="persona-desc">Invented the leading-edge suction analogy, an elegant mathematical model accurately predicting the massive nonlinear lift generated by delta wing vortices. It ultimately supports fast reduced‑order descriptions of unsteady loads by shaping how forces, response, and wake effects are computed.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Edward C. Polhamus</div><div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 1923</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Washington D.C., USA</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 28/05/2001 (78 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Newport News, USA</span>
+</div>
+</div></div>
+</div>
+</div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United States" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="United States"/></span><span class="persona-header-main">
+<strong>D. Peters</strong>
+</span></div>
+<div class="persona-desc">Developed Peters' finite-state inflow theory, providing the essential reduced-order aerodynamic model used globally in rotorcraft flight dynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">David A. Peters</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1940s</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> USA</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Washington University in St. Louis</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> St. Louis, USA</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Israel" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/il.png" title="Israel"/></span><span class="persona-header-main">
+<strong>J. Katz</strong>
+</span></div>
+<div class="persona-desc">Co-authored the definitive modern text on low-speed aerodynamics, consolidating analytical and computational panel methods into modern engineering.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Joseph Katz</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1940s</span>
+<span class="details-location"><img alt="Israel" class="flag" src="https://flagcdn.com/w20/il.png"/> Israel</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">San Diego State University (SDSU)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> San Diego, USA</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header">
+<span class="header-flags"><img alt="USA" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="USA"/></span>
+<span class="persona-header-main"><strong>M. Van Dyke</strong><span class="life-years"> (1922 - 2010)</span></span>
+</div>
+<div class="persona-desc">Systematized perturbation methods for fluid mechanics and aerodynamics, and popularized flow visualization through the Album of Fluid Motion.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Milton Denman Van Dyke</div>
+<div class="details-grid">
+<div class="details-col">
+<span class="details-dates">Born: 01/08/1922</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Chicago, Illinois, USA</span>
+</div>
+<div class="details-col">
+<span class="details-dates">Died: 10/05/2010 (87 years)</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Stanford, California, USA</span>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+<div class="half-century-divider">1951 - 2000</div>
+<div class="century-boxes"><div class="box pure"><h3 class="category-title">Pure Science</h3><div class="category-context"><p>Operator theory, functional analysis, and asymptotics continued to sharpen the mathematical backbone behind singular kernels and state-space reduced-order models used in unsteady aerodynamics.</p></div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Russia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/ru.png" title="Russia"/></span><span class="persona-header-main">
+<strong>V. Rokhlin</strong>
+</span></div>
+<div class="persona-desc">Co-invented fast multipole methods and high‑accuracy quadratures that make boundary‑integral and panel formulations practical at scale, accelerating the singular kernels behind unsteady reduced‑order models.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Vladimir Rokhlin Jr.</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1950s</span>
+<span class="details-location"><img alt="Russia" class="flag" src="https://flagcdn.com/w20/ru.png"/> Russia</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Yale University</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> New Haven, USA</span></div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United Kingdom" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/gb.png" title="United Kingdom"/></span><span class="persona-header-main">
+<strong>L. Greengard</strong>
+</span></div>
+<div class="persona-desc">Developed fast algorithms and solvers for potential fields and integral equations, enabling efficient evaluation of Green‑function kernels used in modern panel methods and unsteady vortex‑based ROMs.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Leslie Greengard</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1950s</span>
+<span class="details-location"><img alt="United Kingdom" class="flag" src="https://flagcdn.com/w20/gb.png"/> United Kingdom</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">New York University (NYU)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> New York, USA</span></div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Australia" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/au.png" title="Australia"/></span><span class="persona-header-main">
+<strong>T. Tao</strong>
+</span><span aria-label="Awards" class="award-icons"><i aria-label="Fields Medal" class="fa-solid fa-medal" title="Fields Medal"></i><i aria-label="Breakthrough Prize in Mathematics" class="fa-solid fa-brain" title="Breakthrough Prize in Mathematics"></i></span></div>
+<div class="persona-desc">Advanced harmonic analysis and PDE theory that underpins modern understanding of fluid‑equation regularity, stability, and singular behavior—core issues when interpreting inviscid, reduced‑order, unsteady aerodynamic models.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Terence Tao</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1970s</span>
+<span class="details-location"><img alt="Australia" class="flag" src="https://flagcdn.com/w20/au.png"/> Australia</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">University of California, Los Angeles (UCLA)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Los Angeles, USA</span></div>
+</div>
+</div><div class="details-awards"><div class="details-awards-label">Awards</div><div class="details-awards-list"><div class="details-award-item"><i aria-label="Fields Medal" class="fa-solid fa-medal" title="Fields Medal"></i><div class="details-award-text"><div class="details-award-main">Fields Medal (2006)</div><div class="details-award-desc">Awarded in 2006 at age 31, while a UCLA professor, recognizing deep results across harmonic analysis and PDE—core mathematical infrastructure for spectral methods, stability, and the operator viewpoint behind resolvent analysis and ROMs.</div></div></div><div class="details-award-item"><i aria-label="Breakthrough Prize in Mathematics" class="fa-solid fa-brain" title="Breakthrough Prize in Mathematics"></i><div class="details-award-text"><div class="details-award-main">Breakthrough Prize in Mathematics (2014)</div><div class="details-award-desc">Honored in 2014 at age 39 for sustained, wide-ranging impact; the same analytic toolkit (dispersive PDE, harmonic analysis, inverse problems) increasingly underpins data‑driven turbulence modeling and modern reduced‑order frameworks.</div></div></div></div></div></div>
+</div>
+</div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Italy" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/it.png" title="Italy"/></span><span class="persona-header-main">
+<strong>C. De Lellis</strong>
+</span></div>
+<div class="persona-desc">Shaped the modern theory of Euler flows and weak solutions, clarifying what inviscid models can (and cannot) guarantee—an essential foundation when using potential‑flow ROMs and vortex‑sheet idealizations for unsteady aerodynamics.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Camillo De Lellis</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1970s</span>
+<span class="details-location"><img alt="Italy" class="flag" src="https://flagcdn.com/w20/it.png"/> Italy</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Institute for Advanced Study</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Princeton, USA</span></div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Hungary" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/hu.png" title="Hungary"/></span><span class="persona-header-main">
+<strong>L. Székelyhidi</strong>
+</span></div>
+<div class="persona-desc">Co-developed convex‑integration approaches for the Euler equations, exposing non‑uniqueness and energy‑cascade behavior in inviscid dynamics—key context for interpreting vortex‑sheet and reduced‑order unsteady aerodynamic models.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">László Székelyhidi Jr.</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1970s</span>
+<span class="details-location"><img alt="Hungary" class="flag" src="https://flagcdn.com/w20/hu.png"/> Hungary</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Max Planck Institute</span><span class="details-location affil-loc"><img alt="Germany" class="flag" src="https://flagcdn.com/w20/de.png"/> Leipzig, Germany</span></div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+<div class="box applied">
+<h3 class="category-title">Applied Science</h3><div class="category-context"><p>Boundary-layer theory, turbulence modeling, compressible-flow physics, and high-order numerical schemes made aerodynamic prediction practical, and coupling ideas bridged inviscid elegance with viscous reality.</p></div>
+<div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United States" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="United States"/></span><span class="persona-header-main">
+<strong>M. Drela</strong>
+</span></div>
+<div class="persona-desc">Developed XFOIL and AVL, translating viscous-inviscid interaction theory into incredibly fast, globally adopted computational tools for airfoil and aircraft design.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Mark Drela</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1950s</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> USA</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Massachusetts Institute of Technology (MIT)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Cambridge, USA</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Netherlands" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/nl.png" title="Netherlands"/></span><span class="persona-header-main">
+<strong>S. Rienstra</strong>
+</span></div>
+<div class="persona-desc">Recontextualized Glauert's expansion using generalized functions, resolving classical mathematical singularities in thin airfoil theory.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Sjoerd W. Rienstra</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1950s</span>
+<span class="details-location"><img alt="Netherlands" class="flag" src="https://flagcdn.com/w20/nl.png"/> Netherlands</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Eindhoven University of Technology (TU/e)</span><span class="details-location affil-loc"><img alt="Netherlands" class="flag" src="https://flagcdn.com/w20/nl.png"/> Eindhoven, Netherlands</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="United States" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/us.png" title="United States"/></span><span class="persona-header-main">
+<strong>J. Eldredge</strong>
+</span></div>
+<div class="persona-desc">Pioneered advanced vortex particle methods, creating robust reduced-order models that capture the highly nonlinear dynamics of unsteady biological flight.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Jeff Eldredge</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1970s</span>
+<span class="details-location"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> USA</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">University of California, Los Angeles (UCLA)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Los Angeles, USA</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="Egypt" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/eg.png" title="Egypt"/></span><span class="persona-header-main">
+<strong>H. Taha</strong>
+</span></div>
+<div class="persona-desc">Linked unsteady aerodynamics with reduced-order, state-space, and variational formulations, including viscous extensions of classical potential-flow theory.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Haithem Taha</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1980s</span>
+<span class="details-location"><img alt="Egypt" class="flag" src="https://flagcdn.com/w20/eg.png"/> Egypt</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">University of California, Irvine (UCI)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Irvine, USA</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona">
+<div class="persona-header"><span class="header-flags"><img alt="India" class="flag name-flag" loading="lazy" src="https://flagcdn.com/w20/in.png" title="India"/></span><span class="persona-header-main">
+<strong>K. Ramesh</strong>
+</span></div>
+<div class="persona-desc">Enhanced Katz's unsteady method for severe kinematics by introducing the Leading Edge Suction Parameter (LESP), creating a predictive framework for leading-edge vortex shedding.</div>
+<div class="details">
+<div class="details-card validation-outline"><div class="details-fullname">Kiran Ramesh</div><div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1980s</span>
+<span class="details-location"><img alt="India" class="flag" src="https://flagcdn.com/w20/in.png"/> India</span>
+</div>
+<div class="details-col">
+<div class="affil-block"><span class="affil-name">Arizona State University (ASU)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Tempe, USA</span></div>
+</div>
+</div></div>
+</div>
+</div><div class="persona"><div class="persona-header"><span class="persona-header-main"><strong>Roesler &amp; Epps</strong> </span></div><div class="persona-desc">Jointly clarified the exact bound vortex-sheet strength for classical lifting cases, closing a historical gap in thin-airfoil / lifting-line modeling and informing reduced-order formulations.</div><div class="details"><div class="details-card validation-outline"><div class="details-person"><div class="details-fullname">Bernard T. Roesler</div><div class="details-grid living"><div class="details-col"><span class="details-dates">Born: -</span><span class="details-location"> - </span></div><div class="details-col"><div class="affil-block"><span class="affil-name">Exponent, Inc.</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/>Menlo Park, USA</span></div></div></div></div><div class="details-person"><div class="details-fullname">Brenden P. Epps</div><div class="details-grid living"><div class="details-col"><span class="details-dates">Born: -</span><span class="details-location"> - </span></div><div class="details-col"><div class="affil-block"><span class="affil-name">Dartmouth College (Thayer School of Engineering)</span><span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/>Hanover, USA</span></div></div></div></div></div></div></div><div class="persona">
+<div class="persona-header">
+
+<span class="persona-header-main"><strong>S. Brunton</strong></span>
+</div>
+<div class="persona-desc">Pioneered data-driven reduced-order modeling (SINDy, DMD ecosystems) connecting dynamical systems, control, and fluid mechanics for modern ROM workflows.</div>
+<div class="details">
+<div class="details-card validation-outline">
+<div class="details-fullname">Steven L. Brunton</div>
+<div class="details-grid living">
+<div class="details-col">
+<span class="details-dates">Born: 1980s</span>
+<span class="details-location">—</span>
+</div>
+<div class="details-col">
+<div class="affil-block">
+<span class="affil-name">University of Washington (UW)</span>
+<span class="details-location affil-loc"><img alt="USA" class="flag" src="https://flagcdn.com/w20/us.png"/> Seattle, USA</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></div></div></div></div>
+<div aria-label="Scroll navigation" id="scrollNav"><button aria-label="Back to top" id="backToTopBtn" onclick="try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);} return false;" title="Go to top">↑</button><button aria-label="Go to bottom" id="scrollToBottomBtn" onclick="try{window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'});}catch(e){window.scrollTo(0,document.documentElement.scrollHeight);} return false;" title="Go to bottom">↓</button></div>
+<script>
+
+        // --- Internal parameters ---
+        // If true, keeps all persona detail boxes expanded (useful for validation).
+        const EXPAND_ALL_DETAILS = false;
+
+        // If true, marks missing/uncertain dates with a symbol for fast validation.
+        const VALIDATION_MODE = true;
+        const UNCERTAIN_SYMBOL = "⚠";
+
+
+        function configurePeriodStickiness() {
+    // Desktop: always keep the main period pill sticky; if there are half-century splits,
+    // stack the sub-period pill beneath it (mobile behavior remains controlled by the CSS below).
+    document.querySelectorAll('.timeline .container').forEach((c) => {
+        c.classList.add('sticky-century');
+        if (c.querySelector('.half-century-divider')) {
+            c.classList.add('has-half-century');
+        }
+    });
+}
+configurePeriodStickiness();
+
+function updateCenturyPillHeight() {
+    // Used only on desktop to place the half-century pill neatly under the main period pill.
+    const pill = document.querySelector('.century-header h2');
+    if (!pill) return;
+    const h = Math.ceil(pill.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--century-pill-height', `${h}px`);
+}
+updateCenturyPillHeight();
+window.addEventListener('resize', () => {
+    clearTimeout(window.__pillResizeTO);
+    window.__pillResizeTO = setTimeout(updateCenturyPillHeight, 120);
+});
+
+function revealTimeline() {
+            const elements = document.querySelectorAll('.container');
+            const windowHeight = window.innerHeight;
+
+            elements.forEach(function(element) {
+                const elementPosition = element.getBoundingClientRect().top;
+                if (elementPosition < windowHeight - 80) {
+                    element.classList.add('show');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealTimeline);
+        revealTimeline();
+
+        function validationMarkNode(titleText) {
+            const s = document.createElement('span');
+            s.className = 'validation-mark';
+            s.textContent = UNCERTAIN_SYMBOL;
+            if (titleText) { s.setAttribute('title', titleText); }
+            return s;
+        }
+
+        function isUncertain(text) {
+            const t = (text || "").toLowerCase().trim();
+            if (!t) { return true; }
+            if (t.includes("unknown")) { return true; }
+            if (t.includes("c.")) { return true; }
+            if (t.includes("bce") || t.includes(" bc")) { return true; }
+            if (t.includes("–") || t.includes("—")) { return true; } // explicit ranges
+            return false;
+        }
+
+        function fullNameFor(raw) {
+            const r = (raw || "").trim();
+            const key = r.toLowerCase();
+
+            const MAP = {
+                "beddoes": "Thomas S. Beddoes",
+                "leishman": "John Gordon Leishman",
+                "knoller": "Otto Knoller",
+                "betz": "Albert Betz",
+                "albert betz": "Albert Betz",
+                "roesler": "Bernard T. Roesler", // expanded from publication records
+                "epps": "Brenden P. Epps",
+                "brenden p. epps": "Brenden P. Epps"
+            };
+
+            return MAP[key] || r;
+        }
+
+        function extractBornLabelFromEntry(entry) {
+            const dates = entry ? entry.querySelector('.details-dates') : null;
+            if (!dates) { return ""; }
+            const txt = (dates.textContent || "").trim();
+            const m = txt.match(/Born:\s*(.*)$/i);
+            return m ? (m[1] || "").trim() : "";
+        }
+
+        
+        function splitGroupedPersonasIntoIndividualBoxes() {
+    // Split grouped items (e.g., "Knoller & Betz") into individual persona boxes.
+    const personas = Array.from(document.querySelectorAll('.persona'));
+
+    function lastYearFrom(text) {
+        const m = (text || "").match(/(\d{4})/g);
+        return m ? m[m.length - 1] : "";
+    }
+
+    function entryName(e) {
+        return (e?.querySelector('.multi-name')?.textContent || "").trim();
+    }
+
+    function cloneEntryContent(entry) {
+        // Return a flat list of cloned children, excluding the internal multi-name.
+        const tmp = entry.cloneNode(true);
+        const nm = tmp.querySelector('.multi-name');
+        if (nm) nm.remove();
+        return Array.from(tmp.childNodes).map(n => n.cloneNode(true));
+    }
+
+    function extractPairFromNodes(nodes, prefixLower) {
+        for (let i = 0; i < nodes.length; i++) {
+            const el = nodes[i];
+            if (el.nodeType !== 1) continue;
+            if (!el.classList.contains('details-dates')) continue;
+            const t = (el.textContent || "").trim().toLowerCase();
+            if (!t.startsWith(prefixLower)) continue;
+
+            const loc = (nodes[i + 1] && nodes[i + 1].nodeType === 1 && nodes[i + 1].classList.contains('details-location'))
+                ? nodes[i + 1]
+                : null;
+
+            return { date: el.cloneNode(true), loc: loc ? loc.cloneNode(true) : null };
+        }
+        return null;
+    }
+
+    function extractAffiliationFromNodes(nodes) {
+        // Prefer any details-location not paired with Born/Died.
+        for (let i = 0; i < nodes.length; i++) {
+            const el = nodes[i];
+            if (el.nodeType !== 1) continue;
+            if (!el.classList.contains('details-location')) continue;
+
+            const prev = nodes[i - 1];
+            if (!prev || prev.nodeType !== 1 || !prev.classList.contains('details-dates')) {
+                return el.cloneNode(true);
+            }
+
+            const t = (prev.textContent || "").trim().toLowerCase();
+            if (!(t.startsWith("born") || t.startsWith("died"))) {
+                return el.cloneNode(true);
+            }
+        }
+        return null;
+    }
+
+    personas.forEach(function(p) {
+        const strong = p.querySelector('.persona-header > strong');
+                const anchor = p.querySelector('.persona-header .persona-header-main') || strong;
+        const headerName = strong ? (strong.textContent || "").trim() : "";
+        if (!strong || !headerName.includes("&")) { return; }
+
+        const grid = p.querySelector('.details .details-grid');
+        if (!grid) { return; }
+
+        const cols0 = Array.from(grid.querySelectorAll('.details-col'));
+        const left0 = cols0[0] || null;
+        const right0 = cols0[1] || null;
+
+        const entriesAll = [];
+        if (left0) entriesAll.push(...Array.from(left0.querySelectorAll('.multi-entry')));
+        if (right0) entriesAll.push(...Array.from(right0.querySelectorAll('.multi-entry')));
+        if (entriesAll.length < 2) { return; }
+
+        const names = [];
+        entriesAll.forEach(function(e) {
+            const nm = entryName(e);
+            if (nm && !names.includes(nm)) names.push(nm);
+        });
+        if (names.length < 2) { return; }
+
+        const parent = p.parentNode;
+        if (!parent) { return; }
+
+        function findEntryIn(col, personRawName) {
+            if (!col) return null;
+            const entries = Array.from(col.querySelectorAll('.multi-entry'));
+            for (const e of entries) {
+                if (entryName(e) === personRawName) return e;
+            }
+            return null;
+        }
+
+        const clones = names.map(function(personRawName) {
+            const clone = p.cloneNode(true);
+
+            // Header: replace group title by individual full name
+            const cStrong = clone.querySelector('.persona-header > strong');
+            if (cStrong) { cStrong.textContent = fullNameFor(personRawName); }
+
+            const cGrid = clone.querySelector('.details .details-grid');
+            if (!cGrid) { return clone; }
+
+            // Ensure 2 columns
+            let cols = Array.from(cGrid.querySelectorAll('.details-col'));
+            if (cols.length < 2) {
+                const second = document.createElement('div');
+                second.className = 'details-col';
+                cGrid.appendChild(second);
+                cols = Array.from(cGrid.querySelectorAll('.details-col'));
+            }
+            const cLeft = cols[0];
+            const cRight = cols[1];
+
+            const leftEntry = findEntryIn(cLeft, personRawName);
+            const rightEntry = findEntryIn(cRight, personRawName);
+
+            const nodes = [];
+            if (leftEntry) nodes.push(...cloneEntryContent(leftEntry));
+            if (rightEntry) nodes.push(...cloneEntryContent(rightEntry));
+
+            const bornPair = extractPairFromNodes(nodes, "born");
+            const diedPair = extractPairFromNodes(nodes, "died");
+            const affNode = extractAffiliationFromNodes(nodes);
+
+            cLeft.innerHTML = '';
+            cRight.innerHTML = '';
+
+            if (bornPair) {
+                cLeft.appendChild(bornPair.date);
+                if (bornPair.loc) cLeft.appendChild(bornPair.loc);
+            } else {
+                const s = document.createElement('span');
+                s.className = 'details-dates';
+                s.textContent = 'Born: unknown';
+                cLeft.appendChild(s);
+            }
+
+            if (diedPair) {
+                cRight.appendChild(diedPair.date);
+                if (diedPair.loc) cRight.appendChild(diedPair.loc);
+            } else if (affNode) {
+                cRight.appendChild(affNode);
+            } else {
+                const s = document.createElement('span');
+                s.className = 'details-location validation-missing';
+                s.textContent = 'No affiliation found.';
+                cRight.appendChild(s);
+            }
+
+            // Header years per individual
+            const yearsSpan = clone.querySelector('.persona-header > .short-years');
+            if (yearsSpan) {
+                const bornTxt = bornPair ? (bornPair.date.textContent || "") : (cLeft.querySelector('.details-dates')?.textContent || "");
+                const diedTxt = diedPair ? (diedPair.date.textContent || "") : "";
+
+                const bornYear = lastYearFrom(bornTxt);
+                const diedYear = lastYearFrom(diedTxt);
+
+                if (bornYear && diedYear) {
+                    yearsSpan.textContent = `(${bornYear} - ${diedYear})`;
+                } else {
+                    // Living persons: do not show "(... - Present)".
+                }
+            }
+
+            return clone;
+        });
+
+        clones.forEach(function(c) { parent.insertBefore(c, p); });
+        parent.removeChild(p);
+    });
+}
+
+
+function addBirthFlagsToHeaders() {
+            const COUNTRY_TITLE_MAP = { "USA": "United States", "UK": "United Kingdom" };
+
+            function ensureTitle(img) {
+                if (!img) { return; }
+                const alt = (img.getAttribute('alt') || '').trim();
+                const title = COUNTRY_TITLE_MAP[alt] || alt;
+                if (title) {
+                    img.setAttribute('title', title);
+                    img.setAttribute('alt', title);
+                }
+                img.setAttribute('loading', 'lazy');
+            }
+
+            document.querySelectorAll('.persona').forEach(function(p) {
+                const header = p.querySelector('.persona-header');
+                const strong = p.querySelector('.persona-header > strong');
+                const anchor = p.querySelector('.persona-header .persona-header-main') || strong;
+                if (!header || !anchor) { return; }
+                if (header.querySelector('.header-flags')) { return; }
+
+                const wrapper = document.createElement('span');
+                wrapper.className = 'header-flags';
+
+                const bornFlag = p.querySelector('.details .details-card .details-grid .details-col:first-child .details-location img.flag');
+
+                if (bornFlag) {
+                    const clone = bornFlag.cloneNode(true);
+                    clone.classList.add('name-flag');
+                    ensureTitle(clone);
+                    wrapper.appendChild(clone);
+                }
+
+                if (wrapper.childNodes.length) {
+                    header.insertBefore(wrapper, anchor);
+                } else {
+                    // No birth flag found: omit the header flag (no outer validation styling).
+                }
+            });
+        }
+
+        function normalizePersonaDescriptionsToOneSentence() {
+            document.querySelectorAll('.persona-desc').forEach(function(d) {
+                const t = (d.textContent || '').trim().replace(/\s+/g, ' ');
+                if (!t) { return; }
+
+                const rough = t.split(/(?<=[.!?])\s+/);
+                if (rough.length <= 1) { return; }
+
+                const parts = rough
+                    .map(function(p) { return p.replace(/[.!?]\s*$/, '').trim(); })
+                    .filter(Boolean);
+
+                if (!parts.length) { return; }
+
+                d.textContent = parts.join('; ') + '.';
+            });
+        }
+
+function applyKnownAffiliations() {
+    // Fill affiliation/organization lines when publicly documented.
+    // (Keep validation symbols reserved for dates/critical fields; do not mark affiliation.)
+    const AFF = {
+        "brenden p. epps": { flag: "us", alt: "USA", text: "Epps Consulting LLC (President & CEO)" },
+        "bernard t. roesler": { flag: "us", alt: "USA", text: "Exponent, Inc. (Senior Engineer)" }
+    };
+
+    document.querySelectorAll('.persona').forEach(function(p) {
+        const fullName = (p.dataset.fullName || p.querySelector('.persona-header > strong')?.textContent || "").trim();
+        const key = fullName.toLowerCase();
+        const info = AFF[key];
+        if (!info) return;
+
+        const grid = p.querySelector('.details .details-grid');
+        if (!grid) return;
+
+        const cols = Array.from(grid.querySelectorAll('.details-col'));
+        if (cols.length < 2) return;
+
+        const right = cols[1];
+
+        const rightDates = right.querySelector('.details-dates');
+        const rightIsDeath = !!(rightDates && (rightDates.textContent || "").trim().toLowerCase().startsWith("died"));
+        if (rightIsDeath) return;
+
+        const alreadyHas = (right.textContent || "").trim();
+        if (alreadyHas && !alreadyHas.toLowerCase().includes("no affiliation found")) return;
+
+        right.innerHTML = '';
+        const s = document.createElement('span');
+        s.className = 'details-location';
+        const img = document.createElement('img');
+        img.className = 'flag';
+        img.src = `https://flagcdn.com/w20/${info.flag}.png`;
+        img.alt = info.alt || "";
+        s.appendChild(img);
+        s.appendChild(document.createTextNode(info.text));
+        right.appendChild(s);
+
+        // Ensure no validation marks remain on affiliation lines
+        right.querySelectorAll('.validation-mark').forEach(function(n) { n.remove(); });
+    });
+}
+
+function makePersonasKeyboardClickable() {
+    // Also helps some browsers reliably show the "clickable" cursor via focus/hover affordances.
+    document.querySelectorAll('.persona').forEach(function(p) {
+        if (!p.hasAttribute('tabindex')) p.setAttribute('tabindex', '0');
+        // cursor styling handled by CSS on header/desc only
+        p.addEventListener('keydown', function(ev) {
+            if (EXPAND_ALL_DETAILS) return;
+            if (ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                toggleDetails(p);
+            }
+        });
+    });
+}
+
+        function ensureAffiliationLines() {
+            document.querySelectorAll('.persona .details .details-grid').forEach(function(grid) {
+                const cols = Array.from(grid.querySelectorAll('.details-col'));
+                if (cols.length < 2) { return; }
+                const right = cols[1];
+
+                const rightDates = right.querySelector('.details-dates');
+                const rightIsDeath = !!(rightDates && (rightDates.textContent || "").trim().toLowerCase().startsWith("died"));
+                if (rightIsDeath) { return; }
+
+                const content = (right.textContent || "").trim();
+                if (!content) {
+                    right.innerHTML = '';
+                    const s = document.createElement('span');
+                    s.className = 'details-location validation-missing';
+                    s.textContent = 'No affiliation found.';
+                    right.appendChild(s);
+                }
+
+                // Never show validation symbols on affiliation lines
+                right.querySelectorAll('.validation-mark').forEach(function(n) { n.remove(); });
+            });
+        }
+
+        function standardizeHeadersAndInjectFullNames() {
+    // Keep header text as-authored (usually abbreviated like "F. Bessel").
+    // Details: prefer the existing .details-fullname (fullest form); otherwise fall back to overrides or header text.
+    const FULL_NAME_OVERRIDES = {
+        "N. Zhukovsky (Joukowski)": "Nikolai Zhukovsky (Joukowski)",
+        "Lord Kelvin (W. Thomson)": "William Thomson, Lord Kelvin",
+        "Lord Rayleigh (J.W. Strutt)": "John William Strutt, Lord Rayleigh",
+        "I. E. Garrick": "Isadore Edward Garrick",
+        "S. W. Rienstra": "Sjoerd W. Rienstra",
+        "Milton van Dyke": "Milton Denman Van Dyke",
+        "Beddoes & Leishman": "Beddoes & Leishman",
+        "Epps & Roesler": "Epps & Roesler",
+        "Knoller & Betz": "Knoller & Betz"
+    };
+
+    document.querySelectorAll('.persona').forEach(function(p) {
+        const strong = p.querySelector('.persona-header > strong');
+                const anchor = p.querySelector('.persona-header .persona-header-main') || strong;
+        const details = p.querySelector('.details');
+        if (!strong || !details) return;
+
+        const rawHeader = (strong.textContent || "").trim();
+
+        const existingFull = (details.querySelector('.details-fullname')?.textContent || "").trim();
+        const fullName = existingFull || FULL_NAME_OVERRIDES[rawHeader] || rawHeader;
+
+        p.dataset.fullName = fullName;
+
+        if (!details.querySelector('.details-fullname')) {
+            const fn = document.createElement('div');
+            fn.className = 'details-fullname';
+            fn.textContent = fullName;
+            details.insertBefore(fn, details.firstChild);
+        }
+
+        // Do not rewrite header (keeps the initial-abbreviation style and user curation).
+    });
+}
+
+function populateDetailedNarratives() { /* disabled: narratives removed */ }
+
+function applyValidationMarkers() {
+            if (!VALIDATION_MODE) { return; }
+
+            document.querySelectorAll('.details-dates').forEach(function(s) {
+                if (s.querySelector('.validation-mark')) { return; }
+                const txt = (s.textContent || '').trim();
+                if (isUncertain(txt)) {
+                    s.appendChild(validationMarkNode("Unverified / approximate date."));
+                }
+            });
+        }
+
+function reflowBirthOrderAlternating() {
+    // Merge Pure/Applied columns into a single birth-ordered list and lay it out as two stacked columns:
+    // fill left column first up to ~half, then fill the right column (both stacks ordered by birth).
+
+    function normalizeYear(label) {
+        const s0 = (label || '').toString().trim();
+        if (!s0 || s0 === '-' || s0.toLowerCase() === 'unknown') return NaN;
+
+        const s = s0.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+        const isBC = /\b(bc|bce)\b/i.test(s);
+
+        // Decades (e.g., '1970s', '1960's')
+        const decade = s.match(/(\d{3,4})\s*'?s\b/i);
+        if (decade) {
+            const y = parseInt(decade[1], 10);
+            return isBC ? -y : y;
+        }
+
+        // Prefer explicit 4-digit years when present (also catches dd/mm/yyyy).
+        const y4 = s.match(/\b(\d{4})\b/g);
+        if (y4 && y4.length) {
+            const y = parseInt(y4[y4.length - 1], 10);
+            return isBC ? -y : y;
+        }
+
+        // BCE or ancient dates often use 1–3 digits
+        const y13 = s.match(/\b(\d{1,3})\b/);
+        if (y13) {
+            const y = parseInt(y13[1], 10);
+            return isBC ? -y : y;
+        }
+
+        return NaN;
+    }
+
+    function birthKey(persona) {
+        // Primary: details 'Born:' line
+        let born = '';
+        try { born = extractBornLabelFromEntry(persona) || ''; } catch (e) { born = ''; }
+        let y = normalizeYear(born);
+        if (!Number.isNaN(y)) return y;
+
+        // Fallback: life-years in header (e.g., '(1499 - 1557)' or '(300 BC - 270 BC)')
+        const ly = persona.querySelector('.persona-header .life-years');
+        const t = (ly ? ly.textContent : '') || '';
+        const m = t.match(/\(\s*([^\)–—-]+?)\s*(?:[–—-].*)?\)/);
+        if (m && m[1]) {
+            y = normalizeYear(m[1]);
+            if (!Number.isNaN(y)) return y;
+        }
+
+        return NaN;
+    }
+
+    document.querySelectorAll('.century-boxes').forEach((cb) => {
+        const personas = Array.from(cb.querySelectorAll('.persona'));
+        if (!personas.length) return;
+
+        // Sort by birth year (unknown/uncertain pushed to the end).
+        personas.sort((a, b) => {
+            const ay0 = birthKey(a);
+            const by0 = birthKey(b);
+            const ay = Number.isNaN(ay0) ? Number.POSITIVE_INFINITY : ay0;
+            const by = Number.isNaN(by0) ? Number.POSITIVE_INFINITY : by0;
+            if (ay !== by) return ay - by;
+
+            // Tiebreaker: visible header text for stable order
+            const an = (a.querySelector('.persona-header-main')?.textContent || a.textContent || '').trim();
+            const bn = (b.querySelector('.persona-header-main')?.textContent || b.textContent || '').trim();
+            return an.localeCompare(bn);
+        });
+
+        // Replace content with the new two-column stacks.
+        cb.innerHTML = '';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'birth-two-col';
+
+        const leftCol = document.createElement('div');
+        leftCol.className = 'birth-col left';
+
+        const rightCol = document.createElement('div');
+        rightCol.className = 'birth-col right';
+
+        const half = Math.ceil(personas.length / 2);
+
+// Fill left column first (oldest → ~half of the names), then continue on the right.
+personas.forEach((p, i) => {
+    if (i < half) leftCol.appendChild(p);
+    else rightCol.appendChild(p);
+});
+
+        wrap.appendChild(leftCol);
+        wrap.appendChild(rightCol);
+        cb.appendChild(wrap);
+    });
+}
+
+
+
+        // --- Apply transformations in a safe order ---
+        splitGroupedPersonasIntoIndividualBoxes();
+        standardizeHeadersAndInjectFullNames();
+        addBirthFlagsToHeaders();
+        normalizePersonaDescriptionsToOneSentence();
+        applyKnownAffiliations();
+        ensureAffiliationLines();
+        applyValidationMarkers();
+        reflowBirthOrderAlternating();
+        // makePersonasKeyboardClickable(); // superseded by header/desc toggle bindings
+
+        if (EXPAND_ALL_DETAILS) {
+            document.querySelectorAll('.persona').forEach(function(p) {
+                p.classList.add('active');
+            });
+        }
+
+        function toggleDetails(element) {
+            if (EXPAND_ALL_DETAILS) { return; }
+            element.classList.toggle('active');
+        }
+
+        // --- Back-to-top button (robust: uses addEventListener, initializes on load) ---
+        
+        // --- Scroll navigation buttons (down + up) ---
+        (function initScrollNav() {
+            const up = document.getElementById('backToTopBtn');
+            const down = document.getElementById('scrollToBottomBtn');
+            if (!up && !down) { return; }
+
+            const THRESHOLD = 140; // px from top/bottom to switch states
+
+            const update = () => {
+                const y = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+                const doc = document.documentElement;
+                const max = Math.max(0, (doc.scrollHeight || document.body.scrollHeight) - window.innerHeight);
+
+                const nearTop = y <= THRESHOLD;
+                const nearBottom = y >= (max - THRESHOLD);
+
+                if (nearTop) {
+                    if (down) down.classList.add('show');
+                    if (up) up.classList.remove('show');
+                } else if (nearBottom) {
+                    if (down) down.classList.remove('show');
+                    if (up) up.classList.add('show');
+                } else {
+                    if (down) down.classList.add('show');
+                    if (up) up.classList.add('show');
+                }
+            };
+
+            window.addEventListener('scroll', update, { passive: true });
+            window.addEventListener('resize', update);
+            update();
+
+            if (up) {
+                up.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+                    catch (err) { window.scrollTo(0, 0); }
+                });
+            }
+            if (down) {
+                down.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const doc = document.documentElement;
+                    const bottom = doc.scrollHeight || document.body.scrollHeight || 0;
+                    try { window.scrollTo({ top: bottom, behavior: 'smooth' }); }
+                    catch (err) { window.scrollTo(0, bottom); }
+                });
+            }
+        })();
+
+
+    </script>
+<script>
+/* Robust UI bindings (kept isolated so failures elsewhere do not break buttons/toggles). */
+(function () {
+  try { document.body.classList.add('js-ready'); } catch (e) {}
+
+  // --- Persona toggle: header + short description only ---
+  function closestPersona(el) {
+    while (el && el !== document.body) {
+      if (el.classList && el.classList.contains('persona')) return el;
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  function bindPersonaToggles() {
+    var personas = document.querySelectorAll('.persona');
+    personas.forEach(function (p) {
+      var header = p.querySelector('.persona-header');
+      var desc = p.querySelector('.persona-desc');
+      var details = p.querySelector('.details');
+      if (!details) return;
+
+      function onToggleClick(e) {
+        // Don't toggle if user clicked a link/button inside the header/desc (future-proof for links).
+        var t = e.target;
+        if (t && (t.closest && (t.closest('a') || t.closest('button') || t.closest('input')))) return;
+        toggleDetails(p);
+      }
+
+      if (header) {
+        header.setAttribute('role', 'button');
+        header.setAttribute('tabindex', '0');
+        header.addEventListener('click', onToggleClick);
+        header.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggleClick(e); }
+        });
+      }
+      if (desc) {
+        desc.setAttribute('role', 'button');
+        desc.setAttribute('tabindex', '0');
+        desc.addEventListener('click', onToggleClick);
+        desc.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggleClick(e); }
+        });
+      }
+    });
+  }
+
+  // --- Scroll nav buttons (↑ / ↓) ---
+  function bindScrollButtons() {
+    var up = document.getElementById('backToTopBtn');
+    var down = document.getElementById('scrollToBottomBtn');
+    if (!up || !down) return;
+
+    var TH = 140; // px from top/bottom
+    function docHeight() {
+      var d = document.documentElement, b = document.body;
+      return Math.max(d.scrollHeight, b.scrollHeight, d.offsetHeight, b.offsetHeight, d.clientHeight, b.clientHeight);
+    }
+    function scrollTop() {
+      return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    }
+
+    function setShow(el, show) {
+      if (!el) return;
+      if (show) el.classList.add('show');
+      else el.classList.remove('show');
+    }
+
+    function update() {
+      var y = scrollTop();
+      var h = docHeight();
+      var wh = window.innerHeight || document.documentElement.clientHeight || 0;
+      if (h <= wh + 2) { setShow(up, false); setShow(down, false); return; }
+
+      var atTop = y <= TH;
+      var atBottom = y >= (h - wh - TH);
+
+      var nav = document.getElementById('scrollNav');
+      if (nav) {
+        if (atBottom) nav.classList.add('at-bottom');
+        else nav.classList.remove('at-bottom');
+      }
+
+      if (atTop) { setShow(down, true); setShow(up, false); }
+      else if (atBottom) { setShow(down, false); setShow(up, true); }
+      else { setShow(down, true); setShow(up, true); }
+    }
+
+    // Click handlers (keep these even if inline onclick exists)
+    up.addEventListener('click', function (e) {
+      e.preventDefault();
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      catch (err) { window.scrollTo(0, 0); }
+    });
+
+    down.addEventListener('click', function (e) {
+      e.preventDefault();
+      var bottom = docHeight();
+      try { window.scrollTo({ top: bottom, behavior: 'smooth' }); }
+      catch (err) { window.scrollTo(0, bottom); }
+    });
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    // Ensure correct initial state (some browsers don't fire scroll at load)
+    update();
+    setTimeout(update, 0);
+    setTimeout(update, 250);
+  }
+
+  // Run after DOM is ready (script is at end, but be safe)
+  try { bindPersonaToggles(); } catch (e) {}
+  try { bindScrollButtons(); } catch (e) {}
+})();
+</script>
+</body>
+</html>
