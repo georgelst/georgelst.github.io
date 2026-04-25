@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UNSAERO | Geometric Decomposition Tool</title>
+<meta name="description" content="Airfoil geometric decomposition into camber and thickness contributions, with physical and visual interpretation for thin-airfoil-based models."/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#087fc3"/>
+<meta name="keywords" content="airfoil geometry, geometric decomposition, camber line, thickness distribution, thin airfoil theory, Bezier curves, reduced-order aerodynamics"/>
+<meta name="author" content="UNSAERO"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:site_name" content="UNSAERO"/>
+<meta property="og:title" content="Geometric Decomposition Tool | UNSAERO"/>
+<meta property="og:description" content="A conceptual tool page for geometric decomposition of airfoils into camber and thickness contributions."/>
+<meta property="og:url" content="https://www.unsaero.com/source/geometric_decomposition_tool.html"/>
+<meta property="og:image" content="https://www.unsaero.com/icon.png"/>
+<meta property="og:image:width" content="2048"/>
+<meta property="og:image:height" content="2048"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:locale:alternate" content="pt_BR"/>
+<meta property="article:modified_time" content="2026-04-24"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Geometric Decomposition Tool | UNSAERO"/>
+<meta name="twitter:description" content="Geometric decomposition of airfoils for camber, thickness, and thin-airfoil-based modeling."/>
+<meta name="twitter:image" content="https://www.unsaero.com/icon.png"/>
+
+<link rel="canonical" href="https://www.unsaero.com/source/geometric_decomposition_tool.html"/>
+<link rel="icon" href="../favicon.ico" type="image/x-icon"/>
+<link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
+<link rel="icon" href="../assets/favicon-16x16.png" sizes="16x16" type="image/png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<link href="../assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Geometric Decomposition Tool | UNSAERO","url":"https://www.unsaero.com/source/geometric_decomposition_tool.html","description":"Airfoil geometric decomposition into camber and thickness contributions, with physical and visual interpretation for thin-airfoil-based models.","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
+</script>
+<style>
+:root{--bg:#f8fafc;--panel:#ffffff;--text:#334155;--title:#0f172a;--muted:#64748b;--accent:#0284c7;--accent-dark:#0369a1;--header:#2c3e50;--border:#dbe4ee;--soft-blue:#f0f9ff;--shadow:0 4px 14px rgba(15,23,42,.055);} 
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+body{min-height:100vh;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;}
+#page-top{max-width:1180px;margin:0 auto 1.35rem;padding:34px 32px 30px;border-radius:12px;color:#fff;background:var(--header);box-shadow:0 6px 18px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.12);}
+#page-top h1{margin:0 0 10px;line-height:1.06;font-weight:800;font-size:clamp(2rem,4vw,3.1rem);color:#fff;}
+.hero-subtitle{max-width:780px;color:rgba(255,255,255,.88);line-height:1.58;font-size:1rem;}
+.lang-content{display:none;}.lang-content.active{display:block;}
+.breadcrumb{max-width:1180px;margin:0 auto 1rem;color:var(--muted);font-size:.9rem;font-weight:650;}
+.breadcrumb a{color:var(--accent);text-decoration:none;}.breadcrumb a:hover{text-decoration:underline;}
+.breadcrumb .lang-content{display:none;}.breadcrumb .lang-content.active{display:block;}
+.tool-workspace{display:grid;grid-template-columns:1fr;gap:1rem;align-items:start;}
+.tool-panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);min-height:100%;}
+.tool-panel h2{font-size:1rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.panel-text{font-size:.92rem;line-height:1.55;color:var(--muted);margin-bottom:1rem;}
+.input-alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;align-items:start;margin:.2rem 0 1rem;padding:.9rem .95rem;border:1px solid rgba(245,158,11,.28);border-left:4px solid #f59e0b;border-radius:12px;background:#fffbeb;color:#78350f;box-shadow:0 4px 12px rgba(245,158,11,.08);font-size:.9rem;line-height:1.5;}
+.input-alert .alert-icon{display:inline-flex;align-items:center;justify-content:center;width:1.35rem;height:1.35rem;color:#d97706;font-size:1rem;margin-top:.02rem;}
+.control-group{display:flex;flex-direction:column;gap:.45rem;margin-bottom:.95rem;}
+.control-row{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:.8rem;align-items:end;}
+.input-panel h2{margin:0 0 1rem;font-size:1.25rem;line-height:1.2;color:var(--title);letter-spacing:0;text-transform:none;}
+.control-label{font-size:.83rem;font-weight:750;color:var(--title);}
+select,input[type="file"],input[type="number"],textarea{width:100%;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--title);font-size:.92rem;}
+select,input[type="file"],input[type="number"]{padding:.62rem .72rem;}
+textarea{height:144px;min-height:116px;max-height:240px;resize:vertical;padding:.72rem .78rem;font-family:Consolas,'SFMono-Regular',monospace;line-height:1.35;outline:none;}
+.method-options{display:grid;gap:.5rem;}
+.method-option{display:flex;align-items:center;gap:.5rem;padding:.64rem .7rem;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-size:.9rem;}
+.method-option input{width:auto;}
+.button-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:.45rem;}
+.button{width:100%;border:1px solid var(--border);border-radius:10px;padding:.68rem .78rem;background:#fff;color:var(--title);font-weight:800;font-size:.93rem;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;}
+.button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}.button:hover{transform:translateY(-1px);box-shadow:0 8px 16px rgba(15,23,42,.08);}
+.visual-panel{padding:20px;}
+.visual-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem;}
+.visual-header h2{margin:0;font-size:1.25rem;line-height:1.2;color:var(--title);letter-spacing:0;text-transform:none;}
+.symbol{font-family:Georgia,'Times New Roman',serif;font-style:italic;}
+.visual-caption{font-size:.9rem;color:var(--muted);line-height:1.45;margin-top:.35rem;}
+.status-pill{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid rgba(2,132,199,.22);background:var(--soft-blue);color:var(--accent-dark);font-weight:800;font-size:.78rem;border-radius:999px;padding:.42rem .68rem;}
+.plot-frame{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#fff,#fbfdff);min-height:310px;padding:18px;display:flex;align-items:center;justify-content:center;}
+.plot-placeholder{width:100%;max-width:760px;}.plot-placeholder svg{width:100%;height:auto;display:block;}.analysis-svg{width:100%;height:auto;display:block;}
+.legend{display:flex;flex-wrap:wrap;gap:.7rem 1rem;margin-top:.95rem;color:var(--muted);font-size:.86rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.4rem;}.legend-line{width:26px;height:2px;border-radius:2px;background:#111827;}.legend-line.surface-fit{background:#111827;}.legend-line.camber{background:#0284c7;}.legend-line.thickness{background:#dc2626;}.legend-dot{width:7px;height:7px;border-radius:50%;background:#334155;box-shadow:9px 0 0 #334155,18px 0 0 #334155;margin-right:18px;opacity:.75;flex:0 0 auto;}
+.layer-toggles{display:flex;flex-wrap:wrap;gap:.55rem;margin:.95rem 0 0;}
+.toggle-pill{display:inline-flex;align-items:center;gap:.42rem;border:1px solid var(--border);background:#fff;border-radius:999px;padding:.42rem .68rem;font-size:.84rem;font-weight:750;color:var(--text);cursor:pointer;user-select:none;}
+.toggle-pill input{width:auto;accent-color:var(--accent);}.summary-actions{margin-top:1rem;display:flex;justify-content:center;align-items:center;}.summary-actions .button{width:auto;min-width:230px;}.button.download{background:#0f766e;border-color:#0f766e;color:#ffffff;box-shadow:0 8px 18px rgba(15,118,110,.16);}.button.download:hover{border-color:#0f766e;box-shadow:0 10px 22px rgba(15,118,110,.22);}
+.decomp-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}
+.decomp-plot-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:14px;}
+.decomp-plot-card h3{font-size:.92rem;color:var(--title);margin:0 0 .65rem;font-weight:850;}
+.mini-plot-frame{border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);min-height:230px;padding:12px;display:flex;align-items:center;justify-content:center;}
+.full-plot{min-height:300px;}
+.results-list{display:grid;gap:.75rem;margin-top:.2rem;}
+.result-item{padding:.8rem .85rem;border:1px solid var(--border);border-radius:12px;background:#fff;}
+.result-label{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:.22rem;}
+.result-value{font-size:1.02rem;font-weight:850;color:var(--title);}.result-value.muted{color:var(--muted);font-weight:700;}
+.micro-note{margin-top:1rem;padding:.85rem .9rem;border-left:3px solid var(--accent);background:var(--soft-blue);border-radius:10px;color:var(--text);font-size:.9rem;line-height:1.52;}
+.back-link{display:inline-flex;margin-top:1.1rem;color:var(--accent);font-weight:750;text-decoration:none;}.back-link:hover{text-decoration:underline;}
+@media (max-width:1060px){.plot-frame{min-height:320px;}}
+@media (max-width:720px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:28px 22px;border-radius:10px;}.visual-header{flex-direction:column;}.plot-frame{min-height:260px;padding:12px;}.tool-panel{padding:18px;}.control-row{grid-template-columns:1fr;}.button-row{grid-template-columns:1fr;}.decomp-plots{grid-template-columns:1fr;}}
+</style>
+</head>
+<body data-page="tools">
+<!-- UNSAERO_HEADER_START -->
+<div class="unsaero-global-header-wrap">
+  <div class="unsaero-global-header">
+    <a class="unsaero-global-logo" href="../index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
+    <nav class="unsaero-global-nav" aria-label="Primary navigation">
+      <a href="../index.html" data-nav="home" data-i18n="nav_home">Home</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../research.html" data-nav="research" data-i18n="nav_research">Research</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="unsaero-global-lang-switch" aria-label="Language selector">
+      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
+        EN
+      </button>
+      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
+        PT
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNSAERO_HEADER_END -->
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <span class="lang-content active" id="breadcrumb-en"><a href="../tools.html">Tools</a> · Geometric Decomposition Tool</span>
+  <span class="lang-content" id="breadcrumb-pt"><a href="../tools.html">Ferramentas</a> · Ferramenta de Decomposição Geométrica</span>
+</nav>
+<header id="page-top">
+  <div class="lang-content active" id="hero-en">
+    <h1>Geometric Decomposition Tool</h1>
+    <p class="hero-subtitle">Decompose airfoil geometry into surface, camber, and thickness representations with physical meaning.</p>
+  </div>
+  <div class="lang-content" id="hero-pt">
+    <h1>Ferramenta de Decomposição Geométrica</h1>
+    <p class="hero-subtitle">Decomponha a geometria de aerofólios em superfície, cambagem e espessura com significado físico.</p>
+  </div>
+</header>
+
+<div class="lang-content active" id="content-en">
+  <section class="tool-workspace" aria-label="Geometric decomposition interface">
+    <aside class="tool-panel input-panel">
+      <h2>Input</h2>
+      <p class="panel-text">Select file or paste coordinates.</p>
+      <div class="input-alert"><span class="alert-icon"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span><span>Linear decomposition introduces deviations near the leading edge. Nonlinear geometric decomposition is under development.</span></div>
+      <div class="control-row">
+        <div class="control-group"><label class="control-label" for="file-input">Coordinate file</label><input accept=".dat,.txt,.csv,text/plain" id="file-input" type="file"/></div>
+        <div class="control-group"><label class="control-label" for="samples-input">Surface points</label><input id="samples-input" type="number" min="40" max="999" step="1" value="500"/></div>
+      </div>
+      <div class="control-group"><label class="control-label" for="points-input">Coordinates</label><textarea id="points-input" spellcheck="false" placeholder="x/c    z/c"></textarea></div>
+      <div class="button-row"><button class="button primary" id="run-btn" type="button">Run</button><button class="button" id="sample-btn" type="button">Reload sample</button></div>
+    </aside>
+
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Geometry view</h2></div></div>
+      <div class="plot-frame" aria-label="Geometry plot"><svg class="analysis-svg" id="plot-geom" role="img" aria-label="Geometry decomposition plot" viewBox="0 0 1000 340"></svg></div>
+      <div class="layer-toggles" aria-label="Geometry layers">
+        <label class="toggle-pill"><input id="toggle-points" type="checkbox" checked/> Discrete points <span class="legend-dot"></span></label>
+        <label class="toggle-pill"><input id="toggle-surface" type="checkbox" checked/> Fitted surface <span class="legend-line surface-fit"></span></label>
+        <label class="toggle-pill"><input id="toggle-camber" type="checkbox" checked/> Camber line <span class="legend-line camber"></span></label>
+      </div>
+    </section>
+
+    <section class="tool-panel visual-panel summary-panel">
+      <div class="visual-header"><div><h2>Summary</h2></div></div>
+      <div class="results-list" id="summary-cards"></div>
+      <div class="button-row summary-actions"><button class="button download" id="download-data-btn" type="button">Download generated data</button></div>
+    </section>
+
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Camber, <span class="symbol">z<sub>c</sub></span></h2></div></div>
+      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-camber" role="img" aria-label="Camber line plot" viewBox="0 0 1000 420"></svg></div>
+    </section>
+
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Thickness, <span class="symbol">z<sub>t</sub></span></h2></div></div>
+      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-thickness" role="img" aria-label="Thickness distribution plot" viewBox="0 0 1000 420"></svg></div>
+    </section>
+
+  </section>
+  <a class="back-link" href="../tools.html">← Back to Tools</a>
+</div>
+
+<div class="lang-content" id="content-pt">
+  <section class="tool-workspace" aria-label="Interface de decomposição geométrica">
+    <aside class="tool-panel input-panel">
+      <h2>Entrada</h2>
+      <p class="panel-text">Selecione um arquivo ou cole as coordenadas.</p>
+      <div class="input-alert"><span class="alert-icon"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span><span>A decomposição linear introduz desvios próximos ao bordo de ataque. A decomposição geométrica não linear está em desenvolvimento.</span></div>
+      <div class="control-row">
+        <div class="control-group"><label class="control-label" for="file-input-pt">Arquivo de coordenadas</label><input accept=".dat,.txt,.csv,text/plain" id="file-input-pt" type="file"/></div>
+        <div class="control-group"><label class="control-label" for="samples-input-pt">Pontos da superfície</label><input id="samples-input-pt" type="number" min="40" max="999" step="1" value="500"/></div>
+      </div>
+      <div class="control-group"><label class="control-label" for="points-input-pt">Coordenadas</label><textarea id="points-input-pt" spellcheck="false" placeholder="x/c    z/c"></textarea></div>
+      <div class="button-row"><button class="button primary" id="run-btn-pt" type="button">Executar</button><button class="button" id="sample-btn-pt" type="button">Recarregar amostra</button></div>
+    </aside>
+
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Visualização geométrica</h2></div></div>
+      <div class="plot-frame" aria-label="Gráfico de geometria"><svg class="analysis-svg" id="plot-geom-pt" role="img" aria-label="Gráfico da decomposição geométrica" viewBox="0 0 1000 340"></svg></div>
+      <div class="layer-toggles" aria-label="Camadas da geometria">
+        <label class="toggle-pill"><input id="toggle-points-pt" type="checkbox" checked/> Pontos discretos <span class="legend-dot"></span></label>
+        <label class="toggle-pill"><input id="toggle-surface-pt" type="checkbox" checked/> Superfície ajustada <span class="legend-line surface-fit"></span></label>
+        <label class="toggle-pill"><input id="toggle-camber-pt" type="checkbox" checked/> Linha de cambagem <span class="legend-line camber"></span></label>
+      </div>
+    </section>
+
+    <section class="tool-panel visual-panel summary-panel">
+      <div class="visual-header"><div><h2>Resumo</h2></div></div>
+      <div class="results-list" id="summary-cards-pt"></div>
+      <div class="button-row summary-actions"><button class="button download" id="download-data-btn-pt" type="button">Baixar dados gerados</button></div>
+    </section>
+
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Cambagem, <span class="symbol">z<sub>c</sub></span></h2></div></div>
+      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-camber-pt" role="img" aria-label="Gráfico da linha de cambagem" viewBox="0 0 1000 420"></svg></div>
+    </section>
+
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Espessura, <span class="symbol">z<sub>t</sub></span></h2></div></div>
+      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-thickness-pt" role="img" aria-label="Gráfico da distribuição de espessura" viewBox="0 0 1000 420"></svg></div>
+    </section>
+
+  </section>
+  <a class="back-link" href="../tools.html">← Voltar para Ferramentas</a>
+</div>
+</main>
+<!-- UNSAERO_FOOTER_START -->
+<footer class="unsaero-global-footer">
+  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
+</footer>
+
+<!-- UNSAERO_FOOTER_END -->
+<script>
+function setLang(lang){
+  if(!['pt','en'].includes(lang)) lang='en';
+  const previousLang = document.documentElement.lang === 'pt-BR' ? 'pt' : 'en';
+  ['pt','en'].forEach(code=>{
+    document.getElementById(`btn-${code}`)?.classList.remove('active');
+    ['hero','content','breadcrumb'].forEach(prefix=>{const el=document.getElementById(`${prefix}-${code}`); if(el){el.classList.remove('active'); el.style.display='none';}});
+  });
+  document.getElementById(`btn-${lang}`)?.classList.add('active');
+  ['hero','content','breadcrumb'].forEach(prefix=>{const el=document.getElementById(`${prefix}-${lang}`); if(el){el.classList.add('active'); el.style.display='block';}});
+  document.documentElement.lang=lang==='pt'?'pt-BR':'en-US';
+  localStorage.setItem('unsaero-lang',lang);
+  if (previousLang !== lang && typeof window.syncGeometricToolState === 'function') {
+    window.syncGeometricToolState(previousLang, lang);
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{const saved=localStorage.getItem('unsaero-lang'); setLang(['pt','en'].includes(saved)?saved:'en');});
+</script>
+<script>
+const SD7003_SAMPLE_DATA = `# SD7003 sample set
+SD7003-085-88
+  1.00000  0.0
+  0.99681  0.00031
+  0.98745  0.00132
+  0.97235  0.00310
+  0.95193  0.00547
+  0.92639  0.00824
+  0.89600  0.01139
+  0.86112  0.01494
+  0.82224  0.01884
+  0.77985  0.02304
+  0.73449  0.02744
+  0.68673  0.03197
+  0.63717  0.03649
+  0.58641  0.04086
+  0.53499  0.04494
+  0.48350  0.04859
+  0.43249  0.05171
+  0.38250  0.05415
+  0.33405  0.05581
+  0.28760  0.05658
+  0.24358  0.05639
+  0.20240  0.05518
+  0.16442  0.05292
+  0.12993  0.04961
+  0.09921  0.04526
+  0.07244  0.03993
+  0.04978  0.03372
+  0.03130  0.02677
+  0.01702  0.01932
+  0.00697  0.01172
+  0.00127  0.00438
+  0.00025 -0.00186
+  0.00457 -0.00741
+  0.01408 -0.01285
+  0.02839 -0.01759
+  0.04763 -0.02141
+  0.07182 -0.02438
+  0.10073 -0.02660
+  0.13407 -0.02809
+  0.17150 -0.02888
+  0.21268 -0.02900
+  0.25719 -0.02852
+  0.30456 -0.02752
+  0.35426 -0.02608
+  0.40572 -0.02428
+  0.45837 -0.02217
+  0.51161 -0.01980
+  0.56484 -0.01723
+  0.61748 -0.01450
+  0.66898 -0.01167
+  0.71883 -0.00887
+  0.76644 -0.00628
+  0.81118 -0.00403
+  0.85241 -0.00220
+  0.88957 -0.00082
+  0.92210  0.00008
+  0.94952  0.00052
+  0.97134  0.00057
+  0.98718  0.00037
+  0.99679  0.00011
+  1.00001 -0.00000`;
+
+function preloadSD7003(){
+  ['points-input','points-input-pt'].forEach((id)=>{
+    const el=document.getElementById(id);
+    if(el && !el.value.trim()) el.value=SD7003_SAMPLE_DATA;
+  });
+}
+function parseCoordinateText(text, forceClosure) {
+  const lines = text.split(/\r?\n/);
+  const points = [];
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const tokens = line.split(/[\s,;]+/).filter(Boolean);
+    if (tokens.length < 2) continue;
+    const x = Number(tokens[0]), y = Number(tokens[1]);
+    if (Number.isFinite(x) && Number.isFinite(y)) points.push({x, y});
+  }
+  if (points.length < 3) throw new Error('At least three valid points are required.');
+  if (forceClosure) {
+    const a = points[0], b = points[points.length - 1];
+    if (Math.hypot(a.x - b.x, a.y - b.y) > 1e-12) points.push({x: a.x, y: a.y});
+  }
+  return points;
+}
+
+function cumulativeS(points) {
+  const s = [0];
+  for (let i = 1; i < points.length; i++) s.push(s[i-1] + Math.hypot(points[i].x-points[i-1].x, points[i].y-points[i-1].y));
+  return s;
+}
+
+function normalizeChord(points) {
+  let xmin = Infinity, xmax = -Infinity;
+  for (const p of points) { xmin = Math.min(xmin, p.x); xmax = Math.max(xmax, p.x); }
+  const chord = xmax - xmin;
+  if (!(chord > 0)) throw new Error('Chord length is zero.');
+  return points.map(p => ({ x: (p.x - xmin) / chord, y: p.y / chord }));
+}
+
+function compressSurface(points, ascending=true) {
+  const tol = 1e-10;
+  const arr = points.slice().sort((a,b) => ascending ? a.x - b.x : b.x - a.x);
+  const out = [];
+  for (const p of arr) {
+    if (!out.length || Math.abs(p.x - out[out.length-1].x) > tol) out.push({x:p.x, y:p.y, count:1});
+    else {
+      const q = out[out.length-1];
+      q.y = (q.y * q.count + p.y) / (q.count + 1);
+      q.count += 1;
+    }
+  }
+  return out.map(({x,y}) => ({x,y}));
+}
+
+function splitSurfaces(points) {
+  let leIndex = 0;
+  for (let i = 1; i < points.length; i++) if (points[i].x < points[leIndex].x) leIndex = i;
+  const upperRaw = points.slice(0, leIndex + 1).reverse();
+  const lowerRaw = points.slice(leIndex);
+  if (upperRaw.length < 2 || lowerRaw.length < 2) throw new Error('Could not split the contour into upper and lower surfaces.');
+  const upper = compressSurface(upperRaw, true);
+  const lower = compressSurface(lowerRaw, true);
+  if (upper.length < 2 || lower.length < 2) throw new Error('Insufficient unique surface points after preprocessing.');
+  return { upper, lower, leIndex };
+}
+
+// Shape-preserving PCHIP-like Hermite slopes (Fritsch-Carlson/Fritsch-Butland style).
+function computePchipDerivatives(x, y) {
+  const n = x.length;
+  if (n === 2) {
+    const slope = (y[1]-y[0])/(x[1]-x[0]);
+    return [slope, slope];
+  }
+  const h = new Array(n-1), delta = new Array(n-1), d = new Array(n).fill(0);
+  for (let i=0;i<n-1;i++) { h[i]=x[i+1]-x[i]; delta[i]=(y[i+1]-y[i])/h[i]; }
+  for (let i=1;i<n-1;i++) {
+    if (delta[i-1] === 0 || delta[i] === 0 || Math.sign(delta[i-1]) !== Math.sign(delta[i])) d[i] = 0;
+    else {
+      const w1 = 2*h[i] + h[i-1], w2 = h[i] + 2*h[i-1];
+      d[i] = (w1+w2)/(w1/delta[i-1] + w2/delta[i]);
+    }
+  }
+  function endpoint(h0,h1,d0,d1) {
+    let v = ((2*h0 + h1)*d0 - h0*d1)/(h0 + h1);
+    if (Math.sign(v) !== Math.sign(d0)) return 0;
+    if (Math.sign(d0) !== Math.sign(d1) && Math.abs(v) > Math.abs(3*d0)) return 3*d0;
+    return v;
+  }
+  d[0] = endpoint(h[0], h[1], delta[0], delta[1]);
+  d[n-1] = endpoint(h[n-2], h[n-3], delta[n-2], delta[n-3]);
+  return d;
+}
+
+function computeNaturalCubicSecondDerivatives(x, y) {
+  const n = x.length;
+  const m = new Array(n).fill(0);
+  if (n <= 2) return m;
+  const a = new Array(n).fill(0), b = new Array(n).fill(0), c = new Array(n).fill(0), r = new Array(n).fill(0);
+  for (let i=1;i<n-1;i++) {
+    const h0 = x[i]-x[i-1], h1 = x[i+1]-x[i];
+    a[i]=h0; b[i]=2*(h0+h1); c[i]=h1; r[i]=6*((y[i+1]-y[i])/h1 - (y[i]-y[i-1])/h0);
+  }
+  for (let i=1;i<n-2;i++) {
+    const factor = a[i+1]/b[i];
+    b[i+1] -= factor*c[i];
+    r[i+1] -= factor*r[i];
+  }
+  for (let i=n-2;i>=1;i--) m[i] = (r[i] - c[i]*m[i+1])/b[i];
+  return m;
+}
+
+function evalInterpolator(mode, x, y, query) {
+  const n = x.length;
+  const aux = mode === 'pchip' ? computePchipDerivatives(x,y) : mode === 'cubic' ? computeNaturalCubicSecondDerivatives(x,y) : null;
+  const out = [];
+  let seg = 0;
+  for (const xv of query) {
+    while (seg < n - 2 && xv > x[seg+1]) seg++;
+    const x0 = x[seg], x1 = x[seg+1], h = x1 - x0;
+    const u = h === 0 ? 0 : (xv - x0)/h;
+    let val;
+    if (mode === 'linear') val = y[seg]*(1-u) + y[seg+1]*u;
+    else if (mode === 'pchip') {
+      const d0 = aux[seg], d1 = aux[seg+1];
+      const h00 = 2*u*u*u - 3*u*u + 1, h10 = u*u*u - 2*u*u + u, h01 = -2*u*u*u + 3*u*u, h11 = u*u*u - u*u;
+      val = h00*y[seg] + h10*h*d0 + h01*y[seg+1] + h11*h*d1;
+    } else {
+      const m0 = aux[seg], m1 = aux[seg+1];
+      const a = (x1 - xv)/h, b = (xv - x0)/h;
+      val = a*y[seg] + b*y[seg+1] + ((a*a*a - a)*m0 + (b*b*b - b)*m1)*h*h/6;
+    }
+    out.push(val);
+  }
+  return out;
+}
+
+function createGrid(n, x0, x1) {
+  const out = [];
+  for (let i=0;i<n;i++) out.push(x0 + (x1 - x0) * i / (n - 1));
+  return out;
+}
+
+function formatNumber(v) { return Number(v).toFixed(6); }
+
+function estimateLeadingEdgeRadius(surfaces) {
+  const pts = surfaces.upper.concat(surfaces.lower).sort((a,b) => a.x - b.x);
+  if (pts.length < 5) return NaN;
+  const near = pts.slice(0, Math.min(11, pts.length));
+  const n = near.length;
+  const sx = near.reduce((a,p)=>a+p.x,0), sy = near.reduce((a,p)=>a+p.y,0);
+  const sxx = near.reduce((a,p)=>a+p.x*p.x,0), sxy = near.reduce((a,p)=>a+p.x*p.y,0);
+  const sxxx = near.reduce((a,p)=>a+p.x*p.x*p.x,0), sxxxx = near.reduce((a,p)=>a+p.x*p.x*p.x*p.x,0);
+  const sxxy = near.reduce((a,p)=>a+p.x*p.x*p.y,0);
+  const A = [[n,sx,sxx],[sx,sxx,sxxx],[sxx,sxxx,sxxxx]];
+  const b = [sy,sxy,sxxy];
+  function det3(m){return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);}
+  const D = det3(A);
+  if (!Number.isFinite(D) || Math.abs(D) < 1e-14) return NaN;
+  const A0 = [[b[0],A[0][1],A[0][2]],[b[1],A[1][1],A[1][2]],[b[2],A[2][1],A[2][2]]];
+  const A1 = [[A[0][0],b[0],A[0][2]],[A[1][0],b[1],A[1][2]],[A[2][0],b[2],A[2][2]]];
+  const A2 = [[A[0][0],A[0][1],b[0]],[A[1][0],A[1][1],b[1]],[A[2][0],A[2][1],b[2]]];
+  const c1 = det3(A1)/D, c2 = det3(A2)/D;
+  const x0 = Math.min(...near.map(p=>p.x));
+  const dy = c1 + 2*c2*x0;
+  const ddy = 2*c2;
+  const kappa = Math.abs(ddy) / Math.pow(1 + dy*dy, 1.5);
+  return kappa > 1e-12 ? 1/kappa : NaN;
+}
+
+function computeSummary(rows, surfaces) {
+  const thickness = rows.map(r => r.thickness);
+  const camberAbs = rows.map(r => Math.abs(r.ycamber));
+  let imaxT = 0, imaxC = 0;
+  for (let i=1;i<rows.length;i++) {
+    if (thickness[i] > thickness[imaxT]) imaxT = i;
+    if (camberAbs[i] > camberAbs[imaxC]) imaxC = i;
+  }
+  return {
+    pointsUpper: surfaces.upper.length,
+    pointsLower: surfaces.lower.length,
+    xmaxThickness: rows[imaxT].x,
+    maxThickness: rows[imaxT].thickness,
+    xmaxCamber: rows[imaxC].x,
+    maxCamber: rows[imaxC].ycamber,
+    leadingEdgeRadius: estimateLeadingEdgeRadius(surfaces),
+    xLE: Math.min(...rows.map(r => r.x)),
+    xTE: Math.max(...rows.map(r => r.x))
+  };
+}
+
+function makeStatCards(summary, lang) {
+  const labels = lang === 'en'
+    ? [
+        ['Upper surface points', summary.pointsUpper],
+        ['Lower surface points', summary.pointsLower],
+        ['Maximum z_t', `${(100*summary.maxThickness).toFixed(2)}% at x/c = ${(100*summary.xmaxThickness).toFixed(1)}%`],
+        ['Maximum |camber|', `${(100*summary.maxCamber).toFixed(2)}% at x/c = ${(100*summary.xmaxCamber).toFixed(1)}%`]
+      ]
+    : [
+        ['Pontos na superfície superior', summary.pointsUpper],
+        ['Pontos na superfície inferior', summary.pointsLower],
+        ['Máximo z_t', `${(100*summary.maxThickness).toFixed(2)}% em x/c = ${(100*summary.xmaxThickness).toFixed(1)}%`],
+        ['Máximo |linha média|', `${(100*summary.maxCamber).toFixed(2)}% em x/c = ${(100*summary.xmaxCamber).toFixed(1)}%`]
+      ];
+  return labels.map(([title, value]) => `<div class="stat-card"><h3>${title}</h3><p>${value}</p></div>`).join('');
+}
+
+function updateTable(rows, tableBody) {
+  tableBody.innerHTML = rows.map((r, i) => `<tr><td>${i+1}</td><td>${formatNumber(r.x)}</td><td>${formatNumber(r.yu)}</td><td>${formatNumber(r.yl)}</td><td>${formatNumber(r.ycamber)}</td><td>${formatNumber(r.thickness)}</td></tr>`).join('');
+}
+
+function setStatus(el, lines) { el.innerHTML = lines.map(line => `<div class="status-line">${line}</div>`).join(''); }
+
+function drawAxesAndSeries(svg, series, options) {
+  const width = Number(svg.viewBox.baseVal.width || 1000), height = Number(svg.viewBox.baseVal.height || 560);
+  const left = options.leftMargin || 108, right = 34, top = 26, bottom = 56;
+  svg.innerHTML = '';
+  const allX = series.flatMap(s => s.data.map(p => p.x));
+  const allY = series.flatMap(s => s.data.map(p => p.y));
+  let xMin = Math.min(...allX), xMax = Math.max(...allX), yMin = Math.min(...allY), yMax = Math.max(...allY);
+  if (xMin === xMax) { xMin -= 1; xMax += 1; }
+  if (yMin === yMax) { yMin -= 1; yMax += 1; }
+  let xRange = xMax-xMin, yRange = yMax-yMin;
+  const padX = 0.03 * xRange;
+  const padY = 0.05 * yRange;
+  xMin -= padX; xMax += padX;
+  if (Number.isFinite(options.yMin) && Number.isFinite(options.yMax) && options.yMax > options.yMin) {
+    yMin = options.yMin;
+    yMax = options.yMax;
+  } else {
+    yMin -= padY;
+    yMax += padY;
+  }
+  if (options.equalScale) {
+    const plotW = width-left-right, plotH = height-top-bottom;
+    const sx = plotW/(xMax-xMin), sy = plotH/(yMax-yMin);
+    const scale = options.preserveFullX ? sx : Math.min(sx, sy);
+    const cx = 0.5*(xMin+xMax), cy = options.yCenter ?? 0.5*(yMin+yMax), halfW = plotW/(2*scale), halfH = plotH/(2*scale);
+    xMin = cx-halfW; xMax = cx+halfW; yMin = cy-halfH; yMax = cy+halfH;
+  }
+  const px = x => left + (x-xMin)/(xMax-xMin)*(width-left-right);
+  const py = y => height-bottom - (y-yMin)/(yMax-yMin)*(height-top-bottom);
+  const NS = 'http://www.w3.org/2000/svg';
+  const make = (name, attrs={}) => { const el = document.createElementNS(NS, name); for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); return el; };
+  svg.appendChild(make('rect', {x:0,y:0,width,height,fill:'#ffffff'}));
+  svg.appendChild(make('rect', {x:left,y:top,width:width-left-right,height:height-top-bottom,fill:'#ffffff',stroke:'#dbe4ee','stroke-width':1}));
+  const gridGroup = make('g', {stroke:'#e2e8f0','stroke-width':1});
+  const ticks = 6;
+  for (let i=0;i<=ticks;i++) {
+    const gx = left + i*(width-left-right)/ticks, gy = top + i*(height-top-bottom)/ticks;
+    gridGroup.appendChild(make('line', {x1:gx,y1:top,x2:gx,y2:height-bottom}));
+    gridGroup.appendChild(make('line', {x1:left,y1:gy,x2:width-right,y2:gy}));
+  }
+  svg.appendChild(gridGroup);
+  const axisGroup = make('g', {stroke:'#64748b','stroke-width':1.1});
+  if (xMin <= 0 && xMax >= 0) axisGroup.appendChild(make('line', {x1:px(0),y1:top,x2:px(0),y2:height-bottom}));
+  if (yMin <= 0 && yMax >= 0) axisGroup.appendChild(make('line', {x1:left,y1:py(0),x2:width-right,y2:py(0)}));
+  svg.appendChild(axisGroup);
+  const labels = make('g', {fill:'#475569','font-size':15,'font-family':'Segoe UI, sans-serif'});
+  for (let i=0;i<=ticks;i++) {
+    const xv = xMin + i*(xMax-xMin)/ticks;
+    const yv = yMin + (ticks-i)*(yMax-yMin)/ticks;
+    const tx = make('text', {x:left + i*(width-left-right)/ticks, y:height-bottom+24, 'text-anchor':'middle'}); tx.textContent = xv.toFixed(4); labels.appendChild(tx);
+    const ty = make('text', {x:left-10, y:top + i*(height-top-bottom)/ticks + 5, 'text-anchor':'end'}); ty.textContent = yv.toFixed(4); labels.appendChild(ty);
+  }
+  const xlab = make('text', {x:(left + width-right)/2, y:height-14, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}); xlab.textContent = options.xlabel || 'x'; labels.appendChild(xlab);
+  const ylab = make('text', {x:24, y:(top+height-bottom)/2, transform:`rotate(-90 24 ${(top+height-bottom)/2})`, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}); ylab.textContent = options.ylabel || 'y'; labels.appendChild(ylab);
+  svg.appendChild(labels);
+  for (const s of series) {
+    if (s.type === 'line') {
+      const d = s.data.map((p,i) => `${i===0?'M':'L'} ${px(p.x).toFixed(2)} ${py(p.y).toFixed(2)}`).join(' ');
+      svg.appendChild(make('path', {d, fill:'none', stroke:s.color, 'stroke-width':s.width || 2.3, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+    } else if (s.type === 'points') {
+      const g = make('g', {fill:s.color, stroke:'#ffffff', 'stroke-width':1.2});
+      s.data.forEach(p => g.appendChild(make('circle', {cx:px(p.x), cy:py(p.y), r:s.radius || 4.2})));
+      svg.appendChild(g);
+    }
+  }
+
+  if (options.inset && options.inset.xMax > options.inset.xMin) {
+    const insetSeries = series.map(s => ({
+      ...s,
+      data: s.data.filter(p => p.x >= options.inset.xMin && p.x <= options.inset.xMax)
+    })).filter(s => s.data.length >= (s.type === 'line' ? 2 : 1));
+
+    if (insetSeries.length) {
+      const iw = 250, ih = 130;
+      const ix = (width - iw) / 2;
+      const iy = height - bottom - ih - 10;
+      let ixMin = options.inset.xMin, ixMax = options.inset.xMax;
+      const insetY = insetSeries.flatMap(s => s.data.map(p => p.y));
+      let iyMin = Math.min(...insetY), iyMax = Math.max(...insetY);
+      if (iyMin === iyMax) { iyMin -= 1e-6; iyMax += 1e-6; }
+      const iDx = ixMax - ixMin, iDy = iyMax - iyMin;
+      ixMin -= 0.04 * iDx; ixMax += 0.04 * iDx; iyMin -= 0.12 * iDy; iyMax += 0.12 * iDy;
+
+      const iPX = x => ix + (x-ixMin)/(ixMax-ixMin)*iw;
+      const iPY = y => iy + ih - (y-iyMin)/(iyMax-iyMin)*ih;
+
+      svg.appendChild(make('rect', {x:ix-8, y:iy-8, width:iw+16, height:ih+16, rx:10, fill:'#ffffff', stroke:'#cbd5e1', 'stroke-width':1.2}));
+      svg.appendChild(make('rect', {x:ix, y:iy, width:iw, height:ih, fill:'#ffffff', stroke:'#dbe4ee', 'stroke-width':1}));
+
+      const insetGrid = make('g', {stroke:'#e2e8f0', 'stroke-width':1});
+      const iTicks = 4;
+      for (let i=0;i<=iTicks;i++) {
+        const gx = ix + i*iw/iTicks, gy = iy + i*ih/iTicks;
+        insetGrid.appendChild(make('line', {x1:gx, y1:iy, x2:gx, y2:iy+ih}));
+        insetGrid.appendChild(make('line', {x1:ix, y1:gy, x2:ix+iw, y2:gy}));
+      }
+      svg.appendChild(insetGrid);
+
+      const insetAxes = make('g', {stroke:'#64748b', 'stroke-width':1.05});
+      if (ixMin <= 0 && ixMax >= 0) insetAxes.appendChild(make('line', {x1:iPX(0), y1:iy, x2:iPX(0), y2:iy+ih}));
+      if (iyMin <= 0 && iyMax >= 0) insetAxes.appendChild(make('line', {x1:ix, y1:iPY(0), x2:ix+iw, y2:iPY(0)}));
+      svg.appendChild(insetAxes);
+
+      for (const s of insetSeries) {
+        if (s.type === 'line') {
+          const d = s.data.map((p,i) => `${i===0?'M':'L'} ${iPX(p.x).toFixed(2)} ${iPY(p.y).toFixed(2)}`).join(' ');
+          svg.appendChild(make('path', {d, fill:'none', stroke:s.color, 'stroke-width':s.width || 2.2, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+        } else if (s.type === 'points') {
+          const g = make('g', {fill:s.color, stroke:'#ffffff', 'stroke-width':1});
+          s.data.forEach(p => g.appendChild(make('circle', {cx:iPX(p.x), cy:iPY(p.y), r:Math.max(2.5, (s.radius || 4.2) - 1.2)})));
+          svg.appendChild(g);
+        }
+      }
+
+      const insetTitle = make('text', {x:ix+8, y:iy-12, fill:'#0f172a', 'font-size':13, 'font-weight':700, 'font-family':'Segoe UI, sans-serif'});
+      insetTitle.textContent = options.inset.title || 'Leading edge detail';
+      svg.appendChild(insetTitle);
+    }
+  }
+}
+
+function toCsv(rows) {
+  const head = 'x;z_upper;z_lower;z_c;z_t';
+  const body = rows.map(r => [r.x, r.yu, r.yl, r.ycamber, r.thickness].map(v => Number(v).toPrecision(12)).join(';'));
+  return '\ufeffsep=;\n' + [head, ...body].join('\n');
+}
+
+function downloadText(content, filename, mime='text/plain;charset=utf-8') {
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = filename; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+}
+
+function runExtraction(rawText, opts) {
+  let points = parseCoordinateText(rawText, opts.forceClosure);
+  if (opts.normalizeChord) points = normalizeChord(points);
+  const surfaces = splitSurfaces(points);
+  const xStart = Math.max(surfaces.upper[0].x, surfaces.lower[0].x);
+  const xEnd = Math.min(surfaces.upper[surfaces.upper.length-1].x, surfaces.lower[surfaces.lower.length-1].x);
+  if (!(xEnd > xStart)) throw new Error('Upper and lower surfaces do not overlap on a valid chordwise interval.');
+  const xUpper = surfaces.upper.map(p=>p.x), yUpper = surfaces.upper.map(p=>p.y);
+  const xLower = surfaces.lower.map(p=>p.x), yLower = surfaces.lower.map(p=>p.y);
+  const n = Math.max(40, Math.min(999, Number(opts.samples) || 500));
+  const grid = createGrid(n, xStart, xEnd);
+  const yu = evalInterpolator(opts.mode, xUpper, yUpper, grid);
+  const yl = evalInterpolator(opts.mode, xLower, yLower, grid);
+  const rows = grid.map((x,i) => ({ x, yu: yu[i], yl: yl[i], ycamber: 0.5*(yu[i]+yl[i]), thickness: yu[i]-yl[i] }));
+  const summary = computeSummary(rows, surfaces);
+  return { points, surfaces, rows, summary };
+}
+
+
+function makeSummaryCards(summary, lang, samples) {
+  const labels = lang === 'en'
+    ? [
+        ['MAXIMUM CAMBER', `${(Math.abs(summary.maxCamber)*100).toFixed(2)}% at x/c = ${(summary.xmaxCamber*100).toFixed(1)}%`],
+        ['MAXIMUM THICKNESS', `${(summary.maxThickness*100).toFixed(2)}% at x/c = ${(summary.xmaxThickness*100).toFixed(1)}%`],
+        ['SURFACE POINTS', `${summary.pointsUpper + summary.pointsLower} surface points`]
+      ]
+    : [
+        ['CAMBAGEM MÁXIMA', `${(Math.abs(summary.maxCamber)*100).toFixed(2)}% em x/c = ${(summary.xmaxCamber*100).toFixed(1)}%`],
+        ['ESPESSURA MÁXIMA', `${(summary.maxThickness*100).toFixed(2)}% em x/c = ${(summary.xmaxThickness*100).toFixed(1)}%`],
+        ['PONTOS DA SUPERFÍCIE', `${summary.pointsUpper + summary.pointsLower} pontos de superfície`]
+      ];
+  return labels.map(([label,value]) => `<div class="result-item"><div class="result-label">${label}</div><div class="result-value">${value}</div></div>`).join('');
+}
+
+function drawPlot(svg, series, options={}) {
+  if (!svg) return;
+  drawAxesAndSeries(svg, series, options);
+}
+
+function wireLinearExtraction(ids, lang) {
+  const textarea = document.getElementById(ids.textarea);
+  const fileInput = document.getElementById(ids.file);
+  const runBtn = document.getElementById(ids.runBtn);
+  const sampleBtn = document.getElementById(ids.sampleBtn);
+  const samplesInput = document.getElementById(ids.samples);
+  const svgGeom = document.getElementById(ids.svgGeom);
+  const svgCamber = document.getElementById(ids.svgCamber);
+  const svgThickness = document.getElementById(ids.svgThickness);
+  const summaryCards = document.getElementById(ids.summaryCards);
+  const downloadBtn = document.getElementById(ids.downloadBtn);
+  let latestCsv = '';
+  window.__unsaeroToolRenders = window.__unsaeroToolRenders || {};
+  window.__unsaeroToolRenders[lang] = render;
+  const togglePoints = document.getElementById(ids.togglePoints);
+  const toggleSurface = document.getElementById(ids.toggleSurface);
+  const toggleCamber = document.getElementById(ids.toggleCamber);
+
+  function render() {
+    if (!textarea) return;
+    try {
+      const samples = Math.max(40, Math.min(999, Number(samplesInput?.value) || 500));
+      const result = runExtraction(textarea.value, {mode:'pchip', samples, normalizeChord:true, forceClosure:false});
+      const upperCurve = result.rows.map(r => ({x:r.x, y:r.yu}));
+      const lowerCurve = result.rows.map(r => ({x:r.x, y:r.yl}));
+      const contourCurve = upperCurve.concat(lowerCurve.slice().reverse());
+      const camberCurve = result.rows.map(r => ({x:r.x, y:r.ycamber}));
+      const thickCurve = result.rows.map(r => ({x:r.x, y:r.thickness}));
+      const rawPoints = result.points.map(p => ({x:p.x, y:p.y}));
+
+      const geometrySeries = [];
+      if (!togglePoints || togglePoints.checked) geometrySeries.push({type:'points', data:rawPoints, color:'#334155'});
+      if (!toggleSurface || toggleSurface.checked) geometrySeries.push({type:'line', data:contourCurve, color:'#111827'});
+      if (!toggleCamber || toggleCamber.checked) geometrySeries.push({type:'line', data:camberCurve, color:'#0284c7'});
+
+      drawPlot(svgGeom, geometrySeries.length ? geometrySeries : [{type:'line', data:camberCurve, color:'#0284c7'}],
+        {xlabel:'x/c', ylabel:'z/c', equalScale:true, preserveFullX:true, yCenter:0, yMin:-0.16, yMax:0.16, leftMargin:108});
+
+      drawPlot(svgCamber, [
+        {type:'line', data:camberCurve, color:'#0284c7'}
+      ], {xlabel:'x/c', ylabel:'z_c/c', leftMargin:108, inset:{xMin:0, xMax:0.10, title: lang === 'en' ? 'Leading edge' : 'Bordo de ataque'}});
+
+      drawPlot(svgThickness, [
+        {type:'line', data:thickCurve, color:'#dc2626'}
+      ], {xlabel:'x/c', ylabel:'z_t/c', leftMargin:108, inset:{xMin:0, xMax:0.10, title: lang === 'en' ? 'Leading edge' : 'Bordo de ataque'}});
+
+      latestCsv = toCsv(result.rows);
+      if (summaryCards) summaryCards.innerHTML = makeSummaryCards(result.summary, lang, samples);
+    } catch (error) {
+      if (summaryCards) {
+        const msg = lang === 'en' ? 'Could not process coordinates.' : 'Não foi possível processar as coordenadas.';
+        summaryCards.innerHTML = `<div class="result-item"><div class="result-label">${lang==='en'?'Error':'Erro'}</div><div class="result-value muted">${msg}</div></div>`;
+      }
+      console.error(error);
+    }
+  }
+
+  runBtn?.addEventListener('click', render);
+  samplesInput?.addEventListener('change', render);
+  [togglePoints, toggleSurface, toggleCamber].forEach(el => el?.addEventListener('change', render));
+  downloadBtn?.addEventListener('click', () => {
+    if (!latestCsv) render();
+    if (latestCsv) downloadText(latestCsv, 'unsaero_geometric_decomposition_data.csv', 'text/csv;charset=utf-8');
+  });
+  sampleBtn?.addEventListener('click', () => { if (textarea) textarea.value = SD7003_SAMPLE_DATA; render(); });
+  fileInput?.addEventListener('change', async (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file || !textarea) return;
+    textarea.value = await file.text();
+    render();
+  });
+  render();
+}
+
+
+window.__unsaeroToolRenders = window.__unsaeroToolRenders || {};
+function getToolIdsByLang(lang) {
+  const suffix = lang === 'pt' ? '-pt' : '';
+  return {
+    textarea: `points-input${suffix}`,
+    samples: `samples-input${suffix}`,
+    togglePoints: `toggle-points${suffix}`,
+    toggleSurface: `toggle-surface${suffix}`,
+    toggleCamber: `toggle-camber${suffix}`
+  };
+}
+function syncInputValue(fromId, toId) {
+  const from = document.getElementById(fromId);
+  const to = document.getElementById(toId);
+  if (from && to) to.value = from.value;
+}
+function syncChecked(fromId, toId) {
+  const from = document.getElementById(fromId);
+  const to = document.getElementById(toId);
+  if (from && to) to.checked = from.checked;
+}
+window.syncGeometricToolState = function(fromLang, toLang) {
+  const from = getToolIdsByLang(fromLang);
+  const to = getToolIdsByLang(toLang);
+  syncInputValue(from.textarea, to.textarea);
+  syncInputValue(from.samples, to.samples);
+  syncChecked(from.togglePoints, to.togglePoints);
+  syncChecked(from.toggleSurface, to.toggleSurface);
+  syncChecked(from.toggleCamber, to.toggleCamber);
+  window.__unsaeroToolRenders?.[toLang]?.();
+};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  preloadSD7003();
+  wireLinearExtraction({textarea:'points-input', file:'file-input', samples:'samples-input', runBtn:'run-btn', sampleBtn:'sample-btn', svgGeom:'plot-geom', svgCamber:'plot-camber', svgThickness:'plot-thickness', summaryCards:'summary-cards', togglePoints:'toggle-points', toggleSurface:'toggle-surface', toggleCamber:'toggle-camber', downloadBtn:'download-data-btn'}, 'en');
+  wireLinearExtraction({textarea:'points-input-pt', file:'file-input-pt', samples:'samples-input-pt', runBtn:'run-btn-pt', sampleBtn:'sample-btn-pt', svgGeom:'plot-geom-pt', svgCamber:'plot-camber-pt', svgThickness:'plot-thickness-pt', summaryCards:'summary-cards-pt', togglePoints:'toggle-points-pt', toggleSurface:'toggle-surface-pt', toggleCamber:'toggle-camber-pt', downloadBtn:'download-data-btn-pt'}, 'pt');
+});
+</script>
+<script>
+(function () {
+  const chromeTranslations = {
+    en: {nav_home:"Home",nav_teaching:"Teaching",nav_research:"Research",nav_tools:"Tools",nav_contact:"Contact",footer_rights:"© 2025–2026 UNSAERO. All rights reserved."},
+    pt: {nav_home:"Início",nav_teaching:"Ensino",nav_research:"Pesquisa",nav_tools:"Ferramentas",nav_contact:"Contato",footer_rights:"© 2025–2026 UNSAERO. Todos os direitos reservados."}
+  };
+  function normalizedLang(lang){return ["pt","en"].includes(lang)?lang:"en";}
+  function applyChromeI18n(lang){lang=normalizedLang(lang||localStorage.getItem("unsaero-lang")||"en");const dictionary=chromeTranslations[lang]||chromeTranslations.en;document.querySelectorAll("[data-i18n]").forEach((el)=>{const key=el.getAttribute("data-i18n");if(dictionary[key]) el.textContent=dictionary[key];});}
+  window.applyChromeI18n=applyChromeI18n;
+  const existingSetLang=window.setLang;
+  if(typeof existingSetLang==="function"&&!existingSetLang.__unsaeroWrapped){const wrappedSetLang=function(lang){lang=normalizedLang(lang);existingSetLang(lang);applyChromeI18n(lang);};wrappedSetLang.__unsaeroWrapped=true;window.setLang=wrappedSetLang;}
+  applyChromeI18n(localStorage.getItem("unsaero-lang")||"en");
+})();
+</script>
+</body>
+</html>

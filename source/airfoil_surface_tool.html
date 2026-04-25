@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Airfoil Camber and Thickness Tool | UNSAERO</title>
+<meta content="Interactive UNSAERO tool for nonlinear geometric decomposition of airfoils into camber and thickness contributions using physically interpretable geometry." name="description"/>
+<meta content="index, follow" name="robots"/>
+<meta content="#087fc3" name="theme-color"/>
+
+<meta content="website" property="og:type"/>
+<meta content="UNSAERO" property="og:site_name"/>
+<meta content="Airfoil Camber and Thickness Tool | UNSAERO" property="og:title"/>
+<meta content="Interactive UNSAERO tool for nonlinear geometric decomposition of airfoils into camber and thickness contributions using physically interpretable geometry." property="og:description"/>
+<meta content="https://www.unsaero.com/source/airfoil_surface_tool.html" property="og:url"/>
+<meta content="https://www.unsaero.com/icon.png" property="og:image"/>
+<meta content="en_US" property="og:locale"/>
+<meta content="pt_BR" property="og:locale:alternate"/>
+<meta content="2026-04-23" property="article:modified_time"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="Airfoil Camber and Thickness Tool | UNSAERO" name="twitter:title"/>
+<meta content="Interactive UNSAERO tool for nonlinear geometric decomposition of airfoils into camber and thickness contributions using physically interpretable geometry." name="twitter:description"/>
+<meta content="https://www.unsaero.com/icon.png" name="twitter:image"/>
+
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f8fafc; --panel: #ffffff; --text: #334155; --title: #0f172a; --muted: #64748b;
+  --accent: #0284c7; --header: #2c3e50; --border: #dbe4ee; --footer: #1e293b;
+  --soft-blue: #eaf4fb; --soft-green: #edf7f2; --soft-orange: #fff3e6; --soft-red:#fef2f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+html { scroll-behavior: smooth; }
+body { min-height: 100vh; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+.site-header-wrap { position: sticky; top: 0; z-index: 12000; background: rgba(248,250,252,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(15,23,42,0.06); }
+.site-header { max-width: 1240px; margin: 0 auto; padding: 1.1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.logo { font-family: 'Syncopate', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: 1px; text-decoration: none; }
+.logo, .logo:hover, .logo:visited, .logo:active { color: inherit; text-decoration: none; }
+.uns { color: var(--title); } .aero { color: var(--accent); }
+.lang-switch { display: flex; gap: 1.5rem; }
+.lang-option { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--muted); transition: color 0.2s ease; user-select: none; }
+.lang-option svg { border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); opacity: 0.7; transition: opacity 0.2s ease; }
+.lang-option:hover, .lang-option.active { color: var(--title); }
+.lang-option:hover svg, .lang-option.active svg { opacity: 1; }
+.lang-option.active { border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+main { width: 100%; max-width: 1240px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+#page-top { max-width: 1240px; margin: 0 auto 1.4rem; padding: 34px 32px 28px; border-radius: 12px; color: #fff; background: var(--header); box-shadow: 0 6px 18px rgba(0,0,0,0.12); border: 1px solid rgba(255,255,255,0.12); }
+.header-kicker { font-size: 12px; letter-spacing: 0.22em; text-transform: lowercase; color: rgba(255,255,255,0.78); margin-bottom: 8px; }
+#page-top h1 { margin: 0 0 10px; line-height: 1.06; font-weight: 800; font-size: clamp(2rem, 4vw, 3.1rem); color: #fff; }
+.hero-subtitle { max-width: 940px; color: rgba(255,255,255,0.88); line-height: 1.6; font-size: 1rem; margin-bottom: 10px; }
+.last-updated { font-size: 0.98rem; color: rgba(255,255,255,0.78); }
+.lang-content { display: none; } .lang-content.active { display: block; }
+.content-stack { display: flex; flex-direction: column; gap: 1rem; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; box-shadow: 0 8px 18px rgba(15,23,42,0.04); }
+.section-head { margin-bottom: 0.95rem; }
+.section-head h2 { color: var(--title); font-size: 1.38rem; line-height: 1.2; margin-bottom: 0.25rem; }
+.section-head p { color: var(--muted); line-height: 1.6; }
+.tool-panel { padding-top: 1.05rem; }
+.tool-panel .section-head { margin-bottom: 0.7rem; }
+.tool-panel .section-head h2 { margin-bottom: 0.18rem; }
+.tool-panel .section-head p { font-size: 0.96rem; line-height: 1.45; }
+.prose p, .prose li { font-size: 1rem; line-height: 1.72; }
+.prose p + p { margin-top: 0.85rem; }
+.prose ul { padding-left: 1.15rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.grid-2, .grid-3, .grid-4 { display: grid; gap: 0.9rem; }
+.grid-2 { grid-template-columns: 1.2fr 0.8fr; }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mini-card, .stat-card { border: 1px solid var(--border); border-radius: 14px; padding: 1rem; background: #fff; }
+.mini-card h3, .stat-card h3 { color: var(--title); font-size: 1rem; line-height: 1.32; margin-bottom: 0.4rem; }
+.mini-card p, .mini-card li, .stat-card p { color: var(--text); font-size: 0.95rem; line-height: 1.6; }
+.mini-card ul { padding-left: 1rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.tone-blue { background: var(--soft-blue); } .tone-green { background: var(--soft-green); } .tone-orange { background: var(--soft-orange); } .tone-red { background: var(--soft-red); }
+.controls-grid { display: flex; flex-direction: column; gap: 0.9rem; }
+.tool-top { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 0.9rem; align-items: start; }
+.tool-bottom { display: grid; grid-template-columns: minmax(240px, 1fr) 220px minmax(320px, 1.15fr); gap: 0.9rem; align-items: end; }
+.text-input, .status-box, .data-table-wrap, .plot-wrap { border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+.text-input textarea { width: 100%; min-height: 118px; height: 118px; max-height: 150px; resize: vertical; border: none; outline: none; padding: 0.75rem 0.9rem; background: transparent; color: var(--title); font-size: 0.94rem; line-height: 1.35; font-family: 'Consolas', 'SFMono-Regular', monospace; }
+.control-stack { display: flex; flex-direction: column; gap: 0.75rem; }
+.control-group { display: flex; flex-direction: column; gap: 0.45rem; }
+.control-row-2 { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:0.75rem; }
+.label { color: var(--title); font-size: 0.94rem; font-weight: 700; }
+.help { color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+select, input[type="file"], .button, input[type="number"] { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 0.64rem 0.78rem; background: #fff; color: var(--title); font-size: 0.93rem; }
+.button-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+.inline-tools { display:flex; flex-wrap:wrap; gap:0.95rem 1.1rem; align-items:center; margin-bottom:0.85rem; }
+.inline-tools .toggle-row { gap:1.1rem; }
+.inline-tools .button { width:auto; min-width:180px; padding:0.66rem 1rem; }
+.plot-grid-2 { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:0.95rem; }
+.button { cursor: pointer; text-align: center; font-weight: 700; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+.button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.button.secondary { background: #fff; }
+.button:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(15,23,42,0.08); }
+.toggle-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+.toggle { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text); font-size: 0.93rem; }
+.toggle input { width: auto; }
+.status-box { padding: 0.8rem 0.9rem; display: flex; flex-direction: column; gap: 0.42rem; }
+.status-line { color: var(--text); font-size: 0.91rem; line-height: 1.38; }
+.status-line strong { color: var(--title); }
+.plot-wrap { padding: 0.8rem; }
+.plot-stage { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,1)); border: 1px solid rgba(15,23,42,0.06); overflow: hidden; }
+.plot-stage.small { aspect-ratio: 16 / 7; }
+svg.plot-svg { width: 100%; height: 100%; display: block; }
+.plot-caption { color: var(--muted); font-size: 0.87rem; line-height: 1.5; margin-top: 0.65rem; }
+.data-table-wrap { overflow: auto; max-height: 380px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.data-table th, .data-table td { padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--border); text-align: right; }
+.data-table th { position: sticky; top: 0; background: #fff; color: var(--title); }
+.data-table td:first-child, .data-table th:first-child { text-align: center; }
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.legend-item { display: inline-flex; align-items: center; gap: 0.45rem; color: var(--text); font-size: 0.9rem; }
+.legend-key { width: 18px; height: 0; border-top: 2.4px solid #0f172a; display:inline-block; }
+.legend-dot { width: 11px; height: 11px; border-radius: 999px; background: #0284c7; display:inline-block; }
+.footer-main { background: var(--footer); padding: 0.9rem 1.5rem; margin-top: auto; }
+.footer-content-wrapper { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; }
+.tech-info { color: #f8fafc; font-size: 0.85rem; font-weight: 500; }
+.tech-info a { color: #f8fafc; text-decoration: none; border-bottom: 1px dotted var(--muted); }
+.tech-info a:hover { color: var(--accent); border-bottom-style: solid; border-color: var(--accent); }
+@media (max-width: 980px) { .tool-top, .tool-bottom, .grid-2, .grid-3, .grid-4, .control-row-2, .plot-grid-2 { grid-template-columns: 1fr; } .inline-tools { align-items:flex-start; flex-direction:column; } }
+@media (max-width: 768px) {
+  .site-header { padding: 1rem; flex-direction: column; }
+  main { padding: 1.25rem 0.85rem 2.4rem; }
+  #page-top { padding: 28px 24px 24px; }
+  .button-row { grid-template-columns: 1fr; }
+  .footer-main { padding: 1rem; }
+  .footer-content-wrapper { justify-content: center; text-align: center; }
+}
+
+html body .unsaero-global-lang-option svg {
+  display: inline-block !important;
+  flex: 0 0 auto !important;
+  width: 24px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  border-radius: 2px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+  opacity: 1 !important;
+  transition: opacity 0.2s ease !important;
+}
+html body .unsaero-global-lang-option:hover svg,
+html body .unsaero-global-lang-option.active svg { opacity: 1 !important; }
+</style>
+<link href="../assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<meta content="aerodynamics, analytical aerodynamics, unsteady aerodynamics, reduced-order models, airfoil geometry, vortex dynamics, distribution theory, thin airfoil theory, aerospace engineering" name="keywords"/><meta content="UNSAERO" name="author"/><link href="https://www.unsaero.com/source/airfoil_surface_tool.html" rel="canonical"/><link href="../favicon.ico" rel="icon" type="image/x-icon"/><link href="../assets/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/><link href="../assets/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="../assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta content="2048" property="og:image:width"/><meta content="2048" property="og:image:height"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Airfoil Camber and Thickness Tool | UNSAERO", "url": "https://www.unsaero.com/source/airfoil_surface_tool.html", "description": "Interactive UNSAERO tool for nonlinear geometric decomposition of airfoils into camber and thickness contributions using physically interpretable geometry.", "isPartOf": {"@type": "WebSite", "name": "UNSAERO", "url": "https://www.unsaero.com/"}, "publisher": {"@type": "Organization", "name": "UNSAERO", "url": "https://www.unsaero.com/", "logo": "https://www.unsaero.com/icon.png"}, "inLanguage": ["en-US", "pt-BR"]}</script></head>
+<body data-page="airfoil">
+<style id="unsaero-critical-header-style">
+html body .unsaero-global-header-wrap,
+html body .unsaero-global-header-wrap * { box-sizing: border-box !important; }
+html body .unsaero-global-header-wrap {
+  position: sticky !important; top: 0 !important; z-index: 12000 !important;
+  width: 100% !important; margin: 0 !important; padding: 0 !important;
+  background: rgba(248,250,252,0.92) !important;
+  backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important;
+  border: 0 !important; border-bottom: 1px solid rgba(15,23,42,0.06) !important;
+  border-radius: 0 !important; box-shadow: none !important;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  text-align: left !important;
+}
+html body .unsaero-global-header {
+  width: 100% !important; max-width: 1240px !important; min-height: 60px !important;
+  margin: 0 auto !important; padding: 1.05rem 1.5rem !important;
+  display: flex !important; flex-direction: row !important; justify-content: space-between !important;
+  align-items: center !important; gap: 0.55rem !important;
+  background: #ffffff !important; color: #334155 !important;
+  border: 0 !important; border-radius: 0 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+  text-align: left !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+}
+html body .unsaero-global-logo,
+html body .unsaero-global-logo:visited,
+html body .unsaero-global-logo:hover,
+html body .unsaero-global-logo:active {
+  display: inline-flex !important; align-items: center !important; flex: 0 0 auto !important;
+  margin: 0 !important; padding: 0 !important; border: 0 !important;
+  background: transparent !important; box-shadow: none !important;
+  font-family: 'Syncopate', Arial, sans-serif !important;
+  font-size: 1.6rem !important; font-style: normal !important; font-weight: 700 !important;
+  letter-spacing: 1px !important; line-height: 1 !important; text-transform: none !important;
+  color: inherit !important; text-decoration: none !important; white-space: nowrap !important;
+}
+html body .unsaero-global-uns { color: #0f172a !important; }
+html body .unsaero-global-aero { color: #0284c7 !important; }
+html body .unsaero-global-nav {
+  display: flex !important; flex-direction: row !important; align-items: center !important;
+  justify-content: center !important; flex: 1 1 auto !important; min-width: 0 !important;
+  gap: 0.55rem !important; margin: 0 !important; padding: 0 !important;
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+}
+html body .unsaero-global-nav a,
+html body .unsaero-global-nav a:visited {
+  display: inline-flex !important; align-items: center !important;
+  margin: 0 !important; padding: 0 !important; border: 0 !important;
+  background: transparent !important; color: #64748b !important;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  font-size: 0.88rem !important; font-style: normal !important; font-weight: 650 !important;
+  letter-spacing: normal !important; line-height: 1.2 !important; text-transform: none !important;
+  text-decoration: none !important; white-space: nowrap !important;
+}
+html body .unsaero-global-nav a:hover,
+html body .unsaero-global-nav a.active { color: #0284c7 !important; }
+html body .unsaero-global-lang-switch {
+  display: flex !important; flex-direction: row !important; align-items: center !important;
+  gap: 1.1rem !important; flex: 0 0 auto !important; margin: 0 !important; padding: 0 !important;
+  background: transparent !important;
+}
+html body .unsaero-global-lang-option {
+  display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;
+  margin: 0 !important; padding: 0 0 2px !important;
+  border: 0 !important; border-bottom: 2px solid transparent !important;
+  background: transparent !important; appearance: none !important; cursor: pointer !important;
+  color: #64748b !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  font-size: 0.95rem !important; font-style: normal !important; font-weight: 600 !important;
+  letter-spacing: normal !important; line-height: 1.2 !important; text-transform: none !important;
+}
+html body .unsaero-global-lang-option:hover,
+html body .unsaero-global-lang-option.active { color: #0f172a !important; border-bottom-color: #0284c7 !important; }
+html body.timeline-page { padding: 0 !important; }
+html body.timeline-page #page-top { margin-top: 20px !important; }
+@media (max-width: 900px) {
+  html body .unsaero-global-header { flex-wrap: wrap !important; justify-content: center !important; }
+  html body .unsaero-global-nav { order: 3 !important; width: 100% !important; overflow-x: auto !important; justify-content: flex-start !important; padding: 0.25rem 0 0.05rem !important; }
+}
+@media (max-width: 640px) {
+  html body .unsaero-global-header { padding: 0.9rem 1rem !important; }
+  html body .unsaero-global-logo { font-size: 1.35rem !important; }
+}
+</style>
+<!-- UNSAERO_HEADER_START -->
+<div class="unsaero-global-header-wrap">
+  <div class="unsaero-global-header">
+    <a class="unsaero-global-logo" href="../index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
+    <nav class="unsaero-global-nav" aria-label="Primary navigation">
+      <a href="../index.html" data-nav="home" data-i18n="nav_home">Home</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../research.html" data-nav="research" data-i18n="nav_research">Research</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="unsaero-global-lang-switch" aria-label="Language selector">
+      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
+        EN
+      </button>
+      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
+        PT
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNSAERO_HEADER_END -->
+<main>
+<header id="page-top">
+<div class="lang-content active" id="hero-en">
+<div class="header-kicker">Web tools</div>
+<h1>Airfoil Camber and Thickness Tool</h1>
+<p class="hero-subtitle">Paste or upload an airfoil coordinate set, reconstruct upper and lower surfaces with a parametric piecewise model, and extract the camber line and thickness distribution on a common chordwise grid.</p>
+<p class="last-updated">Last updated: 23 April 2026</p>
+</div>
+<div class="lang-content" id="hero-pt">
+<div class="header-kicker">Ferramentas web</div>
+<h1>Ferramenta de Curvatura Média e Espessura</h1>
+<p class="hero-subtitle">Cole ou envie um conjunto de coordenadas do aerofólio, reconstrua as superfícies superior e inferior com um modelo paramétrico por partes e extraia a linha de curvatura média e a distribuição de espessura em uma malha cordal comum.</p>
+<p class="last-updated">Última atualização: 23 de abril de 2026</p>
+</div>
+</header>
+<div class="lang-content active" id="content-en">
+<div class="content-stack">
+<section class="panel">
+<div class="section-head">
+<h2>Interactive tool</h2>
+<p>Load coordinates and compute the extracted camber and thickness distributions.</p>
+</div>
+<div class="controls-grid">
+<div class="tool-top">
+<div class="text-input">
+<textarea id="points-input" spellcheck="false"></textarea>
+</div>
+<div class="status-box" id="status-box"><div class="status-line"><strong>Status:</strong> Waiting for coordinates.</div></div>
+</div>
+<div class="tool-bottom">
+<div class="control-group">
+<label class="label" for="file-input">Upload coordinate file</label>
+<input accept=".dat,.txt,.csv,text/plain" id="file-input" type="file"/>
+</div>
+<div class="control-group">
+<label class="label" for="samples-input">Chordwise samples</label>
+<input id="samples-input" max="3000" min="40" step="10" type="number" value="401"/>
+<label class="toggle"><input id="force-closure" type="checkbox"/> Force closure</label>
+</div>
+<div class="button-row">
+<button class="button primary" id="plot-btn" type="button">Run</button>
+<button class="button secondary" id="sample-btn" type="button">Reload sample</button>
+</div>
+</div>
+</div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Extracted geometry</h2><p>The reconstructed airfoil contour is shown together with the current linear-approximation camber line.</p></div>
+<div class="inline-tools">
+<div class="toggle-row">
+<label class="toggle"><input checked="" id="show-points" type="checkbox"/> Show discrete points</label>
+</div>
+<button class="button secondary" id="download-csv-btn" type="button">Download CSV</button>
+</div>
+<div class="plot-wrap">
+<div class="plot-stage geometry"><svg aria-label="Airfoil geometry plot" class="plot-svg" id="plot-geom" role="img" viewbox="0 0 920 700"></svg></div>
+<div class="legend">
+<div class="legend-item"><span class="legend-key" style="border-top-color:#0f172a"></span> Reconstructed contour</div>
+<div class="legend-item"><span class="legend-key" style="border-top-color:#0284c7"></span> Linear approx. camber</div>
+<div class="legend-item"><span class="legend-dot"></span> Imported points</div>
+</div>
+<div class="plot-caption">The imported point set is split at the leading edge, reconstructed branch by branch, and then reassembled as a smooth airfoil contour. The displayed camber corresponds to the current linear approximation.</div>
+</div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Camber distribution</h2><p>The current linear-approximation camber line is reported separately as a chordwise distribution on the common analysis grid.</p></div>
+<div class="plot-wrap">
+<div class="plot-stage small"><svg aria-label="Camber distribution plot" class="plot-svg" id="plot-camber" role="img" viewbox="0 0 1000 420"></svg></div>
+<div class="plot-caption">This curve is obtained directly from the reconstructed upper and lower branches as the current linear approximation, y_c(x) = [y_u(x)+y_l(x)]/2.</div>
+</div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Thickness distribution</h2><p>The thickness is evaluated as the vertical distance between reconstructed upper and lower surfaces on the common analysis grid.</p></div>
+<div class="plot-wrap">
+<div class="plot-stage small"><svg aria-label="Thickness distribution plot" class="plot-svg" id="plot-thickness" role="img" viewbox="0 0 1000 420"></svg></div>
+<div class="plot-caption">This is a high-quality chordwise extraction step. A later version can add nonlinear normal-based pairing.</div>
+</div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Summary</h2><p>Quick geometric indicators extracted from the reconstructed distributions.</p></div>
+<div class="grid-4" id="summary-cards-en"></div>
+</section>
+</div>
+</div>
+<div class="lang-content" id="content-pt">
+<div class="content-stack">
+<section class="panel">
+<div class="section-head"><h2>Ferramenta interativa</h2><p>Carregue as coordenadas e calcule as distribuições extraídas de linha média e espessura.</p></div>
+<div class="controls-grid">
+<div class="tool-top">
+<div class="text-input"><textarea id="points-input-pt" spellcheck="false"></textarea></div>
+<div class="status-box" id="status-box-pt"><div class="status-line"><strong>Status:</strong> Aguardando coordenadas.</div></div>
+</div>
+<div class="tool-bottom">
+<div class="control-group"><label class="label" for="file-input-pt">Enviar arquivo de coordenadas</label><input accept=".dat,.txt,.csv,text/plain" id="file-input-pt" type="file"/></div>
+<div class="control-group"><label class="label" for="samples-input-pt">Amostras ao longo da corda</label><input id="samples-input-pt" max="3000" min="40" step="10" type="number" value="401"/><label class="toggle"><input id="force-closure-pt" type="checkbox"/> Forçar fechamento</label></div>
+<div class="button-row"><button class="button primary" id="plot-btn-pt" type="button">Executar</button><button class="button secondary" id="sample-btn-pt" type="button">Recarregar exemplo</button></div>
+</div>
+</div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Geometria extraída</h2><p>O contorno reconstruído do aerofólio é mostrado juntamente com a linha média da aproximação linear atual.</p></div>
+<div class="inline-tools">
+<div class="toggle-row"><label class="toggle"><input checked="" id="show-points-pt" type="checkbox"/> Mostrar pontos discretos</label></div>
+<button class="button secondary" id="download-csv-btn-pt" type="button">Baixar CSV</button>
+</div>
+<div class="plot-wrap">
+<div class="plot-stage geometry"><svg aria-label="Gráfico da geometria do aerofólio" class="plot-svg" id="plot-geom-pt" role="img" viewbox="0 0 920 700"></svg></div>
+<div class="legend"><div class="legend-item"><span class="legend-key" style="border-top-color:#0f172a"></span> Superfície superior</div><div class="legend-item"><span class="legend-key" style="border-top-color:#475569"></span> Superfície inferior</div><div class="legend-item"><span class="legend-key" style="border-top-color:#0284c7"></span> Linha média aprox. linear</div><div class="legend-item"><span class="legend-dot"></span> Pontos importados</div></div>
+<div class="plot-caption">A ferramenta primeiro divide o contorno em ramos superior e inferior e então reconstrói cada superfície em uma variável cordal monótona.</div>
+</div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Distribuição de linha média</h2><p>A linha média da aproximação linear atual é apresentada separadamente como uma distribuição ao longo da corda na malha comum de análise.</p></div>
+<div class="plot-wrap"><div class="plot-stage small"><svg aria-label="Gráfico da distribuição de linha média" class="plot-svg" id="plot-camber-pt" role="img" viewbox="0 0 1000 420"></svg></div><div class="plot-caption">Esta curva é obtida diretamente dos ramos superior e inferior reconstruídos como a aproximação linear atual, y_c(x) = [y_u(x)+y_l(x)]/2.</div></div>
+</section>
+<section class="panel">
+<div class="section-head"><h2>Distribuição de espessura</h2><p>A espessura é avaliada como a distância vertical entre as superfícies superior e inferior reconstruídas na malha comum de análise.</p></div>
+<div class="plot-wrap"><div class="plot-stage small"><svg aria-label="Gráfico da distribuição de espessura" class="plot-svg" id="plot-thickness-pt" role="img" viewbox="0 0 1000 420"></svg></div><div class="plot-caption">Este é um passo de extração cordal de alta qualidade. Uma próxima versão pode adicionar o pareamento não linear por normais.</div></div>
+</section>
+<section class="panel"><div class="section-head"><h2>Resumo</h2><p>Indicadores geométricos rápidos extraídos das distribuições reconstruídas.</p></div><div class="grid-4" id="summary-cards-pt"></div></section>
+</div>
+</div>
+</main>
+<!-- UNSAERO_FOOTER_START -->
+<footer class="unsaero-global-footer">
+  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
+</footer>
+
+<!-- UNSAERO_FOOTER_END -->
+<script>
+const SAMPLE_DATA = `# SD7003 sample set
+SD7003-085-88
+  1.00000  0.0
+  0.99681  0.00031
+  0.98745  0.00132
+  0.97235  0.00310
+  0.95193  0.00547
+  0.92639  0.00824
+  0.89600  0.01139
+  0.86112  0.01494
+  0.82224  0.01884
+  0.77985  0.02304
+  0.73449  0.02744
+  0.68673  0.03197
+  0.63717  0.03649
+  0.58641  0.04086
+  0.53499  0.04494
+  0.48350  0.04859
+  0.43249  0.05171
+  0.38250  0.05415
+  0.33405  0.05581
+  0.28760  0.05658
+  0.24358  0.05639
+  0.20240  0.05518
+  0.16442  0.05292
+  0.12993  0.04961
+  0.09921  0.04526
+  0.07244  0.03993
+  0.04978  0.03372
+  0.03130  0.02677
+  0.01702  0.01932
+  0.00697  0.01172
+  0.00127  0.00438
+  0.00025 -0.00186
+  0.00457 -0.00741
+  0.01408 -0.01285
+  0.02839 -0.01759
+  0.04763 -0.02141
+  0.07182 -0.02438
+  0.10073 -0.02660
+  0.13407 -0.02809
+  0.17150 -0.02888
+  0.21268 -0.02900
+  0.25719 -0.02852
+  0.30456 -0.02752
+  0.35426 -0.02608
+  0.40572 -0.02428
+  0.45837 -0.02217
+  0.51161 -0.01980
+  0.56484 -0.01723
+  0.61748 -0.01450
+  0.66898 -0.01167
+  0.71883 -0.00887
+  0.76644 -0.00628
+  0.81118 -0.00403
+  0.85241 -0.00220
+  0.88957 -0.00082
+  0.92210  0.00008
+  0.94952  0.00052
+  0.97134  0.00057
+  0.98718  0.00037
+  0.99679  0.00011
+  1.00001 -0.00000`;
+
+function getInitialLang() {
+  const params = new URLSearchParams(window.location.search);
+  const urlLang = params.get('lang');
+  const savedLang = localStorage.getItem('unsaero-lang');
+  return ['pt','en'].includes(urlLang) ? urlLang : (['pt','en'].includes(savedLang) ? savedLang : 'en');
+}
+
+function setLang(lang) {
+  if (!['pt','en'].includes(lang)) lang = 'en';
+  const isEn = lang === 'en';
+  document.getElementById('btn-en')?.classList.toggle('active', isEn);
+  document.getElementById('btn-pt')?.classList.toggle('active', !isEn);
+  document.getElementById('hero-en')?.classList.toggle('active', isEn);
+  document.getElementById('hero-pt')?.classList.toggle('active', !isEn);
+  document.getElementById('content-en')?.classList.toggle('active', isEn);
+  document.getElementById('content-pt')?.classList.toggle('active', !isEn);
+  document.documentElement.lang = isEn ? 'en-US' : 'pt-BR';
+  localStorage.setItem('unsaero-lang', lang);
+}
+
+function parseCoordinateText(text, forceClosure) {
+  const lines = text.split(/\r?\n/);
+  const points = [];
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const tokens = line.split(/[\s,;]+/).filter(Boolean);
+    if (tokens.length < 2) continue;
+    const x = Number(tokens[0]), y = Number(tokens[1]);
+    if (Number.isFinite(x) && Number.isFinite(y)) points.push({x, y});
+  }
+  if (points.length < 3) throw new Error('At least three valid points are required.');
+  if (forceClosure) {
+    const a = points[0], b = points[points.length - 1];
+    if (Math.hypot(a.x - b.x, a.y - b.y) > 1e-12) points.push({x: a.x, y: a.y});
+  }
+  return points;
+}
+
+function cumulativeS(points) {
+  const s = [0];
+  for (let i = 1; i < points.length; i++) s.push(s[i-1] + Math.hypot(points[i].x-points[i-1].x, points[i].y-points[i-1].y));
+  return s;
+}
+
+function normalizeChord(points) {
+  let xmin = Infinity, xmax = -Infinity;
+  for (const p of points) { xmin = Math.min(xmin, p.x); xmax = Math.max(xmax, p.x); }
+  const chord = xmax - xmin;
+  if (!(chord > 0)) throw new Error('Chord length is zero.');
+  return points.map(p => ({ x: (p.x - xmin) / chord, y: p.y / chord }));
+}
+
+function compressSurface(points, ascending=true) {
+  const tol = 1e-10;
+  const arr = points.slice().sort((a,b) => ascending ? a.x - b.x : b.x - a.x);
+  const out = [];
+  for (const p of arr) {
+    if (!out.length || Math.abs(p.x - out[out.length-1].x) > tol) out.push({x:p.x, y:p.y, count:1});
+    else {
+      const q = out[out.length-1];
+      q.y = (q.y * q.count + p.y) / (q.count + 1);
+      q.count += 1;
+    }
+  }
+  return out.map(({x,y}) => ({x,y}));
+}
+
+function splitSurfaces(points) {
+  let leIndex = 0;
+  for (let i = 1; i < points.length; i++) if (points[i].x < points[leIndex].x) leIndex = i;
+  const upperRaw = points.slice(0, leIndex + 1).reverse();
+  const lowerRaw = points.slice(leIndex);
+  if (upperRaw.length < 2 || lowerRaw.length < 2) throw new Error('Could not split the contour into upper and lower surfaces.');
+  const upper = compressSurface(upperRaw, true);
+  const lower = compressSurface(lowerRaw, true);
+  if (upper.length < 2 || lower.length < 2) throw new Error('Insufficient unique surface points after preprocessing.');
+  return { upper, lower, leIndex };
+}
+
+function computePchipDerivatives(x, y) {
+  const n = x.length;
+  if (n === 2) {
+    const slope = (y[1]-y[0])/(x[1]-x[0]);
+    return [slope, slope];
+  }
+  const h = new Array(n-1), delta = new Array(n-1), d = new Array(n).fill(0);
+  for (let i=0;i<n-1;i++) { h[i]=x[i+1]-x[i]; delta[i]=(y[i+1]-y[i])/h[i]; }
+  for (let i=1;i<n-1;i++) {
+    if (delta[i-1] === 0 || delta[i] === 0 || Math.sign(delta[i-1]) !== Math.sign(delta[i])) d[i] = 0;
+    else {
+      const w1 = 2*h[i] + h[i-1], w2 = h[i] + 2*h[i-1];
+      d[i] = (w1+w2)/(w1/delta[i-1] + w2/delta[i]);
+    }
+  }
+  function endpoint(h0,h1,d0,d1) {
+    let v = ((2*h0 + h1)*d0 - h0*d1)/(h0 + h1);
+    if (Math.sign(v) !== Math.sign(d0)) return 0;
+    if (Math.sign(d0) !== Math.sign(d1) && Math.abs(v) > Math.abs(3*d0)) return 3*d0;
+    return v;
+  }
+  d[0] = endpoint(h[0], h[1], delta[0], delta[1]);
+  d[n-1] = endpoint(h[n-2], h[n-3], delta[n-2], delta[n-3]);
+  return d;
+}
+
+function computeNaturalCubicSecondDerivatives(x, y) {
+  const n = x.length;
+  const m = new Array(n).fill(0);
+  if (n <= 2) return m;
+  const a = new Array(n).fill(0), b = new Array(n).fill(0), c = new Array(n).fill(0), r = new Array(n).fill(0);
+  for (let i=1;i<n-1;i++) {
+    const h0 = x[i]-x[i-1], h1 = x[i+1]-x[i];
+    a[i]=h0; b[i]=2*(h0+h1); c[i]=h1; r[i]=6*((y[i+1]-y[i])/h1 - (y[i]-y[i-1])/h0);
+  }
+  for (let i=1;i<n-2;i++) {
+    const factor = a[i+1]/b[i];
+    b[i+1] -= factor*c[i];
+    r[i+1] -= factor*r[i];
+  }
+  for (let i=n-2;i>=1;i--) m[i] = (r[i] - c[i]*m[i+1])/b[i];
+  return m;
+}
+
+function evalInterpolator(mode, x, y, query) {
+  const n = x.length;
+  const aux = mode === 'pchip' ? computePchipDerivatives(x,y) : mode === 'cubic' ? computeNaturalCubicSecondDerivatives(x,y) : null;
+  const out = [];
+  let seg = 0;
+  for (const xv of query) {
+    while (seg < n - 2 && xv > x[seg+1]) seg++;
+    const x0 = x[seg], x1 = x[seg+1], h = x1 - x0;
+    const u = h === 0 ? 0 : (xv - x0)/h;
+    let val;
+    if (mode === 'linear') val = y[seg]*(1-u) + y[seg+1]*u;
+    else if (mode === 'pchip') {
+      const d0 = aux[seg], d1 = aux[seg+1];
+      const h00 = 2*u*u*u - 3*u*u + 1, h10 = u*u*u - 2*u*u + u, h01 = -2*u*u*u + 3*u*u, h11 = u*u*u - u*u;
+      val = h00*y[seg] + h10*h*d0 + h01*y[seg+1] + h11*h*d1;
+    } else {
+      const m0 = aux[seg], m1 = aux[seg+1];
+      const a = (x1 - xv)/h, b = (xv - x0)/h;
+      val = a*y[seg] + b*y[seg+1] + ((a*a*a - a)*m0 + (b*b*b - b)*m1)*h*h/6;
+    }
+    out.push(val);
+  }
+  return out;
+}
+
+function createGrid(n, x0, x1) {
+  const out = [];
+  for (let i=0;i<n;i++) out.push(x0 + (x1 - x0) * i / (n - 1));
+  return out;
+}
+
+function formatNumber(v) { return Number(v).toFixed(6); }
+
+function computeSummary(rows, surfaces) {
+  const thickness = rows.map(r => r.thickness);
+  const camberAbs = rows.map(r => Math.abs(r.ycamber));
+  let imaxT = 0, imaxC = 0;
+  for (let i=1;i<rows.length;i++) {
+    if (thickness[i] > thickness[imaxT]) imaxT = i;
+    if (camberAbs[i] > camberAbs[imaxC]) imaxC = i;
+  }
+  return {
+    pointsUpper: surfaces.upper.length,
+    pointsLower: surfaces.lower.length,
+    xmaxThickness: rows[imaxT].x,
+    maxThickness: rows[imaxT].thickness,
+    xmaxCamber: rows[imaxC].x,
+    maxCamber: rows[imaxC].ycamber,
+    xLE: Math.min(...rows.map(r => r.x)),
+    xTE: Math.max(...rows.map(r => r.x))
+  };
+}
+
+function makeStatCards(summary, lang) {
+  const labels = lang === 'en'
+    ? [
+        ['Upper surface points', summary.pointsUpper],
+        ['Lower surface points', summary.pointsLower],
+        ['Maximum thickness', `${(100*summary.maxThickness).toFixed(3)}% at x/c = ${(100*summary.xmaxThickness).toFixed(1)}%`],
+        ['Maximum |camber|', `${(100*summary.maxCamber).toFixed(3)}% at x/c = ${(100*summary.xmaxCamber).toFixed(1)}%`]
+      ]
+    : [
+        ['Pontos na superfície superior', summary.pointsUpper],
+        ['Pontos na superfície inferior', summary.pointsLower],
+        ['Espessura máxima', `${(100*summary.maxThickness).toFixed(3)}% em x/c = ${(100*summary.xmaxThickness).toFixed(1)}%`],
+        ['Máximo |linha média|', `${(100*summary.maxCamber).toFixed(3)}% em x/c = ${(100*summary.xmaxCamber).toFixed(1)}%`]
+      ];
+  return labels.map(([title, value]) => `<div class="stat-card"><h3>${title}</h3><p>${value}</p></div>`).join('');
+}
+
+function updateTable(rows, tableBody) {
+  tableBody.innerHTML = rows.map((r, i) => `<tr><td>${i+1}</td><td>${formatNumber(r.x)}</td><td>${formatNumber(r.yu)}</td><td>${formatNumber(r.yl)}</td><td>${formatNumber(r.ycamber)}</td><td>${formatNumber(r.thickness)}</td></tr>`).join('');
+}
+
+function setStatus(el, lines) { el.innerHTML = lines.map(line => `<div class="status-line">${line}</div>`).join(''); }
+
+function drawAxesAndSeries(svg, series, options) {
+  const width = Number(svg.viewBox.baseVal.width || 1000), height = Number(svg.viewBox.baseVal.height || 560);
+  const left = 76, right = 34, top = 26, bottom = 56;
+  svg.innerHTML = '';
+  const allX = series.flatMap(s => s.data.map(p => p.x));
+  const allY = series.flatMap(s => s.data.map(p => p.y));
+  let xMin = Math.min(...allX), xMax = Math.max(...allX), yMin = Math.min(...allY), yMax = Math.max(...allY);
+  if (xMin === xMax) { xMin -= 1; xMax += 1; }
+  if (yMin === yMax) { yMin -= 1; yMax += 1; }
+  let xRange = xMax-xMin, yRange = yMax-yMin;
+  const padX = 0.03 * xRange;
+  const padY = 0.05 * yRange;
+  xMin -= padX; xMax += padX; yMin -= padY; yMax += padY;
+  if (options.equalScale) {
+    const plotW = width-left-right, plotH = height-top-bottom;
+    const sx = plotW/(xMax-xMin), sy = plotH/(yMax-yMin), scale = Math.min(sx, sy);
+    const cx = 0.5*(xMin+xMax), cy = 0.5*(yMin+yMax), halfW = plotW/(2*scale), halfH = plotH/(2*scale);
+    xMin = cx-halfW; xMax = cx+halfW; yMin = cy-halfH; yMax = cy+halfH;
+  }
+  const px = x => left + (x-xMin)/(xMax-xMin)*(width-left-right);
+  const py = y => height-bottom - (y-yMin)/(yMax-yMin)*(height-top-bottom);
+  const NS = 'http://www.w3.org/2000/svg';
+  const make = (name, attrs={}) => { const el = document.createElementNS(NS, name); for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); return el; };
+  svg.appendChild(make('rect', {x:0,y:0,width,height,fill:'#ffffff'}));
+  svg.appendChild(make('rect', {x:left,y:top,width:width-left-right,height:height-top-bottom,fill:'#ffffff',stroke:'#dbe4ee','stroke-width':1}));
+  const gridGroup = make('g', {stroke:'#e2e8f0','stroke-width':1});
+  const ticks = 6;
+  for (let i=0;i<=ticks;i++) {
+    const gx = left + i*(width-left-right)/ticks, gy = top + i*(height-top-bottom)/ticks;
+    gridGroup.appendChild(make('line', {x1:gx,y1:top,x2:gx,y2:height-bottom}));
+    gridGroup.appendChild(make('line', {x1:left,y1:gy,x2:width-right,y2:gy}));
+  }
+  svg.appendChild(gridGroup);
+  const axisGroup = make('g', {stroke:'#64748b','stroke-width':1.1});
+  if (xMin <= 0 && xMax >= 0) axisGroup.appendChild(make('line', {x1:px(0),y1:top,x2:px(0),y2:height-bottom}));
+  if (yMin <= 0 && yMax >= 0) axisGroup.appendChild(make('line', {x1:left,y1:py(0),x2:width-right,y2:py(0)}));
+  svg.appendChild(axisGroup);
+  const labels = make('g', {fill:'#475569','font-size':15,'font-family':'Segoe UI, sans-serif'});
+  for (let i=0;i<=ticks;i++) {
+    const xv = xMin + i*(xMax-xMin)/ticks;
+    const yv = yMin + (ticks-i)*(yMax-yMin)/ticks;
+    const tx = make('text', {x:left + i*(width-left-right)/ticks, y:height-bottom+24, 'text-anchor':'middle'}); tx.textContent = xv.toFixed(4); labels.appendChild(tx);
+    const ty = make('text', {x:left-10, y:top + i*(height-top-bottom)/ticks + 5, 'text-anchor':'end'}); ty.textContent = yv.toFixed(4); labels.appendChild(ty);
+  }
+  const xlab = make('text', {x:(left + width-right)/2, y:height-14, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}); xlab.textContent = options.xlabel || 'x'; labels.appendChild(xlab);
+  const ylab = make('text', {x:24, y:(top+height-bottom)/2, transform:`rotate(-90 24 ${(top+height-bottom)/2})`, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}); ylab.textContent = options.ylabel || 'y'; labels.appendChild(ylab);
+  svg.appendChild(labels);
+  for (const s of series) {
+    if (s.type === 'line') {
+      const d = s.data.map((p,i) => `${i===0?'M':'L'} ${px(p.x).toFixed(2)} ${py(p.y).toFixed(2)}`).join(' ');
+      svg.appendChild(make('path', {d, fill:'none', stroke:s.color, 'stroke-width':s.width || 2.3, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+    } else if (s.type === 'points') {
+      const g = make('g', {fill:s.color, stroke:'#ffffff', 'stroke-width':1.2});
+      s.data.forEach(p => g.appendChild(make('circle', {cx:px(p.x), cy:py(p.y), r:s.radius || 4.2})));
+      svg.appendChild(g);
+    }
+  }
+
+  if (options.inset && options.inset.xMax > options.inset.xMin) {
+    const insetSeries = series.map(s => ({
+      ...s,
+      data: s.data.filter(p => p.x >= options.inset.xMin && p.x <= options.inset.xMax)
+    })).filter(s => s.data.length >= (s.type === 'line' ? 2 : 1));
+
+    if (insetSeries.length) {
+      const iw = 250, ih = 130;
+      const ix = (width - iw) / 2;
+      const iy = height - bottom - ih - 10;
+      let ixMin = options.inset.xMin, ixMax = options.inset.xMax;
+      const insetY = insetSeries.flatMap(s => s.data.map(p => p.y));
+      let iyMin = Math.min(...insetY), iyMax = Math.max(...insetY);
+      if (iyMin === iyMax) { iyMin -= 1e-6; iyMax += 1e-6; }
+      const iDx = ixMax - ixMin, iDy = iyMax - iyMin;
+      ixMin -= 0.04 * iDx; ixMax += 0.04 * iDx; iyMin -= 0.12 * iDy; iyMax += 0.12 * iDy;
+
+      const iPX = x => ix + (x-ixMin)/(ixMax-ixMin)*iw;
+      const iPY = y => iy + ih - (y-iyMin)/(iyMax-iyMin)*ih;
+
+      svg.appendChild(make('rect', {x:ix-8, y:iy-8, width:iw+16, height:ih+16, rx:10, fill:'#ffffff', stroke:'#cbd5e1', 'stroke-width':1.2}));
+      svg.appendChild(make('rect', {x:ix, y:iy, width:iw, height:ih, fill:'#ffffff', stroke:'#dbe4ee', 'stroke-width':1}));
+
+      const insetGrid = make('g', {stroke:'#e2e8f0', 'stroke-width':1});
+      const iTicks = 4;
+      for (let i=0;i<=iTicks;i++) {
+        const gx = ix + i*iw/iTicks, gy = iy + i*ih/iTicks;
+        insetGrid.appendChild(make('line', {x1:gx, y1:iy, x2:gx, y2:iy+ih}));
+        insetGrid.appendChild(make('line', {x1:ix, y1:gy, x2:ix+iw, y2:gy}));
+      }
+      svg.appendChild(insetGrid);
+
+      for (const s of insetSeries) {
+        if (s.type === 'line') {
+          const d = s.data.map((p,i) => `${i===0?'M':'L'} ${iPX(p.x).toFixed(2)} ${iPY(p.y).toFixed(2)}`).join(' ');
+          svg.appendChild(make('path', {d, fill:'none', stroke:s.color, 'stroke-width':s.width || 2.2, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+        } else if (s.type === 'points') {
+          const g = make('g', {fill:s.color, stroke:'#ffffff', 'stroke-width':1});
+          s.data.forEach(p => g.appendChild(make('circle', {cx:iPX(p.x), cy:iPY(p.y), r:Math.max(2.5, (s.radius || 4.2) - 1.2)})));
+          svg.appendChild(g);
+        }
+      }
+
+      const insetTitle = make('text', {x:ix+8, y:iy-12, fill:'#0f172a', 'font-size':13, 'font-weight':700, 'font-family':'Segoe UI, sans-serif'});
+      insetTitle.textContent = options.inset.title || 'Leading edge detail';
+      svg.appendChild(insetTitle);
+    }
+  }
+}
+
+function toCsv(rows) {
+  const head = 'x,y_upper,y_lower,y_camber,thickness';
+  const body = rows.map(r => [r.x, r.yu, r.yl, r.ycamber, r.thickness].map(v => Number(v).toPrecision(12)).join(','));
+  return [head, ...body].join('\n');
+}
+
+function downloadText(content, filename, mime='text/plain;charset=utf-8') {
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = filename; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+}
+
+function runExtraction(rawText, opts) {
+  let points = parseCoordinateText(rawText, opts.forceClosure);
+  if (opts.normalizeChord) points = normalizeChord(points);
+  const surfaces = splitSurfaces(points);
+  const xStart = Math.max(surfaces.upper[0].x, surfaces.lower[0].x);
+  const xEnd = Math.min(surfaces.upper[surfaces.upper.length-1].x, surfaces.lower[surfaces.lower.length-1].x);
+  if (!(xEnd > xStart)) throw new Error('Upper and lower surfaces do not overlap on a valid chordwise interval.');
+  const xUpper = surfaces.upper.map(p=>p.x), yUpper = surfaces.upper.map(p=>p.y);
+  const xLower = surfaces.lower.map(p=>p.x), yLower = surfaces.lower.map(p=>p.y);
+  const n = Math.max(40, Math.min(3000, Number(opts.samples) || 401));
+  const grid = createGrid(n, xStart, xEnd);
+  const yu = evalInterpolator(opts.mode, xUpper, yUpper, grid);
+  const yl = evalInterpolator(opts.mode, xLower, yLower, grid);
+  const rows = grid.map((x,i) => ({ x, yu: yu[i], yl: yl[i], ycamber: 0.5*(yu[i]+yl[i]), thickness: yu[i]-yl[i] }));
+  const summary = computeSummary(rows, surfaces);
+  return { points, surfaces, rows, summary };
+}
+
+function wireTool(ids, lang) {
+  const textarea = document.getElementById(ids.textarea), fileInput = document.getElementById(ids.file), samplesInput = document.getElementById(ids.samples), showPoints = document.getElementById(ids.showPoints), forceClosure = document.getElementById(ids.forceClosure), runBtn = document.getElementById(ids.runBtn), sampleBtn = document.getElementById(ids.sampleBtn), downloadBtn = document.getElementById(ids.downloadBtn), statusBox = document.getElementById(ids.status), tableBody = ids.table ? document.getElementById(ids.table) : null, svgGeom = document.getElementById(ids.svgGeom), svgCamber = document.getElementById(ids.svgCamber), svgThickness = document.getElementById(ids.svgThickness), summaryCards = document.getElementById(ids.summaryCards);
+  let currentRows = null;
+
+  function render() {
+    try {
+      const result = runExtraction(textarea.value, { mode: 'pchip', samples: samplesInput.value, normalizeChord: true, forceClosure: forceClosure.checked });
+      currentRows = result.rows;
+      const upperCurve = result.rows.map(r => ({x:r.x, y:r.yu}));
+      const lowerCurve = result.rows.map(r => ({x:r.x, y:r.yl}));
+      const contourCurve = upperCurve.concat(lowerCurve.slice().reverse());
+      const geomSeries = [
+        { type:'line', color:'#0f172a', width:2.6, data: contourCurve },
+        { type:'line', color:'#0284c7', width:2.5, data: result.rows.map(r => ({x:r.x, y:r.ycamber})) }
+      ];
+      if (showPoints.checked) geomSeries.push({ type:'points', color:'#0284c7', radius:3.6, data: result.points });
+      drawAxesAndSeries(svgGeom, geomSeries, { equalScale: true, xlabel:'x/c', ylabel:'y/c' });
+      drawAxesAndSeries(svgCamber, [{ type:'line', color:'#0284c7', data: result.rows.map(r => ({x:r.x, y:r.ycamber})) }], { equalScale:false, xlabel:'x/c', ylabel: lang === 'en' ? 'y_c/c' : 'y_c/c', inset:{ xMin:0, xMax:0.10, title: lang === 'en' ? 'Leading edge: 0 ≤ x/c ≤ 0.10' : 'Bordo de ataque: 0 ≤ x/c ≤ 0.10' } });
+      drawAxesAndSeries(svgThickness, [{ type:'line', color:'#0284c7', data: result.rows.map(r => ({x:r.x, y:r.thickness})) }], { equalScale:false, xlabel:'x/c', ylabel: lang === 'en' ? 't/c' : 't/c', inset:{ xMin:0, xMax:0.10, title: lang === 'en' ? 'Leading edge: 0 ≤ x/c ≤ 0.10' : 'Bordo de ataque: 0 ≤ x/c ≤ 0.10' } });
+      if (tableBody) updateTable(result.rows, tableBody);
+      summaryCards.innerHTML = makeStatCards(result.summary, lang);
+      setStatus(statusBox, [
+        `<strong>Status:</strong> ${lang === 'en' ? 'Extraction completed.' : 'Extração concluída.'}`,
+        `<strong>${lang === 'en' ? 'Imported points' : 'Pontos importados'}:</strong> ${result.points.length}.`,
+        `<strong>${lang === 'en' ? 'Surface model' : 'Modelo de superfície'}:</strong> ${lang === 'en' ? 'PCHIP-like Hermite' : 'Hermite tipo PCHIP'}.`,
+        `<strong>${lang === 'en' ? 'Analysis grid' : 'Malha de análise'}:</strong> ${result.rows.length} ${lang === 'en' ? 'samples' : 'amostras'}.`,
+        `<strong>${lang === 'en' ? 'Leading edge split' : 'Divisão no bordo de ataque'}:</strong> ${lang === 'en' ? 'successful' : 'bem-sucedida'}.`
+      ]);
+    } catch (error) {
+      currentRows = null;
+      if (tableBody) tableBody.innerHTML = '';
+      svgGeom.innerHTML = '';
+      svgCamber.innerHTML = '';
+      svgThickness.innerHTML = '';
+      summaryCards.innerHTML = '';
+      setStatus(statusBox, [`<strong>Status:</strong> ${error.message}`]);
+    }
+  }
+
+  runBtn.addEventListener('click', render);
+  sampleBtn.addEventListener('click', () => { textarea.value = SAMPLE_DATA; render(); });
+  downloadBtn.addEventListener('click', () => { if (currentRows) downloadText(toCsv(currentRows), 'unsaero-camber-thickness.csv', 'text/csv;charset=utf-8'); });
+  fileInput.addEventListener('change', async (event) => { const file = event.target.files && event.target.files[0]; if (!file) return; textarea.value = await file.text(); render(); });
+  [samplesInput, showPoints, forceClosure].forEach(el => el.addEventListener('change', () => { if (textarea.value.trim()) render(); }));
+  textarea.value = SAMPLE_DATA; render();
+}
+
+wireTool({
+  textarea:'points-input', file:'file-input', samples:'samples-input', showPoints:'show-points', forceClosure:'force-closure', runBtn:'plot-btn', sampleBtn:'sample-btn', downloadBtn:'download-csv-btn', status:'status-box', svgGeom:'plot-geom', svgCamber:'plot-camber', svgThickness:'plot-thickness', summaryCards:'summary-cards-en'
+}, 'en');
+wireTool({
+  textarea:'points-input-pt', file:'file-input-pt', samples:'samples-input-pt', showPoints:'show-points-pt', forceClosure:'force-closure-pt', runBtn:'plot-btn-pt', sampleBtn:'sample-btn-pt', downloadBtn:'download-csv-btn-pt', status:'status-box-pt', svgGeom:'plot-geom-pt', svgCamber:'plot-camber-pt', svgThickness:'plot-thickness-pt', summaryCards:'summary-cards-pt'
+}, 'pt');
+</script>
+<script>document.addEventListener("DOMContentLoaded", () => setLang(getInitialLang()));</script>
+<script>
+(function () {
+  const chromeTranslations = {
+    en: {nav_home:"Home",nav_teaching:"Teaching",nav_research:"Research",nav_tools:"Tools",nav_contact:"Contact",footer_rights:"© 2025–2026 UNSAERO. All rights reserved."}, pt: {nav_home:"Início",nav_teaching:"Ensino",nav_research:"Pesquisa",nav_tools:"Ferramentas",nav_contact:"Contato",footer_rights:"© 2025–2026 UNSAERO. Todos os direitos reservados."}
+  };
+
+  function normalizedLang(lang) {
+    return ["pt", "en"].includes(lang) ? lang : "en";
+  }
+
+  function applyChromeI18n(lang) {
+    lang = normalizedLang(lang || localStorage.getItem("unsaero-lang") || "en");
+    const dictionary = chromeTranslations[lang] || chromeTranslations.en;
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (dictionary[key]) el.textContent = dictionary[key];
+    });
+  }
+
+  window.applyChromeI18n = applyChromeI18n;
+
+  const existingSetLang = window.setLang;
+  if (typeof existingSetLang === "function" && !existingSetLang.__unsaeroWrapped) {
+    const wrappedSetLang = function (lang) {
+      lang = normalizedLang(lang);
+      existingSetLang(lang);
+      applyChromeI18n(lang);
+    };
+    wrappedSetLang.__unsaeroWrapped = true;
+    window.setLang = wrappedSetLang;
+  }
+
+  applyChromeI18n(localStorage.getItem("unsaero-lang") || "en");
+})();
+</script>
+</body>
+</html>

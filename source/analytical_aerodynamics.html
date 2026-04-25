@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UNSAERO | Analytical Aerodynamics</title>
+<meta name="description" content="Foundations of Analytical Aerodynamics: interpretable, explicit, semi-explicit, and low-order models for aerodynamic insight, reduced-order dynamics, and principled coupling to CFD and experiments."/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#087fc3"/>
+<meta name="keywords" content="analytical aerodynamics, unsteady aerodynamics, reduced-order models, vortex dynamics, distribution theory, thin airfoil theory, aerodynamic modeling, CFD, aeroelasticity"/>
+<meta name="author" content="UNSAERO"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:site_name" content="UNSAERO"/>
+<meta property="og:title" content="Analytical Aerodynamics | UNSAERO"/>
+<meta property="og:description" content="A conceptual foundation for Analytical Aerodynamics as a modern framework of interpretable, low-order aerodynamic models."/>
+<meta property="og:url" content="https://www.unsaero.com/source/analytical_aerodynamics.html"/>
+<meta property="og:image" content="https://www.unsaero.com/icon.png"/>
+<meta property="og:image:width" content="2048"/>
+<meta property="og:image:height" content="2048"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:locale:alternate" content="pt_BR"/>
+<meta property="article:modified_time" content="2026-04-24"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Analytical Aerodynamics | UNSAERO"/>
+<meta name="twitter:description" content="Interpretable aerodynamic models for rapid analysis, physical insight, and reduced-order dynamics."/>
+<meta name="twitter:image" content="https://www.unsaero.com/icon.png"/>
+
+<link rel="canonical" href="https://www.unsaero.com/source/analytical_aerodynamics.html"/>
+<link rel="icon" href="../favicon.ico" type="image/x-icon"/>
+<link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
+<link rel="icon" href="../assets/favicon-16x16.png" sizes="16x16" type="image/png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="../assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Analytical Aerodynamics | UNSAERO","url":"https://www.unsaero.com/source/analytical_aerodynamics.html","description":"Foundations of Analytical Aerodynamics: interpretable, explicit, semi-explicit, and low-order models for aerodynamic insight, reduced-order dynamics, and principled coupling to CFD and experiments.","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
+</script>
+<style>
+:root{--bg:#f8fafc;--panel:#ffffff;--text:#334155;--title:#0f172a;--muted:#64748b;--accent:#0284c7;--accent-dark:#0369a1;--header:#2c3e50;--border:#dbe4ee;--soft:#e0f2fe;--soft-blue:#f0f9ff;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+body{min-height:100vh;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;}
+#page-top{max-width:1180px;margin:0 auto 1.35rem;padding:34px 32px 30px;border-radius:12px;color:#fff;background:var(--header);box-shadow:0 6px 18px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.12);}
+#page-top h1{margin:0 0 10px;line-height:1.06;font-weight:800;font-size:clamp(2rem,4vw,3.1rem);color:#fff;}
+.hero-subtitle{max-width:850px;color:rgba(255,255,255,.88);line-height:1.6;font-size:1rem;}
+.lang-content{display:none;}.lang-content.active{display:block;}
+.page-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;}
+.section-label{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:1.35rem 0 .75rem;}
+.content-card{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:0 4px 14px rgba(15,23,42,.055);}
+.content-card h2{color:var(--title);font-size:1.35rem;line-height:1.22;margin-bottom:.65rem;}
+.content-card h3{color:var(--title);font-size:1.05rem;line-height:1.25;margin-bottom:.4rem;}
+.content-card p{line-height:1.68;color:var(--text);}
+.content-card p+p{margin-top:.75rem;}
+.card-separator{width:56px;height:1px;background:rgba(2,132,199,.28);margin:0 0 1.05rem;}
+.lead-card{background:linear-gradient(180deg,#fff,#f8fbff);}
+.statement{border-left:3px solid var(--accent);padding:1rem 1.1rem;background:var(--soft-blue);border-radius:10px;margin-top:1rem;}
+.statement strong{color:var(--title);}
+.topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}
+.topic-card,.topic-card.wide{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 3px 10px rgba(15,23,42,.04);}
+.topic-card h3{margin-bottom:.45rem;}
+.topic-card p{font-size:.96rem;line-height:1.6;color:var(--text);}
+.tag-line{margin-top:1rem;color:var(--muted);font-size:.94rem;line-height:1.55;}
+ul.clean-list{list-style:none;margin-top:.65rem;display:grid;gap:.45rem;}
+ul.clean-list li{line-height:1.6;color:var(--text);}
+ul.clean-list li::before{content:'·';color:var(--accent);font-weight:800;margin-right:.55rem;}
+.back-link{display:inline-flex;margin-top:1rem;color:var(--accent);font-weight:750;text-decoration:none;}
+.back-link:hover{text-decoration:underline;}
+.breadcrumb{max-width:1180px;margin:0 auto 1rem;color:var(--muted);font-size:.9rem;font-weight:650;}
+.breadcrumb a{color:var(--accent);text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+.breadcrumb .lang-content{display:none;}
+.breadcrumb .lang-content.active{display:block;}
+@media (max-width:860px){.topic-grid{grid-template-columns:1fr;}#page-top{padding:30px 24px;}.content-card{padding:22px;}}
+@media (max-width:560px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:26px 20px;border-radius:10px;}.content-card{padding:20px;}}
+</style>
+</head>
+<body>
+<!-- UNSAERO_HEADER_START -->
+<div class="unsaero-global-header-wrap">
+  <div class="unsaero-global-header">
+    <a class="unsaero-global-logo" href="../index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
+    <nav class="unsaero-global-nav" aria-label="Primary navigation">
+      <a href="../index.html" data-nav="home" data-i18n="nav_home">Home</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../research.html" data-nav="research" data-i18n="nav_research">Research</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="../contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="unsaero-global-lang-switch" aria-label="Language selector">
+      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
+        EN
+      </button>
+      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
+        PT
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNSAERO_HEADER_END -->
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <span class="lang-content active" id="breadcrumb-en"><a href="../theory.html">Teaching</a> · Analytical Aerodynamics</span>
+  <span class="lang-content" id="breadcrumb-pt"><a href="../theory.html">Ensino</a> · Aerodinâmica Analítica</span>
+</nav>
+<header id="page-top">
+<div class="lang-content active" id="hero-en">
+<h1>Analytical Aerodynamics</h1>
+<p class="hero-subtitle">Interpretable aerodynamic models for physical insight, rapid analysis, and reduced-order dynamics.</p>
+</div>
+<div class="lang-content" id="hero-pt">
+<h1>Aerodinâmica Analítica</h1>
+<p class="hero-subtitle">Modelos aerodinâmicos interpretáveis para compreensão física, análise rápida e dinâmica de ordem reduzida.</p>
+</div>
+</header>
+
+<div class="lang-content active" id="content-en">
+<div class="page-grid">
+<section class="content-card lead-card">
+<h2>Working definition</h2>
+<div class="card-separator" aria-hidden="true"></div>
+<p>Analytical Aerodynamics is the development and use of aerodynamic models whose governing structure remains explicit, semi-explicit, or low-order.</p>
+<p>The aim is not to eliminate computation. The aim is to preserve physical meaning, expose the mathematical structure of the model, and obtain fast access to loads, moments, stability derivatives, sensitivities, and dynamical behavior.</p>
+<div class="statement"><strong>Core idea:</strong> Analytical Aerodynamics is a bridge to CFD, experiments, and data-driven models — not a rejection of them.</div>
+</section>
+
+<div class="section-label">Foundations</div>
+<section class="topic-grid" aria-label="Foundational concepts">
+<article class="topic-card wide">
+<h3>Explicit structure</h3>
+<p>Closed-form relations, integral equations, transfer functions, singularity distributions, and compact kernels make the model legible and reusable.</p>
+</article>
+<article class="topic-card wide">
+<h3>Physical interpretation</h3>
+<p>The model should reveal mechanisms: circulation, pressure loading, wake memory, added-mass response, vortex release, or boundary-layer influence.</p>
+</article>
+<article class="topic-card">
+<h3>Analytical core</h3>
+<p>Potential flow, thin-airfoil theory, conformal mapping, lifting-line ideas, asymptotic relations, and classical unsteady functions.</p>
+</article>
+<article class="topic-card">
+<h3>Low-order layer</h3>
+<p>Panel methods, vortex-lattice methods, DVM/LDVM, viscous–inviscid coupling, and lightweight differentiable tools.</p>
+</article>
+</section>
+
+<section class="content-card">
+<h2>Mathematical toolkit</h2>
+<div class="card-separator" aria-hidden="true"></div>
+<p>The field is unified by a recurring set of mathematical primitives rather than by a single equation.</p>
+<ul class="clean-list">
+<li>Potential theory, Green identities, and singularity solutions.</li>
+<li>Singular-integral formulations and Fourier–Chebyshev expansions.</li>
+<li>Generalized functions for jumps, wakes, and moving discontinuities.</li>
+<li>Lagrangian vortex dynamics, impulse ideas, and wake transport.</li>
+<li>Boundary-layer interaction and local viscous closure.</li>
+</ul>
+</section>
+
+<section class="content-card">
+<h2>Role in modern workflows</h2>
+<div class="card-separator" aria-hidden="true"></div>
+<p>Analytical models provide preliminary fields, benchmark solutions, reduced-order representations, fast trade studies, and operator scaffolds. They are especially useful when higher-fidelity methods are too expensive for early exploration or repeated parametric sweeps.</p>
+<p>In this sense, the analytical layer strengthens CFD and experiments by making assumptions visible, offering sanity checks, and helping decide where expensive resolution is actually needed.</p>
+</section>
+
+<a class="back-link" href="../theory.html">← Back to Teaching</a>
+</div>
+</div>
+
+<div class="lang-content" id="content-pt">
+<div class="page-grid">
+<section class="content-card lead-card">
+<h2>Definição de trabalho</h2>
+<div class="card-separator" aria-hidden="true"></div>
+<p>Aerodinâmica Analítica é o desenvolvimento e o uso de modelos aerodinâmicos cuja estrutura governante permanece explícita, semi-explícita ou de baixa ordem.</p>
+<p>O objetivo não é eliminar a computação. O objetivo é preservar significado físico, expor a estrutura matemática do modelo e obter acesso rápido a cargas, momentos, derivadas de estabilidade, sensibilidades e comportamento dinâmico.</p>
+<div class="statement"><strong>Ideia central:</strong> Aerodinâmica Analítica é uma ponte para CFD, experimentos e modelos orientados por dados — não uma rejeição a eles.</div>
+</section>
+
+<div class="section-label">Fundamentos</div>
+<section class="topic-grid" aria-label="Conceitos fundamentais">
+<article class="topic-card wide">
+<h3>Estrutura explícita</h3>
+<p>Relações fechadas, equações integrais, funções de transferência, distribuições de singularidades e núcleos compactos tornam o modelo legível e reutilizável.</p>
+</article>
+<article class="topic-card wide">
+<h3>Interpretação física</h3>
+<p>O modelo deve revelar mecanismos: circulação, carregamento de pressão, memória da esteira, massa adicionada, emissão de vórtices ou influência da camada limite.</p>
+</article>
+<article class="topic-card">
+<h3>Núcleo analítico</h3>
+<p>Escoamento potencial, teoria de aerofólio fino, transformação conforme, linha sustentadora, relações assintóticas e funções clássicas não estacionárias.</p>
+</article>
+<article class="topic-card">
+<h3>Camada de baixa ordem</h3>
+<p>Métodos de painéis, vortex lattice, DVM/LDVM, acoplamento viscoso–invíscido e ferramentas leves diferenciáveis.</p>
+</article>
+</section>
+
+<section class="content-card">
+<h2>Ferramentas matemáticas</h2>
+<div class="card-separator" aria-hidden="true"></div>
+<p>O campo é unificado por um conjunto recorrente de primitivas matemáticas, e não por uma única equação.</p>
+<ul class="clean-list">
+<li>Teoria potencial, identidades de Green e soluções singulares.</li>
+<li>Formulações integrais singulares e expansões de Fourier–Chebyshev.</li>
+<li>Funções generalizadas para saltos, esteiras e descontinuidades móveis.</li>
+<li>Dinâmica lagrangiana de vórtices, ideias de impulso e transporte de esteira.</li>
+<li>Interação com camada limite e fechamento viscoso local.</li>
+</ul>
+</section>
+
+<section class="content-card">
+<h2>Papel em fluxos de trabalho modernos</h2>
+<div class="card-separator" aria-hidden="true"></div>
+<p>Modelos analíticos fornecem campos preliminares, soluções de referência, representações de ordem reduzida, estudos paramétricos rápidos e estruturas de apoio para métodos baseados em operadores. Eles são especialmente úteis quando métodos de maior fidelidade são caros demais para exploração inicial ou varreduras repetidas.</p>
+<p>Nesse sentido, a camada analítica fortalece CFD e experimentos ao tornar hipóteses visíveis, oferecer verificações de consistência e ajudar a decidir onde a alta resolução realmente é necessária.</p>
+</section>
+
+<a class="back-link" href="../theory.html">← Voltar para Teoria</a>
+</div>
+</div>
+</main>
+<!-- UNSAERO_FOOTER_START -->
+<footer class="unsaero-global-footer">
+  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
+</footer>
+
+<!-- UNSAERO_FOOTER_END -->
+<script>
+function setLang(lang){
+  if(!['pt','en'].includes(lang)) lang='en';
+  ['pt','en'].forEach(code=>{
+    document.getElementById(`btn-${code}`)?.classList.remove('active');
+    ['hero','content'].forEach(prefix=>{const el=document.getElementById(`${prefix}-${code}`); if(el){el.classList.remove('active'); el.style.display='none';}});
+  });
+  document.getElementById(`btn-${lang}`)?.classList.add('active');
+  ['hero','content'].forEach(prefix=>{const el=document.getElementById(`${prefix}-${lang}`); if(el){el.classList.add('active'); el.style.display='block';}});
+  document.documentElement.lang=lang==='pt'?'pt-BR':'en-US';
+  localStorage.setItem('unsaero-lang',lang);
+}
+document.addEventListener('DOMContentLoaded',()=>{const saved=localStorage.getItem('unsaero-lang'); setLang(['pt','en'].includes(saved)?saved:'en');});
+</script>
+<script>
+(function () {
+  const chromeTranslations = {
+    en: {nav_home:"Home",nav_teaching:"Teaching",nav_research:"Research",nav_tools:"Tools",nav_contact:"Contact",footer_rights:"© 2025–2026 UNSAERO. All rights reserved."},
+    pt: {nav_home:"Início",nav_teaching:"Ensino",nav_research:"Pesquisa",nav_tools:"Ferramentas",nav_contact:"Contato",footer_rights:"© 2025–2026 UNSAERO. Todos os direitos reservados."}
+  };
+  function normalizedLang(lang){return ["pt","en"].includes(lang)?lang:"en";}
+  function applyChromeI18n(lang){lang=normalizedLang(lang||localStorage.getItem("unsaero-lang")||"en");const dictionary=chromeTranslations[lang]||chromeTranslations.en;document.querySelectorAll("[data-i18n]").forEach((el)=>{const key=el.getAttribute("data-i18n");if(dictionary[key]) el.textContent=dictionary[key];});}
+  window.applyChromeI18n=applyChromeI18n;
+  const existingSetLang=window.setLang;
+  if(typeof existingSetLang==="function"&&!existingSetLang.__unsaeroWrapped){const wrappedSetLang=function(lang){lang=normalizedLang(lang);existingSetLang(lang);applyChromeI18n(lang);};wrappedSetLang.__unsaeroWrapped=true;window.setLang=wrappedSetLang;}
+  applyChromeI18n(localStorage.getItem("unsaero-lang")||"en");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UNSAERO | Research</title>
+<meta name="description" content="Research directions and technical developments from UNSAERO in aerodynamics, reduced-order modeling, and physically interpretable methods."/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#087fc3"/>
+<meta name="author" content="UNSAERO"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="UNSAERO"/>
+<meta property="og:title" content="Research | UNSAERO"/>
+<meta property="og:description" content="Research directions and technical developments from UNSAERO."/>
+<meta property="og:url" content="https://www.unsaero.com/research.html"/>
+<meta property="og:image" content="https://www.unsaero.com/icon.png"/>
+<link rel="canonical" href="https://www.unsaero.com/research.html"/>
+<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+<link rel="icon" href="assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
+<link rel="icon" href="assets/favicon-16x16.png" sizes="16x16" type="image/png"/>
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<style>
+:root{--bg:#f8fafc;--panel:#ffffff;--text:#334155;--title:#0f172a;--muted:#64748b;--accent:#0284c7;--header:#2c3e50;--border:#dbe4ee;--shadow:0 4px 14px rgba(15,23,42,.055);}*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}body{min-height:100vh;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;}#page-top{max-width:1180px;margin:0 auto 1.35rem;padding:34px 32px 30px;border-radius:12px;color:#fff;background:var(--header);box-shadow:0 6px 18px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.12);}#page-top h1{margin:0 0 10px;line-height:1.06;font-weight:800;font-size:clamp(2rem,4vw,3.1rem);color:#fff;}.hero-subtitle{max-width:780px;color:rgba(255,255,255,.88);line-height:1.58;font-size:1rem;}.lang-content{display:none}.lang-content.active{display:block}.content-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow);}.content-card p{line-height:1.65;color:var(--text);max-width:820px;}
+.page-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;}
+.section-label{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:.2rem 0 -.25rem;}
+.research-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow);}
+.research-card h2{color:var(--title);font-size:1.35rem;margin-bottom:.35rem;}
+.research-subtitle{color:var(--muted);font-size:.96rem;line-height:1.55;margin:0 0 .65rem;max-width:900px;}
+.research-card p{line-height:1.65;color:var(--text);max-width:860px;}
+.project-subtopics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin:1rem 0 .35rem;max-width:960px;}
+.project-subtopic{border:1px solid var(--border);border-radius:12px;background:#fbfdff;padding:.85rem .9rem;}
+.project-subtopic strong{display:block;color:var(--title);font-size:.9rem;margin-bottom:.25rem;}
+.project-subtopic span{display:block;color:var(--muted);font-size:.86rem;line-height:1.45;}
+@media (max-width:820px){.project-subtopics{grid-template-columns:1fr;}}
+.card-separator{width:46px;height:1px;background:rgba(15,23,42,.18);margin:.95rem 0;}
+.related-works{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--border);max-width:920px;}
+.related-works h3{font-size:.92rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 .55rem;font-weight:850;}
+.related-works ul{display:grid;gap:.55rem;margin:0;padding-left:1.1rem;}
+.related-works li{line-height:1.55;color:var(--text);}
+.related-works a{color:var(--accent);font-weight:750;text-decoration:none;}
+.related-works a:hover{text-decoration:underline;}
+.card-action{display:inline-block;margin-top:1.15rem;color:var(--accent);font-weight:700;text-decoration:none;}
+.card-action:hover{text-decoration:underline;}
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<!-- UNSAERO_HEADER_START -->
+<div class="unsaero-global-header-wrap">
+  <div class="unsaero-global-header">
+    <a class="unsaero-global-logo" href="index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
+    <nav class="unsaero-global-nav" aria-label="Primary navigation">
+      <a href="index.html" data-nav="home" data-i18n="nav_home">Home</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="research.html" data-nav="research" data-i18n="nav_research">Research</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
+      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
+      <a href="contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <div class="unsaero-global-lang-switch" aria-label="Language selector">
+      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
+        EN
+      </button>
+      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
+        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
+        PT
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNSAERO_HEADER_END -->
+<main>
+  <section id="page-top">
+    <div class="lang-content active" data-lang="en"><h1>Research</h1><p class="hero-subtitle">Research directions and technical developments in aerodynamics.</p></div>
+    <div class="lang-content" data-lang="pt"><h1>Pesquisa</h1><p class="hero-subtitle">Direções de pesquisa e desenvolvimentos técnicos em aerodinâmica.</p></div>
+  </section>
+  <div class="page-grid">
+    <div class="section-label lang-content active" data-lang="en">Research projects</div>
+    <div class="section-label lang-content" data-lang="pt">Projetos de pesquisa</div>
+
+    <article class="research-card">
+      <div class="lang-content active" data-lang="en">
+        <h2>Nonlinear airfoil decomposition</h2>
+        <p class="research-subtitle">Closed-form formulations and geometrically consistent representations for thin-airfoil theory and reduced-order aerodynamic modeling.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>This project investigates the decomposition of airfoil geometry into camber and thickness through nonlinear geometric formulations. The goal is to overcome inconsistencies of classical linear definitions and produce analytically tractable geometric inputs for aerodynamic models.</p>
+        <div class="project-subtopics" aria-label="Research subtopics">
+          <div class="project-subtopic"><strong>Geometric formulation</strong><span>Develop decomposition methods based on surface geometry, normal directions, and consistent camber/thickness reconstruction.</span></div>
+          <div class="project-subtopic"><strong>Closed-form aerodynamics</strong><span>Compute thin-airfoil coefficients and aerodynamic quantities from nonlinear camber definitions without relying only on numerical discretization.</span></div>
+          <div class="project-subtopic"><strong>Reduced-order modeling</strong><span>Represent geometry through compact, physically interpretable variables suitable for unsteady and low-order aerodynamic models.</span></div>
+          <div class="project-subtopic"><strong>Leading-edge physics</strong><span>Quantify how curvature and camber-slope differences near the leading edge affect analytical predictions and model inputs.</span></div>
+          <div class="project-subtopic"><strong>Sensitivity and control</strong><span>Study how geometric variations propagate into loads and moments, supporting shape control and optimization workflows.</span></div>
+          <div class="project-subtopic"><strong>Applications</strong><span>Flexible airfoils, morphing wings, aeroelastic analysis, drag reduction, and rapid aerodynamic prediction tools.</span></div>
+        </div>
+        <div class="related-works">
+          <h3>Related papers/works</h3>
+          <ul>
+            <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.1007/s11012-024-01801-6" target="_blank" rel="noopener">Nonlinear geometric decomposition of airfoils into the thickness and camber contributions</a>. <em>Meccanica</em>, 2024.</li>
+          </ul>
+        </div>
+        <a class="card-action" href="source/geometric_decomposition_tool.html">Open related tool →</a>
+      </div>
+      <div class="lang-content" data-lang="pt">
+        <h2>Decomposição não linear de aerofólios</h2>
+        <p class="research-subtitle">Formulações fechadas e representações geometricamente consistentes para teoria de aerofólio fino e modelagem aerodinâmica de ordem reduzida.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>Este projeto investiga a decomposição da geometria de aerofólios em cambagem e espessura por meio de formulações geométricas não lineares. O objetivo é superar inconsistências das definições lineares clássicas e produzir entradas geométricas analiticamente tratáveis para modelos aerodinâmicos.</p>
+        <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
+          <div class="project-subtopic"><strong>Formulação geométrica</strong><span>Desenvolver métodos de decomposição baseados na geometria da superfície, direções normais e reconstrução consistente de cambagem/espessura.</span></div>
+          <div class="project-subtopic"><strong>Aerodinâmica em forma fechada</strong><span>Calcular coeficientes da teoria de aerofólio fino e grandezas aerodinâmicas a partir de definições não lineares de cambagem.</span></div>
+          <div class="project-subtopic"><strong>Modelagem de ordem reduzida</strong><span>Representar a geometria por variáveis compactas e fisicamente interpretáveis para modelos aerodinâmicos não estacionários e de baixa ordem.</span></div>
+          <div class="project-subtopic"><strong>Física do bordo de ataque</strong><span>Quantificar como curvatura e diferenças de inclinação da cambagem próximas ao bordo de ataque afetam predições analíticas.</span></div>
+          <div class="project-subtopic"><strong>Sensibilidade e controle</strong><span>Estudar como variações geométricas se propagam para cargas e momentos, apoiando controle de forma e otimização.</span></div>
+          <div class="project-subtopic"><strong>Aplicações</strong><span>Aerofólios flexíveis, asas morphing, aeroelasticidade, redução de arrasto e ferramentas rápidas de predição aerodinâmica.</span></div>
+        </div>
+        <div class="related-works">
+          <h3>Trabalhos relacionados</h3>
+          <ul>
+            <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.1007/s11012-024-01801-6" target="_blank" rel="noopener">Nonlinear geometric decomposition of airfoils into the thickness and camber contributions</a>. <em>Meccanica</em>, 2024.</li>
+          </ul>
+        </div>
+        <a class="card-action" href="source/geometric_decomposition_tool.html">Abrir ferramenta relacionada →</a>
+      </div>
+    </article>
+  </div>
+</main>
+<!-- UNSAERO_FOOTER_START -->
+<footer class="unsaero-global-footer">
+  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
+</footer>
+
+<!-- UNSAERO_FOOTER_END -->
+<script>
+(function(){const key='unsaero-lang';function normalizedLang(lang){return ['pt','en'].includes(lang)?lang:'en'}function apply(lang){lang=normalizedLang(lang||localStorage.getItem(key)||'en');localStorage.setItem(key,lang);document.documentElement.lang=lang==='pt'?'pt-BR':'en-US';document.querySelectorAll('.lang-content').forEach(el=>el.classList.toggle('active',el.dataset.lang===lang));document.querySelectorAll('.unsaero-global-lang-option').forEach(el=>el.classList.remove('active'));document.getElementById('btn-'+lang)?.classList.add('active');applyChromeI18n?.(lang)}window.setLang=apply;document.addEventListener('DOMContentLoaded',()=>apply(localStorage.getItem(key)||'en'));})();
+</script>
+<script>
+(function(){const chromeTranslations={en:{nav_home:'Home',nav_teaching:'Teaching',nav_research:'Research',nav_tools:'Tools',nav_contact:'Contact',footer_rights:'© 2025–2026 UNSAERO. All rights reserved.'},pt:{nav_home:'Início',nav_teaching:'Ensino',nav_research:'Pesquisa',nav_tools:'Ferramentas',nav_contact:'Contato',footer_rights:'© 2025–2026 UNSAERO. Todos os direitos reservados.'}};function normalizedLang(lang){return ['pt','en'].includes(lang)?lang:'en'}function applyChromeI18n(lang){lang=normalizedLang(lang||localStorage.getItem('unsaero-lang')||'en');const dictionary=chromeTranslations[lang]||chromeTranslations.en;document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.getAttribute('data-i18n');if(dictionary[key])el.textContent=dictionary[key];});}window.applyChromeI18n=applyChromeI18n;applyChromeI18n(localStorage.getItem('unsaero-lang')||'en');})();
+</script>
+</body>
+</html>
