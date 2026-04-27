@@ -33,3 +33,5 @@ html body .unsaero-global-lang-option:hover { opacity: 0.78 !important; filter: 
 html body .unsaero-global-lang-option:hover svg { opacity: 0.88 !important; filter: grayscale(.35) saturate(.75) !important; }
 html body .unsaero-global-lang-option.active { opacity: 1 !important; filter: none !important; color: #0f172a !important; border-bottom-color: #0284c7 !important; }
 html body .unsaero-global-lang-option.active svg { opacity: 1 !important; filter: none !important; }
+
+.hero-h1-alt{font-family:var(--font-display,inherit);font-size:clamp(2.2rem,6vw,4.8rem);line-height:.95;margin:0 0 1rem;font-weight:700;color:inherit;}

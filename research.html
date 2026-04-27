@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>UNSAERO | Research</title>
-<meta name="description" content="Research directions and technical developments from UNSAERO in aerodynamics, reduced-order modeling, and physically interpretable methods."/>
+<title>Research Areas in Analytical and Reduced-Order Aerodynamics | UNSAERO</title>
+<meta name="description" content="Research at UNSAERO focuses on analytical unsteady aerodynamics, airfoil geometry, wake dynamics, vortex modeling, reduced-order methods, viscous coupling, and separated-flow phenomena."/>
 <meta name="robots" content="index, follow"/>
 <meta name="theme-color" content="#087fc3"/>
 <meta name="author" content="UNSAERO"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="UNSAERO"/>
-<meta property="og:title" content="Research | UNSAERO"/>
-<meta property="og:description" content="Research directions and technical developments from UNSAERO."/>
+<meta property="og:title" content="Research Areas in Analytical and Reduced-Order Aerodynamics | UNSAERO"/>
+<meta property="og:description" content="Research at UNSAERO focuses on analytical unsteady aerodynamics, airfoil geometry, wake dynamics, vortex modeling, reduced-order methods, viscous coupling, and separated-flow phenomena."/>
 <meta property="og:url" content="https://www.unsaero.com/research.html"/>
 <meta property="og:image" content="https://www.unsaero.com/icon.png"/>
 <link rel="canonical" href="https://www.unsaero.com/research.html"/>
@@ -30,21 +30,46 @@
 .research-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow);}
 .research-card h2{color:var(--title);font-size:1.35rem;margin-bottom:.35rem;}
 .research-subtitle{color:var(--muted);font-size:.96rem;line-height:1.55;margin:0 0 .65rem;max-width:900px;}
-.research-card p{line-height:1.65;color:var(--text);max-width:860px;}
-.project-subtopics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin:1rem 0 .35rem;max-width:960px;}
+.research-card p{line-height:1.65;color:var(--text);max-width:none;width:100%;}
+.project-subtopics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin:1rem 0 .35rem;max-width:none;width:100%;}
 .project-subtopic{border:1px solid var(--border);border-radius:12px;background:#fbfdff;padding:.85rem .9rem;}
 .project-subtopic strong{display:block;color:var(--title);font-size:.9rem;margin-bottom:.25rem;}
 .project-subtopic span{display:block;color:var(--muted);font-size:.86rem;line-height:1.45;}
 @media (max-width:820px){.project-subtopics{grid-template-columns:1fr;}}
 .card-separator{width:46px;height:1px;background:rgba(15,23,42,.18);margin:.95rem 0;}
-.related-works{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--border);max-width:920px;}
-.related-works h3{font-size:.92rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 .55rem;font-weight:850;}
-.related-works ul{display:grid;gap:.55rem;margin:0;padding-left:1.1rem;}
+.related-works,.related-resources{margin-top:.25rem;padding:24px;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);}
+.related-works h2,.related-resources h2{color:var(--title);font-size:1.3rem;letter-spacing:.08em;text-transform:uppercase;margin:0 0 .45rem;font-weight:850;}
+.related-works p,.related-resources p{line-height:1.6;color:var(--muted);max-width:860px;margin:0 0 .9rem;}
+.resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;max-width:980px;}
+.resource-item{border:1px solid var(--border);border-radius:12px;background:#fbfdff;padding:.9rem 1rem;}
+.resource-item strong{display:block;color:var(--title);font-size:.93rem;margin-bottom:.25rem;}
+.resource-item span{display:block;color:var(--muted);font-size:.86rem;line-height:1.45;}
+.related-works ol{display:grid;gap:.85rem;margin:.25rem 0 0;padding-left:1.15rem;max-width:980px;}
 .related-works li{line-height:1.55;color:var(--text);}
-.related-works a{color:var(--accent);font-weight:750;text-decoration:none;}
-.related-works a:hover{text-decoration:underline;}
-.card-action{display:inline-block;margin-top:1.15rem;color:var(--accent);font-weight:700;text-decoration:none;}
-.card-action:hover{text-decoration:underline;}
+.related-works a,.related-resources a{color:var(--accent);font-weight:750;text-decoration:none;}
+.related-works a:hover,.related-resources a:hover{text-decoration:underline;}
+@media (max-width:820px){.resource-grid{grid-template-columns:1fr;}}
+.topic-support{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin-top:1.05rem;width:100%;max-width:none;align-items:stretch;}
+.topic-support-block{border:1px solid var(--border);border-radius:12px;background:#fbfdff;padding:.9rem 1rem;width:100%;min-width:0;box-sizing:border-box;}
+.topic-support-block h3{font-size:.76rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:0 0 .55rem;font-weight:850;width:100%;max-width:none;box-sizing:border-box;}
+.topic-support-block ul{margin:0;padding-left:1.05rem;display:grid;gap:.45rem;width:100%;max-width:none;box-sizing:border-box;}
+.topic-support-block li{line-height:1.45;color:var(--text);font-size:.9rem;width:100%;max-width:none;box-sizing:border-box;}
+.topic-support-block p{max-width:none;width:100%;}.topic-support-block .empty-state{margin:.05rem 0 0;color:var(--muted);font-size:1.05rem;line-height:1.4;width:100%;max-width:none;}
+.topic-support-block a{color:var(--accent);font-weight:750;text-decoration:none;}
+.topic-support-block a:hover{text-decoration:underline;}
+@media (max-width:820px){.topic-support{grid-template-columns:1fr;}}
+
+/* Research page visual polish */
+.research-card{margin-bottom:1.15rem;}
+.topic-support{width:100%;max-width:none;}
+.topic-support-block{display:block;width:100%;max-width:none;background:#fbfdff;}
+.topic-support-block h3,
+.topic-support-block p,
+.topic-support-block ul,
+.topic-support-block li{max-width:none;width:100%;}
+.topic-support-block .empty-state{padding:.05rem 0;margin:0;color:var(--muted);font-style:normal;}
+.topic-support-block ul:has(+ .empty-state){display:none;}
+
 </style>
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -80,55 +105,310 @@
 <!-- UNSAERO_HEADER_END -->
 <main>
   <section id="page-top">
-    <div class="lang-content active" data-lang="en"><h1>Research</h1><p class="hero-subtitle">Research directions and technical developments in aerodynamics.</p></div>
-    <div class="lang-content" data-lang="pt"><h1>Pesquisa</h1><p class="hero-subtitle">Direções de pesquisa e desenvolvimentos técnicos em aerodinâmica.</p></div>
+    <div class="lang-content active" data-lang="en"><h1>Research</h1><p class="hero-subtitle">Analytical modeling of unsteady aerodynamic phenomena through rigorous mathematical formulation, physical interpretation, and reproducible reduced-order tools.</p></div>
+    <div class="lang-content" data-lang="pt"><h2 class="hero-h1-alt">Pesquisa</h2><p class="hero-subtitle">Modelagem analítica de fenômenos aerodinâmicos não estacionários por meio de formulação matemática rigorosa, interpretação física e ferramentas reprodutíveis de ordem reduzida.</p></div>
   </section>
   <div class="page-grid">
-    <div class="section-label lang-content active" data-lang="en">Research projects</div>
-    <div class="section-label lang-content" data-lang="pt">Projetos de pesquisa</div>
+    <div class="section-label lang-content active" data-lang="en">Research areas</div>
+    <div class="section-label lang-content" data-lang="pt">Linhas de pesquisa</div>
 
     <article class="research-card">
       <div class="lang-content active" data-lang="en">
-        <h2>Nonlinear airfoil decomposition</h2>
-        <p class="research-subtitle">Closed-form formulations and geometrically consistent representations for thin-airfoil theory and reduced-order aerodynamic modeling.</p>
+        <h2>1. Analytical Unsteady Aerodynamics</h2>
+        <p class="research-subtitle">Mathematical formulation of unsteady aerodynamic phenomena using generalized functions, distribution theory, and classical thin-airfoil models.</p>
         <div class="card-separator" aria-hidden="true"></div>
-        <p>This project investigates the decomposition of airfoil geometry into camber and thickness through nonlinear geometric formulations. The goal is to overcome inconsistencies of classical linear definitions and produce analytically tractable geometric inputs for aerodynamic models.</p>
+        <p>This research direction establishes analytical foundations for unsteady aerodynamic modeling. Potential-flow idealization, singularity distributions, and vortex-sheet representations are used to clarify the mathematical structure behind lift generation, gust response, impulsive motion, and flapping-wing kinematics.</p>
         <div class="project-subtopics" aria-label="Research subtopics">
-          <div class="project-subtopic"><strong>Geometric formulation</strong><span>Develop decomposition methods based on surface geometry, normal directions, and consistent camber/thickness reconstruction.</span></div>
-          <div class="project-subtopic"><strong>Closed-form aerodynamics</strong><span>Compute thin-airfoil coefficients and aerodynamic quantities from nonlinear camber definitions without relying only on numerical discretization.</span></div>
-          <div class="project-subtopic"><strong>Reduced-order modeling</strong><span>Represent geometry through compact, physically interpretable variables suitable for unsteady and low-order aerodynamic models.</span></div>
-          <div class="project-subtopic"><strong>Leading-edge physics</strong><span>Quantify how curvature and camber-slope differences near the leading edge affect analytical predictions and model inputs.</span></div>
-          <div class="project-subtopic"><strong>Sensitivity and control</strong><span>Study how geometric variations propagate into loads and moments, supporting shape control and optimization workflows.</span></div>
-          <div class="project-subtopic"><strong>Applications</strong><span>Flexible airfoils, morphing wings, aeroelastic analysis, drag reduction, and rapid aerodynamic prediction tools.</span></div>
+          <div class="project-subtopic"><strong>Generalized functions</strong><span>Represent concentrated vorticity, discontinuities, singular loads, and limiting processes using distribution theory.</span></div>
+          <div class="project-subtopic"><strong>Thin-airfoil theory</strong><span>Revisit classical formulations with emphasis on analytical consistency, notation, and physical interpretation.</span></div>
+          <div class="project-subtopic"><strong>Unsteady phenomena</strong><span>Connect gusts, impulsive starts, and flapping motion to reduced-order aerodynamic responses.</span></div>
         </div>
-        <div class="related-works">
-          <h3>Related papers/works</h3>
-          <ul>
-            <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.1007/s11012-024-01801-6" target="_blank" rel="noopener">Nonlinear geometric decomposition of airfoils into the thickness and camber contributions</a>. <em>Meccanica</em>, 2024.</li>
-          </ul>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <ul>
+              <li><a href="source/analytical_aerodynamics.html">Analytical Aerodynamics</a> — teaching note on mathematical and physical foundations.</li>
+            </ul>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <p class="empty-state">—</p>
+          </div>
+        </div></div>
+      <div class="lang-content" data-lang="pt">
+        <h2>1. Aerodinâmica analítica não estacionária</h2>
+        <p class="research-subtitle">Formulação matemática de fenômenos aerodinâmicos não estacionários por meio de funções generalizadas, teoria de distribuições e modelos clássicos de aerofólio fino.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>Esta linha de pesquisa estabelece fundamentos analíticos para a modelagem aerodinâmica não estacionária. A idealização de escoamento potencial, as distribuições de singularidades e as representações por esteiras vorticosas são usadas para esclarecer a estrutura matemática por trás da geração de sustentação, da resposta a rajadas, do movimento impulsivo e da cinemática de asas batentes.</p>
+        <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
+          <div class="project-subtopic"><strong>Funções generalizadas</strong><span>Representar vorticidade concentrada, descontinuidades, cargas singulares e processos limites por meio da teoria de distribuições.</span></div>
+          <div class="project-subtopic"><strong>Teoria de aerofólio fino</strong><span>Revisitar formulações clássicas com ênfase em consistência analítica, notação e interpretação física.</span></div>
+          <div class="project-subtopic"><strong>Fenômenos não estacionários</strong><span>Conectar rajadas, partidas impulsivas e movimento batente a respostas aerodinâmicas de ordem reduzida.</span></div>
         </div>
-        <a class="card-action" href="source/geometric_decomposition_tool.html">Open related tool →</a>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <ul>
+              <li><a href="source/analytical_aerodynamics.html">Aerodinâmica Analítica</a> — nota de ensino sobre fundamentos matemáticos e físicos.</li>
+            </ul>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <p class="empty-state">—</p>
+          </div>
+        </div></div>
+    </article>
+
+    <article class="research-card">
+      <div class="lang-content active" data-lang="en">
+        <h2>2. Airfoil Geometry &amp; Parametric Representation</h2>
+        <p class="research-subtitle">Parametric and analytical representation of airfoil geometries, including Bézier-based surface modeling and nonlinear camber/thickness decomposition.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>This research direction develops geometrically consistent airfoil representations for analytical and reduced-order models. Surface fitting, parametric reconstruction, and nonlinear camber/thickness decomposition are combined to produce compact geometric descriptions suitable for theory, optimization, and computational workflows.</p>
+        <div class="project-subtopics" aria-label="Research subtopics">
+          <div class="project-subtopic"><strong>Bézier representation</strong><span>Fit upper and lower surfaces with smooth polynomial curves suitable for differentiation and reconstruction.</span></div>
+          <div class="project-subtopic"><strong>Nonlinear decomposition</strong><span>Separate camber and thickness using surface-normal geometry rather than only vertical distances.</span></div>
+          <div class="project-subtopic"><strong>Model inputs</strong><span>Generate compact geometric quantities for thin-airfoil theory, aeroelasticity, and optimization workflows.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <ul>
+              <li><a href="source/geometric_decomposition_tool.html">Airfoil Geometric Decomposition Tool</a> — in-platform camber/thickness decomposition.</li>
+            </ul>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.2514/6.2025-0027" target="_blank" rel="noopener">Resolving the Leading-Edge Singularity in the Thin Airfoil Theory for General Airfoil Shapes via Nonlinear Geometric Decomposition</a>. <em>AIAA SCITECH 2025 Forum</em>, AIAA Paper 2025-0027, 2025.</li>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.1007/s11012-024-01801-6" target="_blank" rel="noopener">Nonlinear geometric decomposition of airfoils into the thickness and camber contributions</a>. <em>Meccanica</em>, 59, 889–907, 2024.</li>
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="lang-content" data-lang="pt">
-        <h2>Decomposição não linear de aerofólios</h2>
-        <p class="research-subtitle">Formulações fechadas e representações geometricamente consistentes para teoria de aerofólio fino e modelagem aerodinâmica de ordem reduzida.</p>
+        <h2>2. Geometria de aerofólios &amp; representação paramétrica</h2>
+        <p class="research-subtitle">Representação paramétrica e analítica de geometrias de aerofólios, incluindo modelagem de superfícies por Bézier e decomposição não linear em cambagem/espessura.</p>
         <div class="card-separator" aria-hidden="true"></div>
-        <p>Este projeto investiga a decomposição da geometria de aerofólios em cambagem e espessura por meio de formulações geométricas não lineares. O objetivo é superar inconsistências das definições lineares clássicas e produzir entradas geométricas analiticamente tratáveis para modelos aerodinâmicos.</p>
+        <p>Esta linha de pesquisa desenvolve representações geometricamente consistentes de aerofólios para modelos analíticos e de ordem reduzida. Ajuste de superfícies, reconstrução paramétrica e decomposição não linear em cambagem/espessura são combinados para produzir descrições geométricas compactas adequadas para teoria, otimização e fluxos computacionais.</p>
         <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
-          <div class="project-subtopic"><strong>Formulação geométrica</strong><span>Desenvolver métodos de decomposição baseados na geometria da superfície, direções normais e reconstrução consistente de cambagem/espessura.</span></div>
-          <div class="project-subtopic"><strong>Aerodinâmica em forma fechada</strong><span>Calcular coeficientes da teoria de aerofólio fino e grandezas aerodinâmicas a partir de definições não lineares de cambagem.</span></div>
-          <div class="project-subtopic"><strong>Modelagem de ordem reduzida</strong><span>Representar a geometria por variáveis compactas e fisicamente interpretáveis para modelos aerodinâmicos não estacionários e de baixa ordem.</span></div>
-          <div class="project-subtopic"><strong>Física do bordo de ataque</strong><span>Quantificar como curvatura e diferenças de inclinação da cambagem próximas ao bordo de ataque afetam predições analíticas.</span></div>
-          <div class="project-subtopic"><strong>Sensibilidade e controle</strong><span>Estudar como variações geométricas se propagam para cargas e momentos, apoiando controle de forma e otimização.</span></div>
-          <div class="project-subtopic"><strong>Aplicações</strong><span>Aerofólios flexíveis, asas morphing, aeroelasticidade, redução de arrasto e ferramentas rápidas de predição aerodinâmica.</span></div>
+          <div class="project-subtopic"><strong>Representação por Bézier</strong><span>Ajustar superfícies superior e inferior com curvas polinomiais suaves adequadas para diferenciação e reconstrução.</span></div>
+          <div class="project-subtopic"><strong>Decomposição não linear</strong><span>Separar cambagem e espessura usando geometria normal à superfície, e não apenas distâncias verticais.</span></div>
+          <div class="project-subtopic"><strong>Entradas de modelo</strong><span>Gerar grandezas geométricas compactas para teoria de aerofólio fino, aeroelasticidade e otimização.</span></div>
         </div>
-        <div class="related-works">
-          <h3>Trabalhos relacionados</h3>
-          <ul>
-            <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.1007/s11012-024-01801-6" target="_blank" rel="noopener">Nonlinear geometric decomposition of airfoils into the thickness and camber contributions</a>. <em>Meccanica</em>, 2024.</li>
-          </ul>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <ul>
+              <li><a href="source/geometric_decomposition_tool.html">Ferramenta de Decomposição Geométrica</a> — decomposição de cambagem/espessura na própria plataforma.</li>
+            </ul>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.2514/6.2025-0027" target="_blank" rel="noopener">Resolving the Leading-Edge Singularity in the Thin Airfoil Theory for General Airfoil Shapes via Nonlinear Geometric Decomposition</a>. <em>AIAA SCITECH 2025 Forum</em>, AIAA Paper 2025-0027, 2025.</li>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.1007/s11012-024-01801-6" target="_blank" rel="noopener">Nonlinear geometric decomposition of airfoils into the thickness and camber contributions</a>. <em>Meccanica</em>, 59, 889–907, 2024.</li>
+            </ul>
+          </div>
         </div>
-        <a class="card-action" href="source/geometric_decomposition_tool.html">Abrir ferramenta relacionada →</a>
+      </div>
+    </article>
+
+    <article class="research-card">
+      <div class="lang-content active" data-lang="en">
+        <h2>3. Wake Dynamics &amp; Vortex Modeling</h2>
+        <p class="research-subtitle">Modeling of wake evolution and vorticity transport in unsteady flows, including the unsteady Kutta condition and canonical aerodynamic responses.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>This research direction focuses on the evolution of wakes and vorticity in unsteady aerodynamic flows. The wake is treated as the physical carrier of circulation history, linking airfoil boundary conditions, the unsteady Kutta condition, and canonical indicial and frequency-domain responses.</p>
+        <div class="project-subtopics" aria-label="Research subtopics">
+          <div class="project-subtopic"><strong>Wake dynamics</strong><span>Represent the shed vorticity field and its connection to circulation, memory effects, and induced loads.</span></div>
+          <div class="project-subtopic"><strong>Unsteady Kutta condition</strong><span>Analyze how trailing-edge regularity constrains circulation and determines wake shedding.</span></div>
+          <div class="project-subtopic"><strong>Classical responses</strong><span>Study Wagner, Theodorsen, and Sears formulations as benchmarks for unsteady airfoil theory.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.2514/6.2024-4528" target="_blank" rel="noopener">On the Generalized Wake Vortex Sheet in Small-Disturbance Problems</a>. <em>AIAA AVIATION 2024 Forum</em>, AIAA Paper 2024-4528, 2024.</li>
+              <li>Torres, G. L. S.; Gopalarathnam, A.; Marques, F. D. <a href="https://doi.org/10.2514/6.2025-1886" target="_blank" rel="noopener">A Uniformly Convergent Series Expansion for the Bound Vorticity Distribution in the Unsteady Thin Airfoil Theory</a>. <em>AIAA SCITECH 2025 Forum</em>, AIAA Paper 2025-1886, 2025.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="lang-content" data-lang="pt">
+        <h2>3. Dinâmica da esteira &amp; modelagem vorticosa</h2>
+        <p class="research-subtitle">Modelagem da evolução da esteira e do transporte de vorticidade em escoamentos não estacionários, incluindo a condição de Kutta não estacionária e respostas aerodinâmicas canônicas.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>Esta linha de pesquisa foca a evolução de esteiras e da vorticidade em escoamentos aerodinâmicos não estacionários. A esteira é tratada como portadora física do histórico de circulação, conectando condições de contorno no aerofólio, a condição de Kutta não estacionária e respostas canônicas indiciais e no domínio da frequência.</p>
+        <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
+          <div class="project-subtopic"><strong>Dinâmica da esteira</strong><span>Representar o campo de vorticidade desprendida e sua conexão com circulação, memória e cargas induzidas.</span></div>
+          <div class="project-subtopic"><strong>Condição de Kutta não estacionária</strong><span>Analisar como a regularidade no bordo de fuga restringe a circulação e determina o desprendimento da esteira.</span></div>
+          <div class="project-subtopic"><strong>Respostas clássicas</strong><span>Estudar as formulações de Wagner, Theodorsen e Sears como referências para teoria aerodinâmica não estacionária.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.2514/6.2024-4528" target="_blank" rel="noopener">On the Generalized Wake Vortex Sheet in Small-Disturbance Problems</a>. <em>AIAA AVIATION 2024 Forum</em>, AIAA Paper 2024-4528, 2024.</li>
+              <li>Torres, G. L. S.; Gopalarathnam, A.; Marques, F. D. <a href="https://doi.org/10.2514/6.2025-1886" target="_blank" rel="noopener">A Uniformly Convergent Series Expansion for the Bound Vorticity Distribution in the Unsteady Thin Airfoil Theory</a>. <em>AIAA SCITECH 2025 Forum</em>, AIAA Paper 2025-1886, 2025.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="research-card">
+      <div class="lang-content active" data-lang="en">
+        <h2>4. Reduced-Order &amp; Discrete-Vortex Methods</h2>
+        <p class="research-subtitle">Development of reduced-order aerodynamic models, including discrete-vortex methods, time-marching schemes, and physically consistent load formulations.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>This research direction bridges analytical vortex-sheet theory and computational reduced-order modeling. Continuous vorticity distributions are approximated by discrete vortices, enabling wake roll-up, time marching, and nonlinear unsteady effects while preserving a physically consistent interpretation of aerodynamic loads.</p>
+        <div class="project-subtopics" aria-label="Research subtopics">
+          <div class="project-subtopic"><strong>Vorticity discretization</strong><span>Approximate continuous sheets with point vortices or vortex elements while tracking circulation conservation.</span></div>
+          <div class="project-subtopic"><strong>Time marching</strong><span>Advance bound and wake vorticity through algorithms consistent with kinematics and shedding constraints.</span></div>
+          <div class="project-subtopic"><strong>Load evaluation</strong><span>Formulate aerodynamic forces and moments from physically consistent impulse, pressure, and circulation arguments.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.2514/6.2026-1342" target="_blank" rel="noopener">Novel Discrete-Vortex Method for Unsteady Thin Airfoils</a>. <em>AIAA SCITECH 2026 Forum</em>, AIAA Paper 2026-1342, 2026.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="lang-content" data-lang="pt">
+        <h2>4. Modelos de ordem reduzida &amp; métodos de vórtices discretos</h2>
+        <p class="research-subtitle">Desenvolvimento de modelos aerodinâmicos de ordem reduzida, incluindo métodos de vórtices discretos, esquemas de marcha temporal e formulações de carga fisicamente consistentes.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>Esta linha de pesquisa conecta a teoria analítica de esteiras vorticosas à modelagem computacional de ordem reduzida. Distribuições contínuas de vorticidade são aproximadas por vórtices discretos, permitindo enrolamento da esteira, marcha no tempo e efeitos não lineares não estacionários, preservando uma interpretação fisicamente consistente das cargas aerodinâmicas.</p>
+        <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
+          <div class="project-subtopic"><strong>Discretização da vorticidade</strong><span>Aproximar esteiras contínuas por vórtices pontuais ou elementos vorticosos, mantendo conservação de circulação.</span></div>
+          <div class="project-subtopic"><strong>Marcha temporal</strong><span>Avançar vorticidade ligada e desprendida por algoritmos consistentes com cinemática e restrições de desprendimento.</span></div>
+          <div class="project-subtopic"><strong>Avaliação de cargas</strong><span>Formular forças e momentos aerodinâmicos a partir de argumentos consistentes de impulso, pressão e circulação.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Marques, F. D. <a href="https://doi.org/10.2514/6.2026-1342" target="_blank" rel="noopener">Novel Discrete-Vortex Method for Unsteady Thin Airfoils</a>. <em>AIAA SCITECH 2026 Forum</em>, AIAA Paper 2026-1342, 2026.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="research-card">
+      <div class="lang-content active" data-lang="en">
+        <h2>5. Separated Flows &amp; Leading-Edge Phenomena</h2>
+        <p class="research-subtitle">Modeling of nonlinear aerodynamic effects associated with separation, including leading-edge vortex formation and shedding mechanisms.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>This research direction studies nonlinear aerodynamic effects associated with flow separation, with particular emphasis on leading-edge vortex formation and shedding. Suction-force criteria, leading-edge suction parameter concepts, and LESP-modulated discrete-vortex formulations are used to connect separation onset with transient aerodynamic loads.</p>
+        <div class="project-subtopics" aria-label="Research subtopics">
+          <div class="project-subtopic"><strong>LEV onset</strong><span>Identify criteria for when the leading edge can no longer sustain attached-flow suction.</span></div>
+          <div class="project-subtopic"><strong>LESP modulation</strong><span>Use leading-edge suction parameters to regulate vortex shedding in reduced-order models.</span></div>
+          <div class="project-subtopic"><strong>High-angle dynamics</strong><span>Connect leading-edge vortex formation to transient lift, nonlinear loads, and flapping-wing response.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Camacho, E. A. R.; Marques, F. D.; Silva, A. R. R. <a href="https://doi.org/10.2514/6.2021-0968" target="_blank" rel="noopener">Simulations of a Plunging Airfoil Undergoing Unequal Ascending and Descending Velocities at Low Reynolds Numbers</a>. <em>AIAA SCITECH 2021 Forum</em>, AIAA Paper 2021-0968, 2021.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="lang-content" data-lang="pt">
+        <h2>5. Escoamentos separados &amp; fenômenos de bordo de ataque</h2>
+        <p class="research-subtitle">Modelagem de efeitos aerodinâmicos não lineares associados à separação, incluindo formação e desprendimento de vórtices no bordo de ataque.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>Esta linha de pesquisa estuda efeitos aerodinâmicos não lineares associados à separação do escoamento, com ênfase na formação e no desprendimento de vórtices no bordo de ataque. Critérios de força de sucção, conceitos de parâmetro de sucção no bordo de ataque e formulações de vórtices discretos moduladas por LESP são usados para conectar o início da separação às cargas aerodinâmicas transientes.</p>
+        <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
+          <div class="project-subtopic"><strong>Início do LEV</strong><span>Identificar critérios para quando o bordo de ataque não consegue mais sustentar a sucção de escoamento aderido.</span></div>
+          <div class="project-subtopic"><strong>Modulação por LESP</strong><span>Usar parâmetros de sucção no bordo de ataque para regular o desprendimento de vórtices em modelos de ordem reduzida.</span></div>
+          <div class="project-subtopic"><strong>Dinâmica em alto ângulo</strong><span>Conectar a formação do vórtice de bordo de ataque à sustentação transiente, cargas não lineares e resposta de asas batentes.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Camacho, E. A. R.; Marques, F. D.; Silva, A. R. R. <a href="https://doi.org/10.2514/6.2021-0968" target="_blank" rel="noopener">Simulations of a Plunging Airfoil Undergoing Unequal Ascending and Descending Velocities at Low Reynolds Numbers</a>. <em>AIAA SCITECH 2021 Forum</em>, AIAA Paper 2021-0968, 2021.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="research-card">
+      <div class="lang-content active" data-lang="en">
+        <h2>6. Viscous Coupling &amp; Inner–Outer Interaction</h2>
+        <p class="research-subtitle">Coupling between inviscid outer-flow models and viscous near-wall corrections through boundary-layer displacement, transpiration, and viscous vortex regularization.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>This research direction extends analytical and vortex-based aerodynamic models beyond the purely inviscid approximation. Boundary-layer effects, displacement thickness, viscous transpiration, and finite-core vortex models are used to introduce Reynolds-number dependence while preserving the interpretability and low cost of reduced-order formulations.</p>
+        <div class="project-subtopics" aria-label="Research subtopics">
+          <div class="project-subtopic"><strong>Viscous–inviscid coupling</strong><span>Represent boundary-layer feedback as an effective correction to the outer aerodynamic boundary condition.</span></div>
+          <div class="project-subtopic"><strong>Displacement effects</strong><span>Connect displacement thickness, transpiration velocity, and modified pressure/loading distributions.</span></div>
+          <div class="project-subtopic"><strong>Viscous vortices</strong><span>Regularize shed vortices with finite-core growth models suitable for wake evolution and induced-velocity prediction.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Camacho, E. A. R.; Marques, F. D.; Silva, A. R. R. <a href="https://doi.org/10.2514/6.2022-2026" target="_blank" rel="noopener">Theoretical and Numerical Analysis of Oscillating Airfoils Including Viscous Effects</a>. <em>AIAA SCITECH 2022 Forum</em>, AIAA Paper 2022-2026, 2022.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="lang-content" data-lang="pt">
+        <h2>6. Acoplamento viscoso &amp; interação interno–externo</h2>
+        <p class="research-subtitle">Acoplamento entre modelos invíscidos de escoamento externo e correções viscosas de parede por meio de deslocamento de camada-limite, transpiração e regularização vorticosa viscosa.</p>
+        <div class="card-separator" aria-hidden="true"></div>
+        <p>Esta linha de pesquisa estende modelos aerodinâmicos analíticos e vorticosos além da aproximação puramente invíscida. Efeitos de camada-limite, espessura de deslocamento, transpiração viscosa e modelos de vórtices com núcleo finito são usados para introduzir dependência com o número de Reynolds, preservando a interpretabilidade e o baixo custo de formulações de ordem reduzida.</p>
+        <div class="project-subtopics" aria-label="Subtópicos de pesquisa">
+          <div class="project-subtopic"><strong>Acoplamento viscoso–invíscido</strong><span>Representar o efeito da camada-limite como uma correção efetiva à condição de contorno aerodinâmica externa.</span></div>
+          <div class="project-subtopic"><strong>Efeitos de deslocamento</strong><span>Conectar espessura de deslocamento, velocidade de transpiração e distribuições modificadas de pressão e carga.</span></div>
+          <div class="project-subtopic"><strong>Vórtices viscosos</strong><span>Regularizar vórtices desprendidos com modelos de crescimento de núcleo finito adequados à evolução da esteira e à predição de velocidade induzida.</span></div>
+        </div>
+        <div class="topic-support" aria-label="Related resources and works">
+          <div class="topic-support-block">
+            <h3>RELATED RESOURCES</h3>
+            <p class="empty-state">—</p>
+          </div>
+          <div class="topic-support-block">
+            <h3>RELATED WORKS</h3>
+            <ul>
+              <li>Torres, G. L. S.; Camacho, E. A. R.; Marques, F. D.; Silva, A. R. R. <a href="https://doi.org/10.2514/6.2022-2026" target="_blank" rel="noopener">Theoretical and Numerical Analysis of Oscillating Airfoils Including Viscous Effects</a>. <em>AIAA SCITECH 2022 Forum</em>, AIAA Paper 2022-2026, 2022.</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </article>
   </div>

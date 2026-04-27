@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.unsaero.com/</loc><lastmod>2026-04-24</lastmod><priority>1.00</priority></url>
-  <url><loc>https://www.unsaero.com/theory.html</loc><lastmod>2026-04-24</lastmod><priority>0.90</priority></url>
-  <url><loc>https://www.unsaero.com/tools.html</loc><lastmod>2026-04-24</lastmod><priority>0.90</priority></url>
-  <url><loc>https://www.unsaero.com/research.html</loc><lastmod>2026-04-24</lastmod><priority>0.75</priority></url>
-  <url><loc>https://www.unsaero.com/contact.html</loc><lastmod>2026-04-24</lastmod><priority>0.70</priority></url>
-  <url><loc>https://www.unsaero.com/source/analytical_aerodynamics.html</loc><lastmod>2026-04-24</lastmod><priority>0.85</priority></url>
-  <url><loc>https://www.unsaero.com/source/airfoil_surface_tool.html</loc><lastmod>2026-04-24</lastmod><priority>0.85</priority></url>
-
-  <url>
-    <loc>https://www.unsaero.com/source/geometric_decomposition_tool.html</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
+  <url><loc>https://www.unsaero.com/</loc></url>
+  <url><loc>https://www.unsaero.com/research.html</loc></url>
+  <url><loc>https://www.unsaero.com/theory.html</loc></url>
+  <url><loc>https://www.unsaero.com/tools.html</loc></url>
+  <url><loc>https://www.unsaero.com/contact.html</loc></url>
+  <url><loc>https://www.unsaero.com/source/analytical_aerodynamics.html</loc></url>
+  <url><loc>https://www.unsaero.com/source/geometric_decomposition_tool.html</loc></url>
+  <url><loc>https://www.unsaero.com/source/airfoil_surface_tool.html</loc></url>
+  <url><loc>https://www.unsaero.com/source/timeline.html</loc></url>
 </urlset>
