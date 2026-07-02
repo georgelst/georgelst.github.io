@@ -1,0 +1,2264 @@
+const TRANSLATIONS = {
+  en: {
+    document_title: 'Unsteady Thin-Airfoil Simulator | UNSAERO',
+    breadcrumb_tools: 'Tools', page_title: 'Unsteady Airfoil Simulator',
+    hero_subtitle: 'Explore pitching and heaving thin-airfoil cases through wake-vortex animation and time-resolved aerodynamic loads.',
+    run_case: 'Run case', simulator: 'Unsteady Airfoil Simulator (UAS)', inputs: 'Inputs',
+    kinematics: 'Kinematics', airfoil: 'Airfoil', airfoil_sections: 'Airfoil sections',
+    freestream: 'Freestream', chord: 'Chord',
+    pitch_source: 'Pitch source',
+    plunge_source: 'Plunge source',
+    source_constant: 'Constant',
+    source_sinusoidal: 'Sinusoidal',
+    source_smooth_ramp: 'Smooth ramp',
+    source_cosine_cycle: 'Asymmetric cosine',
+    pitch_constant_value: 'Value [deg]',
+    plunge_constant_value: 'H/c',
+    frequency: 'f [Hz]',
+    pitch_amplitude: 'Aα [deg]',
+    plunge_amplitude: 'H/c',
+    phase: 'φ [deg]',
+    start_time: 't1 [s]',
+    end_time: 't2 [s]',
+    sharpness: 'as [1/s]',
+    zeta: 'ζ',
+    pitch_angle: 'pitch α',
+    plunge: 'plunge h',
+    pivot: 'Pivot', moment_reference: 'Moment ref.', fourier_terms: 'Fourier terms',
+    time_step: 'Time step Δt [s]', steps: 'Steps',
+    run: 'Run', stop: 'Stop',
+    flowfield: 'Flowfield', airfoil_lower: 'airfoil', wake_vortices: 'wake vortices',
+    animation: 'Animation', play: 'Play', pause: 'Pause', auto_repeat: 'Auto repeat',
+    frame: 'Frame', vortex_colors: 'Vortex colors',
+    uniform: 'Uniform', by_circulation: 'By circulation',
+    circulation: 'Circulation', circulation_scale: 'Circulation scale',
+    collapse: 'Collapse', expand: 'Expand',
+    loads: 'Loads',
+    distributions: 'Distributions',
+    versus: 'vs',
+    lift_coefficient: 'Lift Coefficient',
+    drag_coefficient: 'Pressure Drag Coefficient',
+    moment_coefficient: 'Moment Coefficient',
+    lesp_title: 'Leading-Edge Suction Parameter',
+    pressure_distribution: 'Pressure Distribution',
+    vorticity_distribution: 'Vorticity Distribution',
+    distribution_unavailable: 'Distribution data unavailable. Run the case again.',
+    status_ready: 'Ready.', status_running: 'Running...',
+    status_running_progress: 'Running... {progress}%', status_stopped: 'Stopped.',
+    status_done: 'Done.', status_error: 'Error: {message}',
+    status_data_error: 'Failed to load data.',
+    nav_home: 'Home', nav_teaching: 'Teaching', nav_research: 'Research',
+    nav_tools: 'Tools', nav_contact: 'Contact',
+    footer_rights: '© 2025–2026 UNSAERO. All rights reserved.'
+  },
+  pt: {
+    document_title: 'Simulador de Aerofólio Fino Não Estacionário | UNSAERO',
+    breadcrumb_tools: 'Ferramentas', page_title: 'Simulador de Aerofólio Não Estacionário',
+    hero_subtitle: 'Explore casos de aerofólios finos em arfagem e mergulho por meio da animação da esteira de vórtices e de cargas aerodinâmicas resolvidas no tempo.',
+    run_case: 'Executar caso', simulator: 'Simulador de Aerofólio Não Estacionário (UAS)', inputs: 'Entradas',
+    kinematics: 'Cinemática', airfoil: 'Aerofólio', airfoil_sections: 'Seções do aerofólio',
+    freestream: 'Escoamento livre', chord: 'Corda',
+    pitch_source: 'Fonte da arfagem',
+    plunge_source: 'Fonte do mergulho',
+    source_constant: 'Constante',
+    source_sinusoidal: 'Senoidal',
+    source_smooth_ramp: 'Rampa suave',
+    source_cosine_cycle: 'Cosseno assimétrico',
+    pitch_constant_value: 'Valor [graus]',
+    plunge_constant_value: 'H/c',
+    frequency: 'f [Hz]',
+    pitch_amplitude: 'Aα [graus]',
+    plunge_amplitude: 'H/c',
+    phase: 'φ [graus]',
+    start_time: 't1 [s]',
+    end_time: 't2 [s]',
+    sharpness: 'as [1/s]',
+    zeta: 'ζ',
+    pitch_angle: 'arfagem α',
+    plunge: 'mergulho h',
+    pivot: 'Pivô', moment_reference: 'Ref. do momento', fourier_terms: 'Termos de Fourier',
+    time_step: 'Passo de tempo Δt [s]', steps: 'Passos',
+    run: 'Executar', stop: 'Parar',
+    flowfield: 'Campo de escoamento', airfoil_lower: 'aerofólio', wake_vortices: 'vórtices da esteira',
+    animation: 'Animação', play: 'Reproduzir', pause: 'Pausar', auto_repeat: 'Repetir automaticamente',
+    frame: 'Quadro', vortex_colors: 'Cores dos vórtices',
+    uniform: 'Uniforme', by_circulation: 'Por circulação',
+    circulation: 'Circulação', circulation_scale: 'Escala de circulação',
+    collapse: 'Recolher', expand: 'Expandir',
+    loads: 'Cargas',
+    distributions: 'Distribuições',
+    versus: 'versus',
+    lift_coefficient: 'Coeficiente de Sustentação',
+    drag_coefficient: 'Coeficiente de Arrasto de Pressão',
+    moment_coefficient: 'Coeficiente de Momento',
+    lesp_title: 'Parâmetro de Sucção do Bordo de Ataque',
+    pressure_distribution: 'Distribuição de Pressão',
+    vorticity_distribution: 'Distribuição de Vorticidade',
+    distribution_unavailable: 'Dados de distribuição indisponíveis. Execute o caso novamente.',
+    status_ready: 'Pronto.', status_running: 'Executando...',
+    status_running_progress: 'Executando... {progress}%', status_stopped: 'Interrompido.',
+    status_done: 'Concluído.', status_error: 'Erro: {message}',
+    status_data_error: 'Falha ao carregar os dados.',
+    nav_home: 'Início', nav_teaching: 'Ensino', nav_research: 'Pesquisa',
+    nav_tools: 'Ferramentas', nav_contact: 'Contato',
+    footer_rights: '© 2025–2026 UNSAERO. Todos os direitos reservados.'
+  }
+};
+
+const TWO_PI = 2 * Math.PI;
+const FLOWFIELD_EQUALITY_LIMIT_MULTIPLIER = 5;
+
+let currentLanguage = 'en';
+let currentStatus = { key: 'status_ready', values: {} };
+
+function normalizedLanguage(lang){ return ['pt', 'en'].includes(lang) ? lang : 'en'; }
+function translated(key){ return TRANSLATIONS[currentLanguage]?.[key] || TRANSLATIONS.en[key] || key; }
+function interpolate(text, values = {}){
+  return Object.entries(values).reduce((result, [key, value]) => result.replace(`{${key}}`, value), text);
+}
+function renderStatus(){
+  if (statusEl) statusEl.textContent = interpolate(translated(currentStatus.key), currentStatus.values);
+  renderProgress();
+}
+
+function renderProgress(){
+  if (!runProgress || !runProgressFill) return;
+  const active = currentStatus.key === 'status_running' || currentStatus.key === 'status_running_progress';
+  runProgress.hidden = !active;
+  runProgress.setAttribute('aria-hidden', active ? 'false' : 'true');
+  if (!active){
+    runProgressFill.style.width = '0%';
+    runProgress.setAttribute('aria-valuenow', '0');
+    return;
+  }
+
+  const raw = Number(currentStatus.values.progress ?? 0);
+  const progress = Math.max(0, Math.min(100, Number.isFinite(raw) ? raw : 0));
+  runProgressFill.style.width = `${progress}%`;
+  runProgress.setAttribute('aria-valuenow', progress.toFixed(1));
+}
+
+function applyLanguage(lang){
+  currentLanguage = normalizedLanguage(lang || localStorage.getItem('unsaero-lang') || 'en');
+  localStorage.setItem('unsaero-lang', currentLanguage);
+  document.documentElement.lang = currentLanguage === 'pt' ? 'pt-BR' : 'en-US';
+  document.title = translated('document_title');
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    const value = translated(element.dataset.i18n);
+    if (value) element.textContent = value;
+  });
+  document.querySelectorAll('.unsaero-global-lang-option').forEach((button) => {
+    button.classList.toggle('active', button.id === `btn-${currentLanguage}`);
+  });
+  renderStatus();
+  updatePlayPauseButton();
+  updateRepeatButton();
+  updateFrameCounter();
+  updateCollapseButtons();
+  if (DATA) drawKinematicsPreview();
+  if (out){
+    drawFrame(Number(frameSlider.value || 0));
+    plotLoads();
+  }
+}
+
+window.setLang = applyLanguage;
+window.applyChromeI18n = applyLanguage;
+
+const statusEl = document.getElementById('status');
+const vortexColorMode = document.getElementById('vortexColorMode');
+const circulationScaleInput = document.getElementById('circulationScale');
+const circulationScaleValue = document.getElementById('circulationScaleValue');
+const collapseButtons = Array.from(document.querySelectorAll('[data-collapse-target]'));
+
+const pitchKinSelect = document.getElementById('pitchKinSelect');
+const plungeKinSelect = document.getElementById('plungeKinSelect');
+const pitchConstantFields = document.getElementById('pitchConstantFields');
+const pitchSinusoidalFields = document.getElementById('pitchSinusoidalFields');
+const plungeConstantFields = document.getElementById('plungeConstantFields');
+const plungeSinusoidalFields = document.getElementById('plungeSinusoidalFields');
+const airSelect = document.getElementById('airSelect');
+const airfoilSectionsInput = document.getElementById('airfoilSections');
+
+const runBtn = document.getElementById('runBtn');
+const stopBtn = document.getElementById('stopBtn');
+
+const playPauseBtn = document.getElementById('playPauseBtn');
+const repeatBtn = document.getElementById('repeatBtn');
+const frameSlider = document.getElementById('frameSlider');
+const frameCounter = document.getElementById('frameCounter');
+const frameStepButtons = Array.from(document.querySelectorAll('[data-frame-step]'));
+const frameMiniLabels = Array.from(document.querySelectorAll('[data-frame-mini-label]'));
+const showWake = { checked: true }; // wake is always shown
+
+const flowCanvas = document.getElementById('flowCanvas');
+
+const plotPitchKinematics = document.getElementById('plotPitchKinematics');
+const plotPlungeKinematics = document.getElementById('plotPlungeKinematics');
+const plotCL = document.getElementById('plotCL');
+const plotCD = document.getElementById('plotCD');
+const plotCM = document.getElementById('plotCM');
+const plotLESP = document.getElementById('plotLESP');
+const plotPressureDist = document.getElementById('plotPressureDist');
+const plotVorticityDist = document.getElementById('plotVorticityDist');
+const distributionFrameLabel = document.getElementById('distributionFrameLabel');
+const tooltip = document.getElementById('tooltip');
+const runProgress = document.getElementById('runProgress');
+const runProgressFill = document.getElementById('runProgressFill');
+
+function updateCollapseButton(button){
+  if (!button) return;
+  const expanded = button.getAttribute('aria-expanded') !== 'false';
+  const action = translated(expanded ? 'collapse' : 'expand');
+  const label = button.querySelector('[data-collapse-label]');
+  if (label) label.textContent = action;
+  button.setAttribute('aria-label', action);
+  button.title = action;
+}
+
+function updateCollapseButtons(){
+  collapseButtons.forEach(updateCollapseButton);
+}
+
+function setCardExpanded(button, expanded){
+  const targetId = button?.dataset.collapseTarget;
+  const content = targetId ? document.getElementById(targetId) : null;
+  if (!content) return;
+  button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  content.hidden = !expanded;
+  button.closest('.collapsible-card')?.classList.toggle('is-collapsed', !expanded);
+  updateCollapseButton(button);
+
+  if (!expanded) return;
+  requestAnimationFrame(() => {
+    if (targetId === 'kinematicsContent' && DATA) drawKinematicsPreview();
+    if (targetId === 'loadsContent' && out) plotLoads(Number(frameSlider.value || 0));
+    if (targetId === 'distributionsContent' && out) plotDistributions(Number(frameSlider.value || 0));
+  });
+}
+
+function initializeCollapsibles(){
+  collapseButtons.forEach((button) => {
+    setCardExpanded(button, button.getAttribute('aria-expanded') !== 'false');
+    button.addEventListener('click', () => {
+      setCardExpanded(button, button.getAttribute('aria-expanded') === 'false');
+    });
+  });
+}
+
+let DATA = null;
+let out = null;
+let SIM = null; // current simulation context
+let anim = { playing:false, frame:0, raf:null, repeat:true };
+let vortexMode = 'gamma';
+
+let worker = null;
+let workerRunning = false;
+let directSolverModule = null;
+
+let COLORS = {};
+function refreshColors(){
+  const st = getComputedStyle(document.documentElement);
+  const get = (v, fallback) => (st.getPropertyValue(v).trim() || fallback);
+  COLORS = {
+    canvasBg:  get('--canvas-bg', '#ffffff'),
+    canvasGrid:get('--canvas-grid', '#d6dde8'),
+    canvasAxis:get('--canvas-axis', '#94a3b8'),
+    canvasText:get('--canvas-text', '#334155'),
+    border:    get('--border', '#d6dde8'),
+    muted:     get('--muted', '#475569'),
+    text:      get('--text', '#0b1220'),
+    accent:    get('--accent', '#2563eb'),
+    accent2:   get('--accent2', '#059669')
+  };
+}
+
+function setStatus(key, values = {}){
+  currentStatus = { key, values };
+  renderStatus();
+}
+
+function flowPlotBox(){
+  const w = flowCanvas?.width || 900;
+  const h = flowCanvas?.height || 300;
+  return { x:50, y:25, w:w-70, h:h-60 };
+}
+
+async function loadData(){
+  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json', import.meta.url)).then(r=>r.json());
+  DATA = { air };
+  Object.keys(air).forEach(k=>{
+    const opt=document.createElement('option');
+    opt.value=k; opt.textContent=k;
+    airSelect.appendChild(opt);
+  });
+  pitchKinSelect.value = 'constant';
+  plungeKinSelect.value = 'sinusoidal';
+  syncKinematicPanels();
+  setStatus('status_ready');
+  drawKinematicsPreview();
+}
+
+function getNum(id){ return Number(document.getElementById(id).value); }
+function getPercent(id){ return getNum(id) / 100; }
+function degreesToRadians(value){ return value * Math.PI / 180; }
+
+function finiteNumber(value, fallback = 0){
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function positiveNumber(value, fallback = 1){
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+function getInputNumber(id, fallback = 0){
+  return finiteNumber(document.getElementById(id)?.value, fallback);
+}
+
+function getStrictInputNumber(id, label){
+  const value = Number(document.getElementById(id)?.value);
+  if (!Number.isFinite(value)) throw new Error(`${label} must be a finite number.`);
+  return value;
+}
+
+function getStrictPositiveInputNumber(id, label){
+  const value = getStrictInputNumber(id, label);
+  if (value <= 0) throw new Error(`${label} must be greater than zero.`);
+  return value;
+}
+
+function getStrictStepCount(id, label){
+  const value = getStrictPositiveInputNumber(id, label);
+  const rounded = Math.floor(value);
+  if (rounded !== value) throw new Error(`${label} must be an integer.`);
+  if (rounded < 3) throw new Error(`${label} must be at least 3.`);
+  return rounded;
+}
+
+function getTimeStep(){
+  const element = document.getElementById('dt');
+  if (!element) return 0.01;
+  return getStrictPositiveInputNumber('dt', 'Time step Δt');
+}
+
+function getStepCount(){
+  const element = document.getElementById('nSteps');
+  if (!element) return 500;
+  return getStrictStepCount('nSteps', 'Steps');
+}
+
+function getAirfoilSectionCount(){
+  const element = airfoilSectionsInput || document.getElementById('airfoilSections');
+  if (!element) return 199;
+  const value = getStrictStepCount('airfoilSections', 'Airfoil sections');
+  if (value < 2) throw new Error('Airfoil sections must be at least 2.');
+  return value;
+}
+
+function interpolateAirfoilY(points, x){
+  if (!points?.length) return 0;
+  if (x <= points[0][0]) return Number(points[0][1]) || 0;
+  const last = points[points.length - 1];
+  if (x >= last[0]) return Number(last[1]) || 0;
+
+  for (let i=0; i<points.length - 1; i++){
+    const x0 = Number(points[i][0]);
+    const x1 = Number(points[i + 1][0]);
+    if (x >= x0 && x <= x1){
+      const y0 = Number(points[i][1]) || 0;
+      const y1 = Number(points[i + 1][1]) || 0;
+      const denom = x1 - x0;
+      const s = Math.abs(denom) < 1e-12 ? 0 : (x - x0) / denom;
+      return y0 + s * (y1 - y0);
+    }
+  }
+  return Number(last[1]) || 0;
+}
+
+function airfoilWithSections(points, sections){
+  const nSections = Math.max(2, Math.floor(sections));
+  const source = (points || [])
+    .map((p)=>[Number(p[0]), Number(p[1]) || 0])
+    .filter((p)=>Number.isFinite(p[0]) && Number.isFinite(p[1]))
+    .sort((a,b)=>a[0] - b[0]);
+
+  if (source.length < 2) throw new Error('Airfoil needs at least two source points.');
+  const out = new Array(nSections + 1);
+  for (let i=0; i<=nSections; i++){
+    const x = i / nSections;
+    out[i] = [x, interpolateAirfoilY(source, x)];
+  }
+  return out;
+}
+
+function kinematicAmplitudeToPhysical(kind, value, chord){
+  return kind === 'pitch' ? degreesToRadians(value) : value * chord;
+}
+
+function normalizedKinematicSource(value){
+  return ['constant', 'sinusoidal', 'smooth_ramp', 'cosine_cycle'].includes(value) ? value : 'constant';
+}
+
+function getKinematicConfig(kind, options = {}){
+  const strict = options.strict === true;
+  const chord = positiveNumber(options.chord, 1);
+  const isPitch = kind === 'pitch';
+  const select = kind === 'pitch' ? pitchKinSelect : plungeKinSelect;
+  const source = normalizedKinematicSource(select?.value);
+  if (source === 'constant'){
+    const rawValue = strict
+      ? getStrictInputNumber(`${kind}ConstantValue`, isPitch ? 'Pitch value [deg]' : 'Plunge H/c')
+      : getInputNumber(`${kind}ConstantValue`, 0);
+    return {
+      kind,
+      source,
+      valueInput: rawValue,
+      value: kinematicAmplitudeToPhysical(kind, rawValue, chord)
+    };
+  }
+
+  if (source === 'smooth_ramp'){
+    const amplitudeInput = strict
+      ? getStrictInputNumber(`${kind}SmoothAmplitude`, isPitch ? 'Pitch smooth-ramp amplitude [deg]' : 'Plunge smooth-ramp H/c')
+      : getInputNumber(`${kind}SmoothAmplitude`, isPitch ? 5 : 0.03);
+    const sharpness = strict
+      ? getStrictPositiveInputNumber(`${kind}SmoothSharpness`, `${isPitch ? 'Pitch' : 'Plunge'} smooth-ramp sharpness as [1/s]`)
+      : positiveNumber(document.getElementById(`${kind}SmoothSharpness`)?.value, 8);
+    const t1 = strict
+      ? getStrictInputNumber(`${kind}SmoothT1`, `${isPitch ? 'Pitch' : 'Plunge'} smooth-ramp t1 [s]`)
+      : getInputNumber(`${kind}SmoothT1`, 1);
+    const t2 = strict
+      ? getStrictInputNumber(`${kind}SmoothT2`, `${isPitch ? 'Pitch' : 'Plunge'} smooth-ramp t2 [s]`)
+      : getInputNumber(`${kind}SmoothT2`, 3);
+    if (strict && t2 <= t1) throw new Error(`${isPitch ? 'Pitch' : 'Plunge'} smooth-ramp t2 must be greater than t1.`);
+    const amplitude = kinematicAmplitudeToPhysical(kind, amplitudeInput, chord);
+    const duration = Math.max(t2 - t1, 1e-9);
+    return {
+      kind,
+      source,
+      amplitudeInput,
+      amplitude,
+      sharpness,
+      t1,
+      t2,
+      K: amplitude / (2 * duration)
+    };
+  }
+
+  if (source === 'cosine_cycle'){
+    const frequency = strict
+      ? getStrictPositiveInputNumber(`${kind}CosineFrequency`, `${isPitch ? 'Pitch' : 'Plunge'} asymmetric-cosine frequency [Hz]`)
+      : positiveNumber(document.getElementById(`${kind}CosineFrequency`)?.value, 1);
+    const amplitudeInput = strict
+      ? getStrictInputNumber(`${kind}CosineAmplitude`, isPitch ? 'Pitch asymmetric-cosine amplitude [deg]' : 'Plunge asymmetric-cosine H/c')
+      : getInputNumber(`${kind}CosineAmplitude`, isPitch ? 3 : 0.03);
+    const zeta = strict
+      ? getStrictInputNumber(`${kind}CosineZeta`, `${isPitch ? 'Pitch' : 'Plunge'} asymmetric-cosine ζ`)
+      : getInputNumber(`${kind}CosineZeta`, 0.5);
+    if (strict && !(zeta > 0 && zeta < 1)) throw new Error(`${isPitch ? 'Pitch' : 'Plunge'} asymmetric-cosine ζ must be between 0 and 1.`);
+    const phaseInput = strict
+      ? getStrictInputNumber(`${kind}CosinePhase`, `${isPitch ? 'Pitch' : 'Plunge'} asymmetric-cosine phase [deg]`)
+      : getInputNumber(`${kind}CosinePhase`, 0);
+    return {
+      kind,
+      source,
+      frequency,
+      amplitudeInput,
+      amplitude: kinematicAmplitudeToPhysical(kind, amplitudeInput, chord),
+      zeta,
+      phaseInput,
+      phase: degreesToRadians(phaseInput)
+    };
+  }
+
+  const frequency = strict
+    ? getStrictPositiveInputNumber(`${kind}Frequency`, `${isPitch ? 'Pitch' : 'Plunge'} frequency [Hz]`)
+    : positiveNumber(document.getElementById(`${kind}Frequency`)?.value, 1);
+  const amplitudeInput = strict
+    ? getStrictInputNumber(`${kind}Amplitude`, isPitch ? 'Pitch amplitude [deg]' : 'Plunge H/c')
+    : getInputNumber(`${kind}Amplitude`, isPitch ? 3 : 0.03);
+  const phaseInput = strict
+    ? getStrictInputNumber(`${kind}Phase`, `${isPitch ? 'Pitch' : 'Plunge'} phase [deg]`)
+    : getInputNumber(`${kind}Phase`, 0);
+
+  return {
+    kind,
+    source,
+    frequency,
+    amplitudeInput,
+    phaseInput,
+    amplitude: isPitch ? degreesToRadians(amplitudeInput) : amplitudeInput * chord,
+    phase: degreesToRadians(phaseInput)
+  };
+}
+
+function logCosh(x){
+  const ax = Math.abs(x);
+  return ax + Math.log1p(Math.exp(-2 * ax)) - Math.log(2);
+}
+
+function sechSquared(x){
+  const c = Math.cosh(x);
+  if (!Number.isFinite(c) || c === 0){
+    const e = Math.exp(-Math.abs(x));
+    return 4 * e * e;
+  }
+  return 1 / (c * c);
+}
+
+function evaluateKinematic(config, time){
+  if (config.source === 'constant'){
+    return {
+      y: config.value,
+      dy: 0,
+      d2y: 0
+    };
+  }
+
+  if (config.source === 'smooth_ramp'){
+    const a1 = config.sharpness * (time - config.t1);
+    const a2 = config.sharpness * (time - config.t2);
+    return {
+      y: (config.K / config.sharpness) * (logCosh(a1) - logCosh(a2)) + 0.5 * config.amplitude,
+      dy: config.K * (Math.tanh(a1) - Math.tanh(a2)),
+      d2y: config.sharpness * config.K * (sechSquared(a1) - sechSquared(a2))
+    };
+  }
+
+  if (config.source === 'cosine_cycle'){
+    const T = 1 / config.frequency;
+    const tCycle = ((time % T) + T) % T;
+    const split = config.zeta * T;
+    if (tCycle < split){
+      const omega = Math.PI / split;
+      const angle = omega * tCycle + config.phase;
+      return {
+        y: config.amplitude - config.amplitude * Math.cos(angle),
+        dy: omega * config.amplitude * Math.sin(angle),
+        d2y: omega * omega * config.amplitude * Math.cos(angle)
+      };
+    }
+    const omega = Math.PI / (T * (1 - config.zeta));
+    const angle = omega * (T - tCycle) + config.phase;
+    return {
+      y: config.amplitude - config.amplitude * Math.cos(angle),
+      dy: -omega * config.amplitude * Math.sin(angle),
+      d2y: omega * omega * config.amplitude * Math.cos(angle)
+    };
+  }
+
+  const omega = TWO_PI * config.frequency;
+  const angle = omega * time + config.phase;
+  const sin = Math.sin(angle);
+  const cos = Math.cos(angle);
+  return {
+    y: config.amplitude * sin,
+    dy: config.amplitude * omega * cos,
+    d2y: -config.amplitude * omega * omega * sin
+  };
+}
+
+function checkSeries(name, values, n){
+  if (!values || values.length !== n) throw new Error(`${name} has invalid length.`);
+  for (let i=0; i<n; i++){
+    if (!Number.isFinite(Number(values[i]))) throw new Error(`${name} contains a non-finite value.`);
+  }
+}
+
+function selectedKinematics(chord = getStrictPositiveInputNumber('c', 'Chord c')){
+  const pitchConfig = getKinematicConfig('pitch', { strict: true, chord });
+  const plungeConfig = getKinematicConfig('plunge', { strict: true, chord });
+  const dt = getTimeStep();
+  const n = getStepCount();
+  const duration = dt * (n - 1);
+
+  const t = new Array(n);
+  const alpha = new Array(n);
+  const h = new Array(n);
+  const dalpha = new Array(n);
+  const d2alpha = new Array(n);
+  const dh = new Array(n);
+  const d2h = new Array(n);
+  const rows = new Array(n);
+
+  for (let i=0; i<n; i++){
+    const time = i * dt;
+    const pitch = evaluateKinematic(pitchConfig, time);
+    const plunge = evaluateKinematic(plungeConfig, time);
+    t[i] = time;
+    alpha[i] = pitch.y;
+    dalpha[i] = pitch.dy;
+    d2alpha[i] = pitch.d2y;
+    h[i] = plunge.y;
+    dh[i] = plunge.dy;
+    d2h[i] = plunge.d2y;
+    rows[i] = [time, alpha[i], h[i]];
+  }
+
+  checkSeries('t', t, n);
+  checkSeries('alpha', alpha, n);
+  checkSeries('h', h, n);
+  checkSeries('dalpha', dalpha, n);
+  checkSeries('d2alpha', d2alpha, n);
+  checkSeries('dh', dh, n);
+  checkSeries('d2h', d2h, n);
+
+  return {
+    pitchName: pitchConfig.source,
+    plungeName: plungeConfig.source,
+    pitchConfig,
+    plungeConfig,
+    rows,
+    t,
+    alpha,
+    h,
+    dalpha,
+    d2alpha,
+    dh,
+    d2h,
+    dt,
+    duration
+  };
+}
+
+let stopRequested = false;
+stopBtn.addEventListener('click', ()=>{
+  stopRequested = true;
+  if (workerRunning && worker){
+    worker.postMessage({ type: 'stop' });
+  }
+});
+
+async function loadDirectSolver(){
+  if (directSolverModule) return directSolverModule;
+  try{
+    directSolverModule = await import(new URL('./solver.js?v=uas-layout-order-20260629', import.meta.url).href);
+  } catch(error){
+    console.warn('Versioned solver import failed; falling back to plain solver import.', error);
+    directSolverModule = await import('./solver.js');
+  }
+  return directSolverModule;
+}
+
+async function runSolverDirect(params, hooks){
+  await new Promise(r => setTimeout(r, 0));
+  const { aeroSolver } = await loadDirectSolver();
+  return aeroSolver(params, {
+    onProgress: hooks?.onProgress,
+    shouldStop: () => stopRequested
+  });
+}
+
+async function runSolverInWorker(params, hooks){
+  if (!window.Worker) return runSolverDirect(params, hooks);
+
+  if (!worker){
+    try{
+      worker = new Worker(new URL('./worker.js?v=uas-layout-order-20260629', import.meta.url), { type: 'module' });
+    } catch(error){
+      console.warn('Worker construction failed; falling back to direct solver.', error);
+      return runSolverDirect(params, hooks);
+    }
+  }
+  workerRunning = true;
+
+  return new Promise((resolve, reject)=>{
+    const onMsg = (ev)=>{
+      const msg = ev.data || {};
+      if (msg.type === 'progress'){
+        hooks.onProgress(msg.k, msg.it);
+      } else if (msg.type === 'done'){
+        worker.removeEventListener('message', onMsg);
+        worker.removeEventListener('error', onErr);
+        workerRunning = false;
+        resolve(msg.out);
+      } else if (msg.type === 'error'){
+        worker.removeEventListener('message', onMsg);
+        worker.removeEventListener('error', onErr);
+        workerRunning = false;
+        reject(new Error(msg.message || 'Worker error'));
+      }
+    };
+    const onErr = (e)=>{
+      worker.removeEventListener('message', onMsg);
+      worker.removeEventListener('error', onErr);
+      workerRunning = false;
+      reject(new Error(e.message || 'Worker error'));
+    };
+
+    worker.addEventListener('message', onMsg);
+    worker.addEventListener('error', onErr);
+    worker.postMessage({ type: 'run', params });
+  }).catch(async (error)=>{
+    console.warn('Worker failed; falling back to direct solver.', error);
+    workerRunning = false;
+    worker = null;
+    return runSolverDirect(params, hooks);
+  });
+}
+
+runBtn.addEventListener('click', async ()=>{
+  if (!DATA) return;
+  stopRequested = false;
+  workerRunning = false;
+  stopBtn.disabled = false;
+  runBtn.disabled = true;
+  playPauseBtn.disabled = true;
+  repeatBtn.disabled = true;
+  frameSlider.disabled = true;
+
+  // Reset plots and lock animation controls
+  anim.playing = false;
+  if (anim.raf) cancelAnimationFrame(anim.raf);
+  anim.raf = null;
+  playPauseBtn.disabled = true;
+  updatePlayPauseButton();
+  repeatBtn.disabled = true;
+  updateRepeatButton();
+  frameSlider.disabled = true;
+  updateFrameCounter();
+  clearCanvas(plotCL);
+  clearCanvas(plotCD);
+  clearCanvas(plotCM);
+  clearCanvas(plotLESP);
+  clearCanvas(plotPressureDist);
+  clearCanvas(plotVorticityDist);
+  if (distributionFrameLabel) distributionFrameLabel.textContent = '0/0';
+  setStatus('status_running');
+
+  try{
+    const Uref = getStrictPositiveInputNumber('Uref', 'Freestream U');
+    const chord = getStrictPositiveInputNumber('c', 'Chord c');
+    const motion = selectedKinematics(chord);
+    const { pitchName, plungeName, rows: kin, t, alpha, h, dalpha, d2alpha, dh, d2h } = motion;
+    const airName = airSelect.value;
+    const airfoil = airfoilWithSections(DATA.air[airName], getAirfoilSectionCount()); // [[x,y],...]
+
+    const hooks = {
+      onProgress: (k, it)=>{
+        if (k % 20 === 0) setStatus('status_running_progress', { progress: (100*k/it).toFixed(1) });
+      }
+    };
+
+    SIM = {
+      pitchName,
+      plungeName,
+      kin,
+      airName,
+      t, alpha, h, dalpha, d2alpha, dh, d2h,
+      Uref,
+      c: chord,
+      xp: getPercent('xp'),
+      airfoil
+    };
+
+    const params = {
+      Uref,
+      c: chord,
+      xp: getPercent('xp'),
+      xref: getPercent('xref'),
+      nAterm: Math.floor(getNum('nAterm')),
+      t, alpha, h, dalpha, d2alpha, dh, d2h,
+      airfoil,
+      maxWake: 800,
+      wakeSaveStride: 1,
+      wakeWakeNeighbors: 0
+    };
+
+    out = await runSolverInWorker(params, hooks);
+    GLOBAL_GSCALE = null;
+    GLOBAL_FLOW_BOUNDS = null;
+    GLOBAL_DISTRIBUTION_BOUNDS = null;
+    getGlobalFlowBounds();
+
+    setStatus(out.stopped ? 'status_stopped' : 'status_done');
+    stopBtn.disabled = true;
+    runBtn.disabled = false;
+
+    // enable animation
+    const nFrames = getFrameCount();
+    frameSlider.max = String(nFrames - 1);
+    const finalFrame = Math.max(0, nFrames - 1);
+    frameSlider.value = String(finalFrame);
+    anim.frame = finalFrame;
+    frameSlider.disabled = false;
+    playPauseBtn.disabled = false;
+    repeatBtn.disabled = false;
+    updatePlayPauseButton();
+    updateRepeatButton();
+    updateFrameCounter();
+
+    drawFrame(finalFrame);
+    plotLoads();
+
+  } catch(e){
+    setStatus('status_error', { message: e.message });
+    stopBtn.disabled = true;
+    runBtn.disabled = false;
+    playPauseBtn.disabled = true;
+    repeatBtn.disabled = true;
+    updatePlayPauseButton();
+    updateRepeatButton();
+    updateFrameCounter();
+  }
+});
+
+frameSlider.addEventListener('input', ()=>{
+  setFrame(Number(frameSlider.value));
+});
+
+function syncKinematicPanels(){
+  const pitchSource = normalizedKinematicSource(pitchKinSelect.value);
+  const plungeSource = normalizedKinematicSource(plungeKinSelect.value);
+  [
+    ['pitchConstantFields', pitchSource === 'constant'],
+    ['pitchSinusoidalFields', pitchSource === 'sinusoidal'],
+    ['pitchSmoothRampFields', pitchSource === 'smooth_ramp'],
+    ['pitchCosineCycleFields', pitchSource === 'cosine_cycle'],
+    ['plungeConstantFields', plungeSource === 'constant'],
+    ['plungeSinusoidalFields', plungeSource === 'sinusoidal'],
+    ['plungeSmoothRampFields', plungeSource === 'smooth_ramp'],
+    ['plungeCosineCycleFields', plungeSource === 'cosine_cycle']
+  ].forEach(([id, visible])=>{
+    const element = document.getElementById(id);
+    if (element) element.hidden = !visible;
+  });
+  drawKinematicsPreview();
+}
+
+function bindKinematicControls(){
+  [
+    pitchKinSelect,
+    plungeKinSelect,
+    document.getElementById('pitchConstantValue'),
+    document.getElementById('pitchFrequency'),
+    document.getElementById('pitchAmplitude'),
+    document.getElementById('pitchPhase'),
+    document.getElementById('pitchSmoothAmplitude'),
+    document.getElementById('pitchSmoothSharpness'),
+    document.getElementById('pitchSmoothT1'),
+    document.getElementById('pitchSmoothT2'),
+    document.getElementById('pitchCosineFrequency'),
+    document.getElementById('pitchCosineAmplitude'),
+    document.getElementById('pitchCosineZeta'),
+    document.getElementById('pitchCosinePhase'),
+    document.getElementById('plungeConstantValue'),
+    document.getElementById('plungeFrequency'),
+    document.getElementById('plungeAmplitude'),
+    document.getElementById('plungePhase'),
+    document.getElementById('plungeSmoothAmplitude'),
+    document.getElementById('plungeSmoothSharpness'),
+    document.getElementById('plungeSmoothT1'),
+    document.getElementById('plungeSmoothT2'),
+    document.getElementById('plungeCosineFrequency'),
+    document.getElementById('plungeCosineAmplitude'),
+    document.getElementById('plungeCosineZeta'),
+    document.getElementById('plungeCosinePhase')
+  ].forEach((element)=>{
+    element?.addEventListener('input', syncKinematicPanels);
+    element?.addEventListener('change', syncKinematicPanels);
+  });
+}
+
+bindKinematicControls();
+
+function getCirculationScaleFactor(){
+  const raw = Number(circulationScaleInput?.value);
+  if (!Number.isFinite(raw)) return 1;
+  return Math.max(1e-10, Math.min(1, raw));
+}
+
+function updateCirculationScaleOutput(){
+  if (!circulationScaleValue) return;
+  const raw = Number(circulationScaleInput?.value);
+  circulationScaleValue.value = raw <= 0 ? '1e-10' : getCirculationScaleFactor().toFixed(2);
+}
+
+// segmented control for vortex colors
+vortexColorMode?.addEventListener('click', (ev)=>{
+  const btn = ev.target.closest('button');
+  if (!btn) return;
+  const mode = btn.dataset.mode;
+  vortexMode = mode;
+  [...vortexColorMode.querySelectorAll('.segbtn')].forEach(b=>b.classList.toggle('active', b===btn));
+  drawFrame(Number(frameSlider.value||0));
+});
+
+circulationScaleInput?.addEventListener('input', ()=>{
+  updateCirculationScaleOutput();
+  drawFrame(Number(frameSlider.value || 0));
+});
+circulationScaleInput?.addEventListener('change', updateCirculationScaleOutput);
+updateCirculationScaleOutput();
+
+
+function updatePlayPauseButton(){
+  if (!playPauseBtn) return;
+  const label = translated(anim.playing ? 'pause' : 'play');
+  const icon = anim.playing
+    ? '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="3" y="2.5" width="3.5" height="11" rx="1"></rect><rect x="9.5" y="2.5" width="3.5" height="11" rx="1"></rect></svg>'
+    : '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 2.7v10.6c0 .78.85 1.26 1.52.86l8.24-5.3a1 1 0 0 0 0-1.72L5.52 1.84A1 1 0 0 0 4 2.7z"></path></svg>';
+  playPauseBtn.innerHTML = `<span class="play-pause-icon">${icon}</span><span>${label}</span>`;
+  playPauseBtn.setAttribute('aria-label', label);
+}
+
+function updateRepeatButton(){
+  if (!repeatBtn) return;
+  repeatBtn.textContent = translated('auto_repeat');
+  repeatBtn.classList.toggle('active', !!anim.repeat);
+  repeatBtn.setAttribute('aria-pressed', anim.repeat ? 'true' : 'false');
+}
+
+function updateFrameCounter(){
+  const total = getFrameCount();
+  if (!total){
+    if (frameCounter) frameCounter.textContent = '0/0';
+    frameMiniLabels.forEach((label)=>{ label.textContent = '0/0'; });
+    frameStepButtons.forEach((button)=>{ button.disabled = true; });
+    return;
+  }
+  const current = Math.max(0, Math.min(total - 1, Number(frameSlider.value || anim.frame || 0)));
+  const label = `${current + 1}/${total}`;
+  if (frameCounter) frameCounter.textContent = label;
+  frameMiniLabels.forEach((element)=>{ element.textContent = label; });
+  frameStepButtons.forEach((button)=>{
+    const step = Number(button.dataset.frameStep || 0);
+    button.disabled = !out || (step < 0 && current <= 0) || (step > 0 && current >= total - 1);
+  });
+}
+
+function setFrame(frame){
+  if (!out) return;
+  const total = getFrameCount();
+  if (!total) return;
+  const next = Math.max(0, Math.min(total - 1, Math.round(Number(frame) || 0)));
+  anim.frame = next;
+  frameSlider.value = String(next);
+  drawFrame(next);
+  updateFrameCounter();
+}
+
+function stepFrame(delta){
+  if (anim.playing){
+    anim.playing = false;
+    if (anim.raf) cancelAnimationFrame(anim.raf);
+    anim.raf = null;
+    updatePlayPauseButton();
+  }
+  const current = Number(frameSlider.value || anim.frame || 0);
+  setFrame(current + delta);
+}
+
+let frameHoldDelay = null;
+let frameHoldTimer = null;
+
+function clearFrameStepHold(){
+  if (frameHoldDelay){
+    clearTimeout(frameHoldDelay);
+    frameHoldDelay = null;
+  }
+  if (frameHoldTimer){
+    clearInterval(frameHoldTimer);
+    frameHoldTimer = null;
+  }
+}
+
+frameStepButtons.forEach((button)=>{
+  const stepFromButton = () => Number(button.dataset.frameStep || 0);
+  button.addEventListener('pointerdown', (event)=>{
+    if (button.disabled) return;
+    event.preventDefault();
+    clearFrameStepHold();
+    const step = stepFromButton();
+    stepFrame(step);
+    frameHoldDelay = setTimeout(()=>{
+      frameHoldTimer = setInterval(()=>{
+        if (button.disabled){
+          clearFrameStepHold();
+          return;
+        }
+        stepFrame(step);
+      }, 55);
+    }, 230);
+  });
+  button.addEventListener('click', (event)=>{
+    // Keyboard-initiated clicks have detail = 0; pointer clicks are handled
+    // by pointerdown so press-and-hold does not double-step on release.
+    if (event.detail === 0) stepFrame(stepFromButton());
+  });
+  button.addEventListener('pointerup', clearFrameStepHold);
+  button.addEventListener('pointercancel', clearFrameStepHold);
+  button.addEventListener('pointerleave', clearFrameStepHold);
+  button.addEventListener('blur', clearFrameStepHold);
+});
+window.addEventListener('pointerup', clearFrameStepHold);
+window.addEventListener('pointercancel', clearFrameStepHold);
+
+playPauseBtn.addEventListener('click', ()=>{
+  if (!out) return;
+  const nFrames = getFrameCount();
+  if (!nFrames) return;
+
+  if (anim.playing){
+    anim.playing = false;
+    if (anim.raf){
+      cancelAnimationFrame(anim.raf);
+      anim.raf = null;
+    }
+  } else {
+    const sliderFrame = Number(frameSlider.value || anim.frame || 0);
+    anim.frame = Math.max(0, Math.min(nFrames - 1, Number.isFinite(sliderFrame) ? sliderFrame : 0));
+    if (anim.frame >= nFrames - 1){
+      anim.frame = -1;
+    }
+    anim.playing = true;
+    tick();
+  }
+  updatePlayPauseButton();
+});
+
+repeatBtn?.addEventListener('click', ()=>{
+  anim.repeat = !anim.repeat;
+  updateRepeatButton();
+});
+
+function tick(){
+  if (!anim.playing || !out) return;
+  const nFrames = getFrameCount();
+  if (!nFrames){
+    anim.playing = false;
+    anim.raf = null;
+    updatePlayPauseButton();
+    updateFrameCounter();
+    return;
+  }
+  anim.frame = anim.repeat ? ((anim.frame + 1) % nFrames) : Math.min(anim.frame + 1, nFrames - 1);
+  frameSlider.value = String(anim.frame);
+  drawFrame(anim.frame);
+  updateFrameCounter();
+  if (anim.frame >= nFrames - 1 && !anim.repeat){
+    anim.playing = false;
+    anim.raf = null;
+    updatePlayPauseButton();
+    return;
+  }
+  anim.raf = requestAnimationFrame(tick);
+}
+
+// --- drawing helpers ---
+function clear(ctx,w,h){
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = COLORS.canvasBg;
+  ctx.fillRect(0,0,w,h);
+}
+
+function clearCanvas(canvas){
+  if (!canvas) return;
+  clear(canvas.getContext('2d'), canvas.width, canvas.height);
+}
+
+function drawAxes(ctx, w, h, box){
+  ctx.strokeStyle = COLORS.canvasGrid;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(box.x, box.y, box.w, box.h);
+}
+
+function niceStep(range, targetTicks=5){
+  // returns a "nice" step size (1,2,5 * 10^k)
+  const raw = range / Math.max(1, targetTicks);
+  const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+  const frac = raw / pow;
+  let niceFrac = 1;
+  if (frac <= 1) niceFrac = 1;
+  else if (frac <= 2) niceFrac = 2;
+  else if (frac <= 5) niceFrac = 5;
+  else niceFrac = 10;
+  return niceFrac * pow;
+}
+
+function drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, xlabel, ylabel, options = {}){
+  // axes: left + bottom, with ticks and labels
+  const showYTicks = options.showYTicks !== false;
+  const showYTickLabels = options.showYTickLabels !== false;
+  const ylabelOffset = Number.isFinite(options.ylabelOffset) ? options.ylabelOffset : 52;
+  ctx.save();
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.lineWidth = 1;
+
+  // y-axis: readable, but secondary to the data.
+  ctx.strokeStyle = COLORS.canvasAxis;
+  ctx.beginPath();
+  ctx.moveTo(box.x, box.y);
+  ctx.lineTo(box.x, box.y + box.h);
+  ctx.stroke();
+
+  const xRange = xmax - xmin;
+  const yRange = ymax - ymin;
+  const xStep = niceStep(xRange, 5);
+  const yStep = niceStep(yRange, 5);
+
+  // x-axis/baseline: dashed and located at the physical y = 0 level.
+  if (ymin <= 0 && ymax >= 0 && yRange > 0){
+    const zeroY = box.y + (1 - ((0 - ymin) / yRange)) * box.h;
+    ctx.save();
+    ctx.strokeStyle = COLORS.canvasAxis;
+    ctx.globalAlpha = 0.86;
+    ctx.lineWidth = 1.05;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(box.x, zeroY);
+    ctx.lineTo(box.x + box.w, zeroY);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ticks
+  ctx.font = "11px system-ui";
+
+  // x ticks
+  ctx.strokeStyle = COLORS.canvasGrid;
+  const xStart = Math.ceil(xmin / xStep) * xStep;
+  for (let xv = xStart; xv <= xmax + 1e-12; xv += xStep){
+    const u = (xv - xmin) / (xmax - xmin);
+    const X = box.x + u * box.w;
+    const Y = box.y + box.h;
+    ctx.beginPath();
+    ctx.moveTo(X, Y);
+    ctx.lineTo(X, Y + 5);
+    ctx.stroke();
+    const s = (Math.abs(xv) < 1e-10) ? "0" : xv.toPrecision(3);
+    ctx.fillText(s, X - 10, Y + 18);
+  }
+
+  if (showYTicks){
+    ctx.strokeStyle = COLORS.canvasAxis;
+    // y ticks
+    const yStart = Math.ceil(ymin / yStep) * yStep;
+    for (let yv = yStart; yv <= ymax + 1e-12; yv += yStep){
+      const v = (yv - ymin) / (ymax - ymin);
+      const X = box.x;
+      const Y = box.y + (1 - v) * box.h;
+      ctx.beginPath();
+      ctx.moveTo(X - 5, Y);
+      ctx.lineTo(X, Y);
+      ctx.stroke();
+      if (showYTickLabels){
+        const s = (Math.abs(yv) < 1e-10) ? "0" : yv.toPrecision(3);
+        ctx.fillText(s, X - 42, Y + 4);
+      }
+    }
+  }
+
+  // labels
+  ctx.font = "12px system-ui";
+  if (xlabel){
+    ctx.fillText(xlabel, box.x + box.w/2 - 10, box.y + box.h + 34);
+  }
+  if (ylabel){
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.translate(box.x - ylabelOffset, box.y + box.h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText(ylabel, 0, 0);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function paddedRange(values, fallbackSpan = 1){
+  let min = Infinity;
+  let max = -Infinity;
+  for (const value of values){
+    if (!Number.isFinite(value)) continue;
+    min = Math.min(min, value);
+    max = Math.max(max, value);
+  }
+  if (!Number.isFinite(min) || !Number.isFinite(max)){
+    min = -fallbackSpan;
+    max = fallbackSpan;
+  }
+  if (min === max){
+    const span = Math.max(Math.abs(min) * 0.2, fallbackSpan);
+    min -= span;
+    max += span;
+  }
+  const pad = 0.1 * (max - min);
+  return { min: min - pad, max: max + pad };
+}
+
+function drawKinematicsCurve(ctx, box, t, y, ylabel, color, xlabel = '', yRange = null, axisOptions = {}){
+  const xmin = t[0] ?? 0;
+  const xmax = t[t.length - 1] ?? 1;
+  const yr = yRange || paddedRange(y, 0.05);
+  drawPlotAxes(ctx, box, xmin, xmax, yr.min, yr.max, xlabel, ylabel, axisOptions);
+
+  const bounds = { xmin, xmax, zmin: yr.min, zmax: yr.max };
+  if (Array.isArray(axisOptions.verticalGuides)){
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(box.x, box.y, box.w, box.h);
+    ctx.clip();
+    ctx.strokeStyle = COLORS.canvasAxis;
+    ctx.fillStyle = COLORS.canvasText;
+    ctx.globalAlpha = 0.78;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'center';
+    for (const guide of axisOptions.verticalGuides){
+      const gx = Number(guide?.x);
+      if (!Number.isFinite(gx) || gx < xmin || gx > xmax) continue;
+      const gy = Number.isFinite(guide?.y) ? Number(guide.y) : 0;
+      const q0 = worldToCanvas(gx, 0, box, bounds);
+      const q1 = worldToCanvas(gx, gy, box, bounds);
+      ctx.beginPath();
+      ctx.moveTo(q0.X, q0.Y);
+      ctx.lineTo(q1.X, q1.Y);
+      ctx.stroke();
+      if (guide.label){
+        ctx.setLineDash([]);
+        ctx.textBaseline = gy >= 0 ? 'top' : 'bottom';
+        ctx.fillText(guide.label, q0.X, q0.Y + (gy >= 0 ? 5 : -5));
+        ctx.setLineDash([5, 5]);
+      }
+    }
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(box.x, box.y, box.w, box.h);
+  ctx.clip();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.9;
+  ctx.beginPath();
+  for (let i=0; i<t.length; i++){
+    const q = worldToCanvas(t[i], y[i], box, bounds);
+    if (i === 0) ctx.moveTo(q.X, q.Y);
+    else ctx.lineTo(q.X, q.Y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function buildPreviewSeries(config){
+  const n = 241;
+  const x = new Array(n);
+  const y = new Array(n);
+  if (config.source === 'sinusoidal'){
+    for (let i=0; i<n; i++){
+      const tau = i / (n - 1);
+      x[i] = tau;
+      y[i] = 0.92 * Math.sin(TWO_PI * tau);
+    }
+    return { x, y, xlabel: 't/T' };
+  }
+
+  if (config.source === 'smooth_ramp'){
+    const sharpness = positiveNumber(config.sharpness, 8);
+    const t1 = Math.max(0, Number.isFinite(config.t1) ? config.t1 : 1);
+    const rawT2 = Number.isFinite(config.t2) ? config.t2 : 3;
+    const t2 = rawT2 > t1 ? rawT2 : t1 + Math.max(0.2, 1 / sharpness);
+    const duration = Math.max(t2 - t1, 1e-9);
+    const xmin = 0;
+    const xmax = Math.max(t1 + t2, t2 + 1e-6, 1e-6);
+    const K = 1 / (2 * duration);
+    const rampPreviewY = (time)=>{
+      const a1 = sharpness * (time - t1);
+      const a2 = sharpness * (time - t2);
+      const yRaw = (K / sharpness) * (logCosh(a1) - logCosh(a2)) + 0.5;
+      return 0.92 * (2 * yRaw - 1);
+    };
+    for (let i=0; i<n; i++){
+      const time = xmin + (i / (n - 1)) * (xmax - xmin);
+      x[i] = time;
+      y[i] = rampPreviewY(time);
+    }
+    return {
+      x,
+      y,
+      xlabel: 't',
+      guides: [
+        { x: t1, y: rampPreviewY(t1), label: 't₁' },
+        { x: t2, y: rampPreviewY(t2), label: 't₂' }
+      ]
+    };
+  }
+
+  if (config.source === 'cosine_cycle'){
+    const zeta = Math.max(0.001, Math.min(0.999, Number.isFinite(config.zeta) ? config.zeta : 0.5));
+    for (let i=0; i<n; i++){
+      const tau = i / (n - 1);
+      const yRaw = tau < zeta
+        ? 1 - Math.cos(Math.PI * tau / zeta)
+        : 1 - Math.cos(Math.PI * (1 - tau) / (1 - zeta));
+      x[i] = tau;
+      y[i] = 0.46 * yRaw;
+    }
+    return {
+      x,
+      y,
+      xlabel: 't/T',
+      guides: [{ x: zeta, y: 0.92, label: 'ζ' }]
+    };
+  }
+
+  for (let i=0; i<n; i++){
+    const time = i / (n - 1);
+    x[i] = time;
+    y[i] = 0;
+  }
+  return { x, y, xlabel: 't' };
+}
+
+function drawSingleKinematicPreview(canvas, config, ylabel, color){
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  clear(ctx, w, h);
+
+  const { x, y, xlabel, guides } = buildPreviewSeries(config);
+  const box = { x: 62, y: 18, w: w - 88, h: h - 62 };
+  drawKinematicsCurve(ctx, box, x, y, ylabel, color, xlabel, { min: -1, max: 1 }, {
+    showYTicks: false,
+    ylabelOffset: 30,
+    verticalGuides: guides
+  });
+}
+
+function drawKinematicsPreview(){
+  const pitchConfig = getKinematicConfig('pitch');
+  const plungeConfig = getKinematicConfig('plunge');
+  drawSingleKinematicPreview(
+    plotPitchKinematics,
+    pitchConfig,
+    'α',
+    COLORS.accent2
+  );
+  drawSingleKinematicPreview(
+    plotPlungeKinematics,
+    plungeConfig,
+    'h',
+    COLORS.accent2
+  );
+}
+
+function worldToCanvas(x, z, box, bounds){
+  const {xmin,xmax,zmin,zmax} = bounds;
+  const u = (x - xmin)/(xmax - xmin);
+  const v = (z - zmin)/(zmax - zmin);
+  return {
+    X: box.x + u*box.w,
+    Y: box.y + (1-v)*box.h
+  };
+}
+
+function lerp(a,b,t){ return a + (b-a)*t; }
+function rgb(r,g,b){ return `rgb(${r|0},${g|0},${b|0})`; }
+function getMidRGB(){
+  const theme = document.documentElement.getAttribute('data-theme') || 'light';
+  // Requirement: zero circulation must map to white (light mode) or black (dark mode)
+  return (theme === 'light') ? [255,255,255] : [0,0,0];
+}
+function vortexColor(G, Gmax){
+  if (!Number.isFinite(G) || !Number.isFinite(Gmax) || Gmax <= 0) return COLORS.accent2;
+
+  const mid = getMidRGB();
+  const red = [255, 40, 40];
+  const blue = [40, 120, 255];
+  if (!Number.isFinite(Gmax) || Gmax <= 0) return COLORS.accent2;
+  const ratio = G/Gmax;
+  if (!Number.isFinite(ratio)) return COLORS.accent2;
+  const x = Math.max(-1, Math.min(1, ratio));
+  if (x >= 0){
+    const t = x;
+    return rgb(lerp(mid[0], red[0], t), lerp(mid[1], red[1], t), lerp(mid[2], red[2], t));
+  } else {
+    const t = -x;
+    return rgb(lerp(mid[0], blue[0], t), lerp(mid[1], blue[1], t), lerp(mid[2], blue[2], t));
+  }
+}
+
+function getWakeSnapshot(frame){
+  if (!out?.flowfield?.TE) return null;
+  const TE = out.flowfield.TE;
+  if (TE[frame]) return TE[frame];
+  const stride = Math.max(1, out.flowfield.wakeSaveStride || 1);
+  // jump directly to the last saved stride-aligned snapshot
+  let k = frame - (frame % stride);
+  for (; k >= 0; k -= stride){
+    if (TE[k]) return TE[k];
+  }
+  return TE[0] || null;
+}
+
+function getFrameCount(){
+  return out?.flowfield?.TE?.length || SIM?.t?.length || 0;
+}
+
+function wakeLength(w){
+  if (!w) return 0;
+  if (Array.isArray(w)) return w.length;
+  if (w.re && typeof w.re.length === 'number') return w.re.length;
+  return 0;
+}
+
+let GLOBAL_FLOW_BOUNDS = null;
+function getGlobalFlowBounds(){
+  if (GLOBAL_FLOW_BOUNDS) return GLOBAL_FLOW_BOUNDS;
+  if (!out || !SIM || !DATA) return null;
+
+  const kin = SIM.kin || [];
+  const airfoil = SIM.airfoil || [];
+  const chord = Math.max(Math.abs(SIM.c), 1e-9);
+  const pivot = SIM.xp * SIM.c;
+  const U = SIM.Uref;
+  let xmin = Infinity;
+  let xmax = -Infinity;
+  let maxAbsVortexZ = 0;
+  let maxAbsAirfoilZ = 0;
+
+  for (let frame=0; frame<kin.length; frame++){
+    const row = kin[frame];
+    if (!row) continue;
+    const t = Number(row[0]) || 0;
+    const alpha = Number(row[1]) || 0;
+    const plunge = Number(row[2]) || 0;
+    const wake = getWakeSnapshot(frame);
+
+    if (Array.isArray(wake)){
+      for (const vortex of wake){
+        const x = Number(vortex.re);
+        const z = Number(vortex.im);
+        if (Number.isFinite(x)){
+          xmin = Math.min(xmin, x);
+          xmax = Math.max(xmax, x);
+        }
+        if (Number.isFinite(z)) maxAbsVortexZ = Math.max(maxAbsVortexZ, Math.abs(z));
+      }
+    } else if (wake?.im){
+      for (let i=0; i<wake.im.length; i++){
+        const x = Number(wake.re[i]);
+        const z = Number(wake.im[i]);
+        if (Number.isFinite(x)){
+          xmin = Math.min(xmin, x);
+          xmax = Math.max(xmax, x);
+        }
+        if (Number.isFinite(z)) maxAbsVortexZ = Math.max(maxAbsVortexZ, Math.abs(z));
+      }
+    }
+
+    const ca = Math.cos(alpha);
+    const sa = Math.sin(alpha);
+    for (const point of airfoil){
+      const xr = point[0] * SIM.c - pivot;
+      const yi = point[1] * SIM.c;
+      const x = xr * ca + yi * sa - U * t;
+      const z = -xr * sa + yi * ca;
+      const zFixed = z + plunge;
+      if (Number.isFinite(x)){
+        xmin = Math.min(xmin, x);
+        xmax = Math.max(xmax, x);
+      }
+      if (Number.isFinite(zFixed)) maxAbsAirfoilZ = Math.max(maxAbsAirfoilZ, Math.abs(zFixed));
+    }
+  }
+
+  const measuredExtent = Math.max(maxAbsVortexZ, maxAbsAirfoilZ);
+  const zLimit = Math.max(0.05 * chord, 1.15 * measuredExtent);
+  if (!Number.isFinite(xmin) || !Number.isFinite(xmax)){
+    xmin = -chord;
+    xmax = 0;
+  }
+
+  // Use a constant fixed-frame origin at the rightmost point in the full
+  // trajectory. This keeps the view fixed while presenting the domain as
+  // roughly -L < x/c < 0, instead of following the airfoil body.
+  const xOrigin = Math.max(xmax, 0);
+  const xPad = Math.max(0.03 * Math.max(xmax - xmin, chord), 0.03 * chord);
+  const shiftedMin = xmin - xOrigin - xPad;
+  // Keep the fixed-frame view anchored near -L < x/c, but leave a real
+  // right-side margin so early wake/airfoil markers are not clipped at x = 0.
+  const shiftedMax = Math.max(xmax - xOrigin + xPad, xPad);
+  const xRange = Math.max(shiftedMax - shiftedMin, 1e-9);
+  const box = flowPlotBox();
+  const equalScaleZLimit = 0.5 * xRange * (box.h / Math.max(box.w, 1));
+  const visualZLimit = zLimit;
+  const balancedZLimit = Math.max(
+    visualZLimit,
+    Math.min(equalScaleZLimit, visualZLimit * FLOWFIELD_EQUALITY_LIMIT_MULTIPLIER)
+  );
+
+  GLOBAL_FLOW_BOUNDS = {
+    xmin: shiftedMin,
+    xmax: shiftedMax,
+    zmin: -balancedZLimit,
+    zmax: balancedZLimit,
+    xOrigin,
+    maxAbsVortexZ,
+    maxAbsAirfoilZ,
+    visualZLimit,
+    equalScaleZLimit
+  };
+  return GLOBAL_FLOW_BOUNDS;
+}
+
+
+let GLOBAL_GSCALE = null;
+function getGlobalGScale(){
+  if (!out) return 1e-12;
+  const ff = out.flowfield || {};
+  if (Number.isFinite(ff.maxAbsG) && ff.maxAbsG > 0) return ff.maxAbsG;
+  if (Number.isFinite(GLOBAL_GSCALE) && GLOBAL_GSCALE > 0) return GLOBAL_GSCALE;
+
+  let gmax = 0;
+  const lastG = ff.last?.G;
+  if (lastG && typeof lastG.length === 'number'){
+    for (let i=0;i<lastG.length;i++){
+      const g = lastG[i];
+      if (Number.isFinite(g)) gmax = Math.max(gmax, Math.abs(g));
+    }
+  }
+  if (gmax <= 0 && Array.isArray(ff.TE)){
+    for (let k=0;k<ff.TE.length;k++){
+      const w = ff.TE[k];
+      if (!w || !w.G) continue;
+      const G = w.G;
+      for (let i=0;i<G.length;i++){
+        const g = G[i];
+        if (Number.isFinite(g)) gmax = Math.max(gmax, Math.abs(g));
+      }
+    }
+  }
+
+  GLOBAL_GSCALE = Math.max(gmax, 1e-12);
+  ff.maxAbsG = GLOBAL_GSCALE;
+  return GLOBAL_GSCALE;
+}
+
+function getActiveGScale(){
+  const global = getGlobalGScale();
+  return Math.max(global * getCirculationScaleFactor(), 1e-10);
+}
+
+function drawCirculationColorbox(ctx, box, gLimit){
+  if (vortexMode !== 'gamma' || !Number.isFinite(gLimit) || gLimit <= 0) return;
+
+  const width = 154;
+  const height = 11;
+  const x = box.x + 14;
+  const y = box.y + 12;
+  const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
+  gradient.addColorStop(0, vortexColor(-gLimit, gLimit));
+  gradient.addColorStop(0.5, vortexColor(0, gLimit));
+  gradient.addColorStop(1, vortexColor(gLimit, gLimit));
+
+  ctx.save();
+  ctx.fillStyle = COLORS.canvasBg;
+  ctx.globalAlpha = 0.88;
+  ctx.fillRect(x - 8, y - 10, width + 16, height + 34);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = gradient;
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeStyle = COLORS.border;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x, y, width, height);
+
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = '10.5px system-ui';
+  ctx.textBaseline = 'top';
+  ctx.textAlign = 'left';
+  ctx.fillText(`−${formatPlotValue(gLimit)}`, x, y + height + 4);
+  ctx.textAlign = 'center';
+  ctx.fillText('0', x + width / 2, y + height + 4);
+  ctx.textAlign = 'right';
+  ctx.fillText(formatPlotValue(gLimit), x + width, y + height + 4);
+  ctx.textAlign = 'center';
+  ctx.fillText(translated('circulation'), x + width / 2, y - 10);
+  ctx.restore();
+}
+
+function drawFrame(frame){
+  if (!out || !DATA) return;
+  const ctx = flowCanvas.getContext('2d');
+  const w = flowCanvas.width, h = flowCanvas.height;
+  clear(ctx,w,h);
+
+  const box = flowPlotBox();
+  drawAxes(ctx,w,h,box);
+
+  const kin = SIM.kin;
+  const air = SIM.airfoil || DATA.air[airSelect.value];
+
+  const U = getNum('Uref');
+  const c = getNum('c');
+  const xp = getPercent('xp');
+
+  const tK = kin[frame][0];
+  const aK = kin[frame][1];
+  const hK = kin[frame][2];
+  const globalFlow = getGlobalFlowBounds();
+  const xOrigin = globalFlow?.xOrigin || 0;
+
+  // Bounds/data are plotted in the fixed frame. The only x transform is a
+  // constant origin shift so the right edge reads near x/c = 0 for every frame.
+  let xmin = Infinity, xmax = -Infinity;
+  let zmin = Infinity, zmax = -Infinity;
+
+  const wake = getWakeSnapshot(frame);
+  if (wake){
+    if (Array.isArray(wake)){
+      for (const p of wake){
+        const Xp = p.re - xOrigin;
+        const Zp = p.im;
+        xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
+        zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
+      }
+    } else {
+      for (let i=0;i<wake.re.length;i++){
+        const Xp = wake.re[i] - xOrigin;
+        const Zp = wake.im[i];
+        xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
+        zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
+      }
+    }
+  }
+
+  const ca = Math.cos(aK), sa = Math.sin(aK);
+  const xpAbs = xp*c;
+
+  for (const p of air){
+    const xr = p[0]*c - xpAbs;
+    const yi = p[1]*c;
+    const Xp = xr*ca + yi*sa - U*tK - xOrigin;
+    const Zp = -xr*sa + yi*ca + hK;
+    xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
+    zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
+  }
+
+  const xMinData = xmin, xMaxData = xmax;
+  const zMinData = zmin, zMaxData = zmax;
+
+  if (globalFlow){
+    xmin = globalFlow.xmin;
+    xmax = globalFlow.xmax;
+    zmin = globalFlow.zmin;
+    zmax = globalFlow.zmax;
+  } else {
+    const fallbackXMin = Number.isFinite(xMinData) ? xMinData : -c;
+    const fallbackXMax = Number.isFinite(xMaxData) ? xMaxData : 0;
+    const xr = Math.max(fallbackXMax - fallbackXMin, 0.25*c);
+    const px = 0.08 * xr;
+    xmin = fallbackXMin - px;
+    xmax = fallbackXMax + px;
+
+    const fallbackMin = Number.isFinite(zMinData) ? zMinData : -0.05*c;
+    const fallbackMax = Number.isFinite(zMaxData) ? zMaxData : 0.05*c;
+    const zc = 0.5*(fallbackMax + fallbackMin);
+    const zr = Math.max(fallbackMax - fallbackMin, 0.1*c);
+    zmin = zc - 0.575*zr;
+    zmax = zc + 0.575*zr;
+  }
+
+
+  const bounds = {xmin,xmax,zmin,zmax};
+  flowCanvas.dataset.xMin = String(xmin);
+  flowCanvas.dataset.xMax = String(xmax);
+  flowCanvas.dataset.xOrigin = String(xOrigin);
+  flowCanvas.dataset.zMin = String(zmin);
+  flowCanvas.dataset.zMax = String(zmax);
+  flowCanvas.dataset.maxVortexHeight = String(globalFlow?.maxAbsVortexZ || 0);
+  flowCanvas.dataset.axisEqual = "false";
+
+  // fixed-frame axes
+  const O = worldToCanvas(0,0,box,bounds);
+  ctx.strokeStyle = COLORS.canvasAxis;
+
+  // Keep the horizontal x/c axis readable but secondary to the wake and airfoil.
+  ctx.save();
+  ctx.strokeStyle = COLORS.canvasAxis;
+  ctx.globalAlpha = 0.86;
+  ctx.lineWidth = 1.05;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(box.x, O.Y); ctx.lineTo(box.x + box.w, O.Y);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.68;
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(O.X, box.y); ctx.lineTo(O.X, box.y + box.h);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = "12px system-ui";
+  ctx.fillText("x/c", box.x + box.w - 24, O.Y - 6);
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.translate(O.X + 14, box.y + 32);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("z/c", 0, 0);
+  ctx.restore();
+
+  // Three explicit z/c ticks make the automatically fitted scale readable.
+  ctx.save();
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  for (const zTick of [zmax, 0, zmin]){
+    const q = worldToCanvas(0, zTick, box, bounds);
+    const normalized = Math.abs(zTick/c) < 5e-7 ? 0 : zTick/c;
+    ctx.beginPath();
+    ctx.moveTo(O.X - 4, q.Y);
+    ctx.lineTo(O.X + 4, q.Y);
+    ctx.stroke();
+    ctx.fillText(normalized.toFixed(3), O.X - 7, q.Y);
+  }
+  ctx.restore();
+
+  // airfoil in the fixed frame
+  ctx.strokeStyle = COLORS.text;
+  ctx.lineWidth = 2.1;
+  ctx.beginPath();
+  for (let i=0;i<air.length;i++){
+    const p = air[i];
+    const xr = p[0]*c - xpAbs;
+    const yi = p[1]*c;
+    const Xp = xr*ca + yi*sa - U*tK - xOrigin;
+    const Zp = -xr*sa + yi*ca + hK;
+    const q = worldToCanvas(Xp, Zp, box, bounds);
+    if (i===0) ctx.moveTo(q.X,q.Y);
+    else ctx.lineTo(q.X,q.Y);
+  }
+  ctx.stroke();
+
+  // wake vortices
+  let activeGScale = null;
+  if (showWake.checked){
+    activeGScale = getActiveGScale();
+
+    if (wake){
+      if (Array.isArray(wake)){
+        for (let i=0;i<wake.length;i++){
+          const p = wake[i];
+          const g = (p.G ?? 0);
+          const q = worldToCanvas(p.re - xOrigin, p.im, box, bounds);
+
+          ctx.fillStyle = (vortexMode === 'uniform') ? COLORS.accent2 : vortexColor(g, activeGScale);
+          ctx.beginPath();
+          ctx.arc(q.X,q.Y,3.0,0,Math.PI*2);
+          ctx.fill();
+        }
+      } else {
+        const wr = wake.re, wi = wake.im, wG = wake.G;
+        for (let i=0;i<wr.length;i++){
+          const g = wG[i];
+          const q = worldToCanvas(wr[i] - xOrigin, wi[i], box, bounds);
+
+          ctx.fillStyle = (vortexMode === 'uniform') ? COLORS.accent2 : vortexColor(g, activeGScale);
+          ctx.beginPath();
+          ctx.arc(q.X,q.Y,3.0,0,Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+  drawCirculationColorbox(ctx, box, activeGScale || getActiveGScale());
+
+  // Pivot marker in the fixed frame: body point (x/c = xp, z/c = 0)
+  // transformed with the same inertial mapping as the airfoil.
+  const pivotPoint = worldToCanvas(-U*tK - xOrigin, hK, box, bounds);
+  ctx.save();
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(pivotPoint.X, pivotPoint.Y, 3.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+// footer text
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = "12px system-ui";
+  const nFrames = getFrameCount();
+  ctx.fillText(`frame ${frame + 1}/${nFrames}`, 50, h-18);
+  updateFrameCounter();
+  plotDistributions(frame);
+  updateLoadMarkers(frame);
+}
+
+// simple line plot on canvas
+function plotLine(canvas, x, y, title, ylabel){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  clear(ctx,w,h);
+  const box = {x:60,y:18,w:w-85,h:h-58};
+
+  const xmin = x[0], xmax = x[x.length-1];
+  let ymin = Infinity, ymax = -Infinity;
+  for (const v of y){ ymin = Math.min(ymin,v); ymax = Math.max(ymax,v); }
+  if (!isFinite(ymin) || ymin===ymax){ ymin -= 1; ymax += 1; }
+
+  // small padding
+  const py = 0.08*(ymax - ymin + 1e-9);
+  ymin -= py; ymax += py;
+
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, "t", ylabel || "");
+
+  // plot
+  const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
+  ctx.strokeStyle = COLORS.accent;
+  ctx.lineWidth = 1.75;
+  ctx.beginPath();
+  for (let i=0;i<x.length;i++){
+    const q = worldToCanvas(x[i], y[i], box, bounds);
+    if (i===0) ctx.moveTo(q.X,q.Y);
+    else ctx.lineTo(q.X,q.Y);
+  }
+  ctx.stroke();
+
+  // title
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = "12px system-ui";
+  ctx.fillText(title, 10, 14);
+}
+
+
+function binarySearchNearest(x, value){
+  let lo = 0, hi = x.length - 1;
+  while (hi - lo > 1){
+    const mid = (lo + hi) >> 1;
+    if (x[mid] < value) lo = mid;
+    else hi = mid;
+  }
+  return (Math.abs(x[lo]-value) <= Math.abs(x[hi]-value)) ? lo : hi;
+}
+
+function nearestFiniteIndex(x, y, value){
+  if (!x?.length) return 0;
+  const guess = binarySearchNearest(x, value);
+  if (Number.isFinite(x[guess]) && Number.isFinite(y?.[guess])) return guess;
+
+  let best = -1;
+  let bestDistance = Infinity;
+  for (let i=0; i<x.length; i++){
+    if (!Number.isFinite(x[i]) || !Number.isFinite(y?.[i])) continue;
+    const distance = Math.abs(x[i] - value);
+    if (distance < bestDistance){
+      bestDistance = distance;
+      best = i;
+    }
+  }
+  return best >= 0 ? best : Math.max(0, Math.min(x.length - 1, guess));
+}
+
+function formatPlotValue(value){
+  if (!Number.isFinite(value)) return '—';
+  const mag = Math.abs(value);
+  if (mag > 0 && (mag < 1e-4 || mag >= 1e4)) return value.toExponential(4);
+  return value.toFixed(6);
+}
+
+function drawPlot(canvas, state, hoverIdx = null){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  clear(ctx,w,h);
+  const box = {x:62,y:38,w:w-90,h:h-78};
+
+  const x = state.x, y = state.y;
+  const xmin = x[0], xmax = x[x.length-1];
+  let ymin = Infinity, ymax = -Infinity;
+  for (const v of y){ ymin = Math.min(ymin,v); ymax = Math.max(ymax,v); }
+  if (!isFinite(ymin) || ymin===ymax){ ymin -= 1; ymax += 1; }
+  const py = 0.10*(ymax - ymin + 1e-9);
+  ymin -= py; ymax += py;
+
+  state.bounds = {xmin,xmax,ymin,ymax, box};
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 't', state.ylabel);
+
+  const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
+  ctx.strokeStyle = COLORS.accent;
+  ctx.lineWidth = 1.75;
+  ctx.beginPath();
+  for (let i=0;i<x.length;i++){
+    const q = worldToCanvas(x[i], y[i], box, bounds);
+    if (i===0) ctx.moveTo(q.X,q.Y); else ctx.lineTo(q.X,q.Y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = '12px system-ui';
+  ctx.fillText(state.title, 10, 16);
+
+  const markerIdxRaw = hoverIdx !== null ? hoverIdx : state.activeIdx;
+  if (Number.isFinite(markerIdxRaw)){
+    const markerIdx = Math.max(0, Math.min(x.length - 1, Math.round(markerIdxRaw)));
+    const q = worldToCanvas(x[markerIdx], y[markerIdx], box, bounds);
+    const markerColor = hoverIdx !== null ? COLORS.accent2 : '#ef4444';
+    ctx.save();
+    ctx.strokeStyle = markerColor;
+    ctx.fillStyle = markerColor;
+    ctx.lineWidth = hoverIdx !== null ? 1 : 1.25;
+    ctx.setLineDash(hoverIdx !== null ? [4,4] : [3,5]);
+    ctx.beginPath();
+    ctx.moveTo(q.X, box.y); ctx.lineTo(q.X, box.y + box.h);
+    if (hoverIdx !== null){
+      ctx.moveTo(box.x, q.Y); ctx.lineTo(box.x + box.w, q.Y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(q.X, q.Y, hoverIdx !== null ? 3.5 : 4.2, 0, Math.PI*2); ctx.fill();
+    ctx.lineWidth = 1.3;
+    ctx.strokeStyle = COLORS.canvasBg;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function attachPlotHover(canvas){
+  canvas.addEventListener('mousemove', (ev)=>{
+    const st = canvas.__plotState;
+    if (!st || !st.bounds) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = (ev.clientX - rect.left) * (canvas.width / rect.width);
+    const my = (ev.clientY - rect.top)  * (canvas.height / rect.height);
+
+    const {xmin,xmax, box} = st.bounds;
+    if (mx < box.x || mx > box.x+box.w || my < box.y || my > box.y+box.h){
+      tooltip.hidden = true;
+      drawPlot(canvas, st, null);
+      return;
+    }
+
+    const tVal = xmin + ((mx - box.x)/box.w)*(xmax - xmin);
+    const idx = binarySearchNearest(st.x, tVal);
+    drawPlot(canvas, st, idx);
+
+    const xVal = st.x[idx];
+    const yVal = st.y[idx];
+
+    tooltip.innerHTML =
+      '<div><b>'+st.ylabel+'</b> <span class="muted">'+translated('versus')+'</span> <b>t</b></div>' +
+      '<div class="muted">t = '+xVal.toFixed(4)+'</div>' +
+      '<div class="muted">'+st.ylabel+' = '+yVal.toFixed(6)+'</div>';
+    tooltip.hidden = false;
+    tooltip.style.left = (ev.clientX + 14) + 'px';
+    tooltip.style.top  = (ev.clientY + 14) + 'px';
+  });
+
+  canvas.addEventListener('mouseleave', ()=>{
+    const st = canvas.__plotState;
+    if (st) drawPlot(canvas, st, null);
+    tooltip.hidden = true;
+  });
+}
+
+function activeFrameIndex(frame = Number(frameSlider.value || 0)){
+  const total = getFrameCount();
+  if (!total) return 0;
+  const value = Number(frame);
+  return Math.max(0, Math.min(total - 1, Number.isFinite(value) ? Math.round(value) : 0));
+}
+
+function plotLoads(frame = Number(frameSlider.value || 0)){
+  const x = SIM.t;
+  const CL = out.loads.map(r=>r[2]);
+  const CD = out.loads.map(r=>r[3]);
+  const CM = out.loads.map(r=>r[4]);
+  const LESP = Array.from(out.LESP);
+  const activeIdx = activeFrameIndex(frame);
+
+  plotCL.__plotState = { x, y: CL, title: translated('lift_coefficient'), ylabel: 'C_L', activeIdx };
+  plotCD.__plotState = { x, y: CD, title: translated('drag_coefficient'), ylabel: 'C_D', activeIdx };
+  plotCM.__plotState = { x, y: CM, title: translated('moment_coefficient'), ylabel: 'C_M', activeIdx };
+  plotLESP.__plotState = { x, y: LESP, title: translated('lesp_title'), ylabel: 'LESP', activeIdx };
+
+  drawPlot(plotCL, plotCL.__plotState);
+  drawPlot(plotCD, plotCD.__plotState);
+  drawPlot(plotCM, plotCM.__plotState);
+  drawPlot(plotLESP, plotLESP.__plotState);
+
+  if (!plotCL.__hoverAttached){ attachPlotHover(plotCL); plotCL.__hoverAttached = true; }
+  if (!plotCD.__hoverAttached){ attachPlotHover(plotCD); plotCD.__hoverAttached = true; }
+  if (!plotCM.__hoverAttached){ attachPlotHover(plotCM); plotCM.__hoverAttached = true; }
+  if (!plotLESP.__hoverAttached){ attachPlotHover(plotLESP); plotLESP.__hoverAttached = true; }
+}
+
+function updateLoadMarkers(frame = Number(frameSlider.value || 0)){
+  const activeIdx = activeFrameIndex(frame);
+  for (const canvas of [plotCL, plotCD, plotCM, plotLESP]){
+    const state = canvas?.__plotState;
+    if (!state) continue;
+    state.activeIdx = activeIdx;
+    drawPlot(canvas, state);
+  }
+}
+
+function panelCenterX(){
+  const air = SIM?.airfoil || DATA?.air?.[airSelect.value] || [];
+  const x = [];
+  for (let i=0; i<air.length - 1; i++){
+    x.push(0.5 * (Number(air[i][0]) + Number(air[i + 1][0])));
+  }
+  return x;
+}
+
+let GLOBAL_DISTRIBUTION_BOUNDS = null;
+
+function quantileSorted(sorted, q){
+  if (!sorted.length) return NaN;
+  const pos = Math.max(0, Math.min(sorted.length - 1, q * (sorted.length - 1)));
+  const lo = Math.floor(pos);
+  const hi = Math.ceil(pos);
+  if (lo === hi) return sorted[lo];
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+
+function niceDistributionBounds(ymin, ymax, fallbackSpan = 1, symmetric = false){
+  if (!Number.isFinite(ymin) || !Number.isFinite(ymax) || ymin === ymax){
+    ymin = -fallbackSpan;
+    ymax = fallbackSpan;
+  }
+
+  if (symmetric){
+    const lim = Math.max(Math.abs(ymin), Math.abs(ymax), fallbackSpan);
+    const step = niceStep(2 * lim, 4);
+    const niceLim = Math.max(step, Math.ceil(lim / step) * step);
+    return { ymin: -niceLim, ymax: niceLim };
+  }
+
+  ymin = Math.min(ymin, 0);
+  ymax = Math.max(ymax, 0);
+  const span = Math.max(ymax - ymin, fallbackSpan);
+  const pad = 0.12 * span;
+  const step = niceStep(span + 2 * pad, 5);
+  return {
+    ymin: Math.floor((ymin - pad) / step) * step,
+    ymax: Math.ceil((ymax + pad) / step) * step
+  };
+}
+
+function computeDistributionBounds(kind){
+  const frames = kind === 'gamma' ? out?.gamma : out?.pressure;
+  if (!Array.isArray(frames) || !frames.length){
+    return kind === 'gamma' ? { ymin: -1, ymax: 1 } : { ymin: -4, ymax: 4 };
+  }
+
+  const samples = [];
+  for (const frameValues of frames){
+    const values = Array.from(frameValues || []);
+    const n = values.length;
+    if (!n) continue;
+    // Exclude both edges and use quantiles: this keeps the leading-edge
+    // singular behavior from setting the visual scale while still fitting the
+    // useful body of the distribution across the full simulation.
+    const margin = Math.max(2, Math.floor(0.08 * n));
+    const start = Math.min(margin, n - 1);
+    const end = Math.max(start + 1, n - margin);
+    for (let i=start; i<end; i++){
+      const v = Number(values[i]);
+      if (Number.isFinite(v)) samples.push(v);
+    }
+  }
+
+  if (samples.length < 8){
+    return kind === 'gamma' ? { ymin: -1, ymax: 1 } : { ymin: -4, ymax: 4 };
+  }
+
+  samples.sort((a, b)=>a - b);
+  const ymin = quantileSorted(samples, 0.05);
+  const ymax = quantileSorted(samples, 0.95);
+  return niceDistributionBounds(
+    ymin,
+    ymax,
+    kind === 'gamma' ? 0.25 : 1,
+    kind === 'gamma'
+  );
+}
+
+function distributionBounds(kind){
+  if (!GLOBAL_DISTRIBUTION_BOUNDS){
+    GLOBAL_DISTRIBUTION_BOUNDS = {
+      pressure: computeDistributionBounds('pressure'),
+      gamma: computeDistributionBounds('gamma')
+    };
+  }
+  return GLOBAL_DISTRIBUTION_BOUNDS[kind] || { ymin: -1, ymax: 1 };
+}
+
+function drawDistributionPlot(canvas, x, y, title, ylabel, hoverIdx = null, kind = 'pressure'){
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  clear(ctx,w,h);
+  if (!x?.length || !y?.length){
+    canvas.__distributionState = null;
+    ctx.fillStyle = COLORS.muted;
+    ctx.font = '13px system-ui';
+    ctx.fillText(translated('distribution_unavailable'), 18, 34);
+    return;
+  }
+
+  const n = Math.min(x.length, y.length);
+  const xPlot = x.slice(0, n);
+  const yPlot = Array.from(y).slice(0, n).map(Number);
+  const box = {x:62,y:38,w:w-90,h:h-78};
+  const xmin = 0;
+  const xmax = 1;
+  const { ymin, ymax } = distributionBounds(kind);
+  const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
+
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 'x/c', ylabel);
+
+  canvas.__distributionState = {
+    x: xPlot,
+    y: yPlot,
+    title,
+    ylabel,
+    kind,
+    bounds: { xmin, xmax, ymin, ymax, box }
+  };
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(box.x, box.y, box.w, box.h);
+  ctx.clip();
+  ctx.strokeStyle = COLORS.accent;
+  ctx.lineWidth = 1.75;
+  let drawing = false;
+  ctx.beginPath();
+  for (let i=0; i<n; i++){
+    if (!Number.isFinite(xPlot[i]) || !Number.isFinite(yPlot[i])){
+      drawing = false;
+      continue;
+    }
+    const q = worldToCanvas(xPlot[i], yPlot[i], box, bounds);
+    if (!drawing){
+      ctx.moveTo(q.X,q.Y);
+      drawing = true;
+    }
+    else ctx.lineTo(q.X,q.Y);
+  }
+  ctx.stroke();
+
+  ctx.restore();
+
+  if (Number.isFinite(hoverIdx)){
+    const markerIdx = Math.max(0, Math.min(n - 1, Math.round(hoverIdx)));
+    if (Number.isFinite(xPlot[markerIdx]) && Number.isFinite(yPlot[markerIdx])){
+      const q = worldToCanvas(xPlot[markerIdx], yPlot[markerIdx], box, bounds);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(box.x, box.y, box.w, box.h);
+      ctx.clip();
+      ctx.strokeStyle = COLORS.accent2;
+      ctx.fillStyle = COLORS.accent2;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();
+      ctx.moveTo(q.X, box.y); ctx.lineTo(q.X, box.y + box.h);
+      ctx.moveTo(box.x, q.Y); ctx.lineTo(box.x + box.w, q.Y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(q.X, q.Y, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = COLORS.canvasBg;
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = '12px system-ui';
+  ctx.fillText(title, 10, 16);
+}
+
+function attachDistributionHover(canvas){
+  canvas.addEventListener('mousemove', (ev)=>{
+    const st = canvas.__distributionState;
+    if (!st || !st.bounds) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = (ev.clientX - rect.left) * (canvas.width / rect.width);
+    const my = (ev.clientY - rect.top)  * (canvas.height / rect.height);
+
+    const { xmin, xmax, box } = st.bounds;
+    if (mx < box.x || mx > box.x + box.w || my < box.y || my > box.y + box.h){
+      tooltip.hidden = true;
+      drawDistributionPlot(canvas, st.x, st.y, st.title, st.ylabel, null, st.kind);
+      return;
+    }
+
+    const xValue = xmin + ((mx - box.x) / box.w) * (xmax - xmin);
+    const idx = nearestFiniteIndex(st.x, st.y, xValue);
+    drawDistributionPlot(canvas, st.x, st.y, st.title, st.ylabel, idx, st.kind);
+
+    const xVal = st.x[idx];
+    const yVal = st.y[idx];
+    tooltip.innerHTML =
+      '<div><b>'+st.ylabel+'</b> <span class="muted">'+translated('versus')+'</span> <b>x/c</b></div>' +
+      '<div class="muted">x/c = '+formatPlotValue(xVal)+'</div>' +
+      '<div class="muted">'+st.ylabel+' = '+formatPlotValue(yVal)+'</div>';
+    tooltip.hidden = false;
+    tooltip.style.left = (ev.clientX + 14) + 'px';
+    tooltip.style.top  = (ev.clientY + 14) + 'px';
+  });
+
+  canvas.addEventListener('mouseleave', ()=>{
+    const st = canvas.__distributionState;
+    if (st) drawDistributionPlot(canvas, st.x, st.y, st.title, st.ylabel, null, st.kind);
+    tooltip.hidden = true;
+  });
+}
+
+function plotDistributions(frame = Number(frameSlider.value || 0)){
+  if (!out || !SIM) return;
+  const nFrames = getFrameCount();
+  if (!nFrames) return;
+  const k = Math.max(0, Math.min(nFrames - 1, Number(frame) || 0));
+  const x = panelCenterX();
+
+  drawDistributionPlot(
+    plotPressureDist,
+    x,
+    out.pressure?.[k],
+    translated('pressure_distribution'),
+    'ΔC_p',
+    null,
+    'pressure'
+  );
+  drawDistributionPlot(
+    plotVorticityDist,
+    x,
+    out.gamma?.[k],
+    translated('vorticity_distribution'),
+    'γ_b',
+    null,
+    'gamma'
+  );
+  if (!plotPressureDist.__hoverAttached){ attachDistributionHover(plotPressureDist); plotPressureDist.__hoverAttached = true; }
+  if (!plotVorticityDist.__hoverAttached){ attachDistributionHover(plotVorticityDist); plotVorticityDist.__hoverAttached = true; }
+  if (distributionFrameLabel) distributionFrameLabel.textContent = `${k + 1}/${nFrames}`;
+}
+
+
+
+// init
+initializeCollapsibles();
+applyLanguage(localStorage.getItem('unsaero-lang') || 'en');
+refreshColors();
+loadData()
+  .then(()=>runBtn.click())
+  .catch(e=>{
+    console.error(e);
+    setStatus('status_data_error');
+  });

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Harmonic Oscillating Airfoils | UNSAERO</title>
+<meta name="description" content="A native HTML paper-style teaching note on harmonic oscillating airfoils, reduced frequency, thin-airfoil theory, Theodorsen theory, and wake memory."/>
+<meta name="robots" content="noindex, nofollow"/>
+<meta name="theme-color" content="#087fc3"/>
+<meta name="keywords" content="harmonic oscillating airfoils, Theodorsen function, Sears function, unsteady thin airfoil theory, reduced frequency, heaving airfoil, pitching airfoil, UNSAERO"/>
+<meta name="author" content="UNSAERO"/>
+<meta property="og:type" content="article"/>
+<meta property="og:site_name" content="UNSAERO"/>
+<meta property="og:title" content="Harmonic Oscillating Airfoils | UNSAERO"/>
+<meta property="og:description" content="A native HTML paper-style teaching note on harmonic heaving and pitching airfoils and the frequency-domain interpretation of unsteady lift."/>
+<meta property="og:url" content="https://www.unsaero.com/source/harmonic_oscillating_airfoils.html"/>
+<meta property="og:image" content="https://www.unsaero.com/icon.png"/>
+<meta property="og:image:width" content="2048"/>
+<meta property="og:image:height" content="2048"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:locale:alternate" content="pt_BR"/>
+<meta property="article:modified_time" content="2026-05-03"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Harmonic Oscillating Airfoils | UNSAERO"/>
+<meta name="twitter:description" content="A native HTML paper-style teaching note on harmonic heaving and pitching airfoils."/>
+<meta name="twitter:image" content="https://www.unsaero.com/icon.png"/>
+<link rel="canonical" href="https://www.unsaero.com/source/harmonic_oscillating_airfoils.html"/>
+<link rel="icon" href="../favicon.ico" type="image/x-icon"/>
+<link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
+<link rel="icon" href="../assets/favicon-16x16.png" sizes="16x16" type="image/png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="../assets/css/shared.css?v=20260622-flat-flags" rel="stylesheet"/>
+<link href="../assets/css/paper.css?v=20260503" rel="stylesheet"/>
+<script>
+window.MathJax={tex:{tags:'ams',inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['\\[','\\]'],['\\begin{equation}','\\end{equation}']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","name":"Harmonic Oscillating Airfoils","url":"https://www.unsaero.com/source/harmonic_oscillating_airfoils.html","description":"A native HTML paper-style teaching note on harmonic oscillating airfoils, reduced frequency, unsteady thin-airfoil theory, and wake-memory effects.","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
+</script>
+<link href="../assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
+  <script defer src="../assets/js/partials.js" data-root="../"></script>
+</head>
+<body class="paper-body" data-page="theory">
+<!-- UNSAERO_HEADER_START -->
+<div id="unsaero-header"></div>
+<!-- UNSAERO_HEADER_END -->
+<main class="paper-shell">
+<nav class="paper-breadcrumb" aria-label="Breadcrumb">
+  <span class="lang-content active" id="breadcrumb-en"><a href="../theory.html">Teaching</a> · Harmonic Oscillating Airfoils</span>
+  <span class="lang-content" id="breadcrumb-pt"><a href="../theory.html">Ensino</a> · Aerofólios em Oscilação Harmônica</span>
+</nav>
+<article class="paper">
+<div class="lang-content active" id="content-en">
+<header>
+<h1 class="paper-title">Harmonic Oscillating Airfoils</h1>
+<p class="paper-brand" aria-label="UNSAERO"><a class="paper-brand-link" href="https://www.unsaero.com/" target="_blank" rel="noopener"><span class="paper-brand-uns">UNS</span><span class="paper-brand-aero">AERO</span></a></p>
+<div class="paper-print-update-note" role="note">
+  An updated version of this document is maintained at <a href="https://www.unsaero.com/">www.unsaero.com</a>.
+</div>
+<div class="paper-toolbar" aria-label="Page actions">
+  <button class="paper-btn pdf-download-btn" type="button" onclick="downloadPaperPDF()"><img class="pdf-icon" src="../assets/img/pdf-icon.svg" alt="" aria-hidden="true">Download PDF</button>
+</div>
+<section class="paper-abstract">
+<h2>Abstract</h2>
+<p>This note introduces harmonic heaving and pitching airfoils as a compact route into unsteady thin-airfoil theory. The central idea is to replace arbitrary time histories by complex harmonic amplitudes, so that aerodynamic memory appears through frequency-domain transfer functions. The resulting framework clarifies the role of reduced frequency, separates circulatory and non-circulatory effects, and prepares the ground for Theodorsen and Sears theory.</p>
+</section>
+<nav class="paper-toc" aria-label="Table of contents">
+<h2>Contents</h2>
+<ol></ol>
+</nav>
+</header>
+<section id="motivation-en">
+<h2>Motivation</h2>
+<p>Harmonic motion is the canonical experiment of linear unsteady aerodynamics. Instead of asking how an airfoil responds to every possible motion, one studies sinusoidal heaving, pitching, or gust inputs and reconstructs more general responses by superposition. This turns a transient aerodynamic problem into a frequency-response problem.</p>
+<p>For teaching purposes, this is especially useful because amplitude attenuation and phase lag become visible. The wake is no longer an abstract downstream object: it becomes the mechanism that delays and reshapes the circulatory lift.</p>
+</section>
+<section id="kinematics-en">
+<h2>Kinematics</h2>
+<p>Consider a thin airfoil of chord $c$ in a uniform stream of speed $U$. A harmonic heaving motion $h(t)$ and a harmonic pitching motion $\alpha(t)$ may be represented by complex amplitudes, with the physical motion recovered from the real part.</p>
+<div class="equation-block" id="eq-harmonic-kinematics-en" data-label="eq:harmonic-kinematics" data-cref="Eq.">
+\begin{equation}
+h(t)=\Re\{\hat{h}e^{i\omega t}\},\qquad
+\alpha(t)=\Re\{\hat{\alpha}e^{i\omega t}\}.
+\end{equation}
+</div>
+<div class="definition" id="def-reduced-frequency-en" data-label="def:reduced-frequency" data-cref="Definition"><strong>Definition.</strong> The reduced frequency is
+\begin{equation}
+k=\frac{\omega c}{2U}.
+\end{equation}
+It compares the convective time scale $c/(2U)$ with the oscillation time scale $1/\omega$.</div>
+<figure class="paper-figure">
+<svg viewBox="0 0 760 300" role="img" aria-label="Schematic of a harmonically pitching and heaving airfoil with a wake">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker></defs>
+<rect x="0" y="0" width="760" height="300" fill="#ffffff"/>
+<line x1="70" y1="150" x2="190" y2="150" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="92" y="133" font-family="Georgia" font-size="22" fill="#334155">U</text>
+<g transform="translate(310 150) rotate(-8)">
+<line x1="-150" y1="0" x2="150" y2="0" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="15" cy="0" r="6" fill="#0369a1"/>
+</g>
+<path d="M475 140 C535 120, 590 176, 655 148" fill="none" stroke="#0369a1" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M475 160 C535 190, 600 122, 690 165" fill="none" stroke="#0369a1" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M320 86 A72 72 0 0 1 390 115" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="392" y="104" font-family="Georgia" font-size="22" fill="#334155">α(t)</text>
+<path d="M270 230 C290 205, 310 205, 330 230 C350 255, 370 255, 390 230" fill="none" stroke="#64748b" stroke-width="3"/>
+<text x="285" y="270" font-family="Georgia" font-size="22" fill="#334155">h(t)</text>
+<text x="544" y="112" font-family="Georgia" font-size="20" fill="#334155">wake memory</text>
+</svg>
+<figcaption><strong>Figure 1.</strong> Harmonic heaving and pitching introduce a periodic boundary condition at the airfoil. The shed wake convects downstream and stores the history of circulation, producing phase lag in the aerodynamic response.</figcaption>
+</figure>
+</section>
+<section id="frequency-domain-en">
+<h2>Frequency-domain interpretation</h2>
+<p>In a linear theory, a harmonic input produces a harmonic output at the same frequency. The important information is therefore not the frequency itself, but the complex multiplier connecting input and output. This multiplier encodes both magnitude and phase.</p>
+<div class="equation-block" id="eq-transfer-function-en" data-label="eq:transfer-function" data-cref="Eq.">
+\begin{equation}
+\hat{C}_L(k)=\mathcal{G}(k)\,\hat{q},
+\end{equation}
+</div>
+<p>where $\hat{q}$ denotes the relevant complex amplitude of the prescribed motion or gust. The transfer function $\mathcal{G}(k)$ is the frequency-domain signature of the aerodynamic model.</p>
+<div class="remark"><strong>Interpretation.</strong> Small $k$ corresponds to slow motion relative to convection, so the flow behaves closer to a quasi-steady limit. Larger $k$ increases the importance of added-mass effects, wake phase lag, and non-quasi-steady circulation.</div>
+</section>
+<section id="theodorsen-en">
+<h2>Route to Theodorsen theory</h2>
+<p>Theodorsen theory gives the classical incompressible, inviscid, linear response of a thin airfoil undergoing harmonic motion. Its most recognizable object is the Theodorsen function, a complex-valued function of reduced frequency.</p>
+<div class="equation-block" id="eq-theodorsen-en" data-label="eq:theodorsen" data-cref="Eq.">
+\begin{equation}
+C(k)=\frac{H_1^{(2)}(k)}{H_1^{(2)}(k)+iH_0^{(2)}(k)}.
+\end{equation}
+</div>
+<p>The modulus $|C(k)|$ measures attenuation of the circulatory contribution, while $\arg C(k)$ measures phase lag induced by the wake. The non-circulatory contribution, often associated with apparent mass, must be kept separate because it does not carry the same wake-memory mechanism.</p>
+<p class="paper-note"><strong>Cross-reference pattern.</strong> In this HTML framework, LaTeX-like references are written as anchors, for example <a class="xref" href="#eq-theodorsen-en"></a>. This plays the role of a lightweight <code>\cref</code>: it links directly to the labeled equation and remains stable when reused across the article.</p>
+</section>
+
+<section id="plotting-data-en">
+<h2>Plotting from external data</h2>
+<p>A useful way to keep this note close to an Overleaf workflow is to store numerical values in a plain-text file and let the plot environment read the data directly. In a LaTeX/PGFPlots source, the figure can be regenerated whenever the data file is updated, without manually editing the plot.</p>
+<p>For example, the package includes <a href="../assets/data/theodorsen_sample.txt" target="_blank" rel="noopener"><code>assets/data/theodorsen_sample.txt</code></a>, a small placeholder table with reduced frequency, magnitude and phase data.</p>
+<pre class="paper-code"><code>% File: figures/theodorsen_from_txt.tex
+% Compile from the project root so the relative path to assets/data works.
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.82\textwidth,
+    height=0.46\textwidth,
+    grid=both,
+    xlabel={$k$},
+    ylabel={$|C(k)|$},
+    xmin=0, xmax=1,
+    ymin=0.45, ymax=1.05,
+    tick align=outside,
+    legend style={draw=none, fill=none, at={(0.98,0.98)}, anchor=north east}
+]
+\addplot+[mark=*, thick] table[
+    x=k,
+    y=Cmag,
+    col sep=space
+]{assets/data/theodorsen_sample.txt};
+\addlegendentry{sample data}
+\end{axis}
+\end{tikzpicture}</code></pre>
+<figure class="paper-figure rendered-figure">
+  <img src="../assets/img/theodorsen_from_txt_placeholder.png" alt="Rendered placeholder plot of Theodorsen magnitude from external data">
+  <figcaption><strong>Figure 2.</strong> Rendered placeholder generated from <code>assets/data/theodorsen_sample.txt</code>. The HTML page displays the PNG directly, while the corresponding PGFPlots source is stored in <code>figures/theodorsen_from_txt.tex</code>.</figcaption>
+</figure>
+<p>The corresponding data file is intentionally simple:</p>
+<pre class="paper-code"><code>k     Cmag   phase_deg
+0.00  1.000   0.00
+0.05  0.918  -7.15
+0.10  0.832 -11.60
+0.20  0.742 -15.90
+0.40  0.646 -17.20
+0.70  0.574 -15.10
+1.00  0.538 -12.90</code></pre>
+<div class="remark"><strong>Remark.</strong> The values above are sample teaching data, not a substitute for computing $C(k)$ directly from the Hankel-function expression. The purpose of this block is to show the file-driven plotting pattern.</div>
+</section>
+
+
+<section id="interactive-airfoil-en" class="interactive-section">
+<h2>Interactive harmonic pitching</h2>
+<p>The slider below changes the reduced frequency used in a simple browser animation. It is not a numerical solver; it is a compact visual aid for understanding how faster oscillations make unsteady phase effects more apparent.</p>
+<div class="interactive-card">
+  <div class="control-row">
+    <label for="kSliderEn"><strong>Reduced frequency</strong> $k$ = <span id="kValEn">0.10</span></label>
+    <input id="kSliderEn" type="range" min="0" max="1" step="0.01" value="0.10"/>
+  </div>
+  <canvas id="airfoilCanvasEn" class="airfoil-canvas" width="720" height="280" aria-label="Animated harmonic pitching airfoil"></canvas>
+  <p class="canvas-caption">The plate oscillates harmonically about an elastic-axis marker. The dashed wake surrogate is phase-shifted to suggest aerodynamic memory.</p>
+</div>
+</section>
+<section id="quick-check-en" class="quiz-block">
+<h2>Quick check</h2>
+<p><strong>Question.</strong> In a frequency-domain view of unsteady thin-airfoil theory, what is the main physical meaning of increasing $k$?</p>
+<div class="quiz-options">
+  <button type="button" data-answer="wrong" data-feedback="Not quite. Quasi-steady amplitude is not the main point here; think about the time needed for vorticity to convect into the wake.">It only increases the quasi-steady lift slope.</button>
+  <button type="button" data-answer="right" data-feedback="Correct — larger reduced frequency makes wake-memory and phase-lag effects more important.">It makes phase lag and wake-memory effects more important.</button>
+  <button type="button" data-answer="wrong" data-feedback="Not quite. Inviscid thin-airfoil theory does not use viscosity as the primary mechanism in Theodorsen's response.">It mainly increases viscous drag.</button>
+</div>
+<p class="quiz-feedback" aria-live="polite"></p>
+</section>
+
+<section id="planned-expansions-en">
+<h2>Planned expansions</h2>
+<p>This page is intended to grow as a native HTML teaching paper. The next layers are: derivation of the boundary condition, Glauert-series representation, circulatory and non-circulatory lift decomposition, Theodorsen plots, Sears gust response, and comparison with time-domain indicial functions.</p>
+</section>
+<section id="references-en">
+<h2>References</h2>
+<ol class="reference-list">
+<li>Theodorsen, T. <em>General Theory of Aerodynamic Instability and the Mechanism of Flutter</em>. NACA Report 496, 1935. <a href="https://ntrs.nasa.gov/citations/19800006788" target="_blank" rel="noopener">NASA NTRS</a>.</li>
+<li>Sears, W. R. Some aspects of non-stationary airfoil theory and its practical application. <em>Journal of the Aeronautical Sciences</em>, 8(3), 104--108, 1941. <a href="https://doi.org/10.2514/8.10655" target="_blank" rel="noopener">doi:10.2514/8.10655</a>.</li>
+<li>Bisplinghoff, R. L., Ashley, H., and Halfman, R. L. <em>Aeroelasticity</em>. Addison-Wesley, 1955. ISBN 978-0201005950.</li>
+<li>Wagner, H. Über die Entstehung des dynamischen Auftriebes von Tragflügeln. <em>Zeitschrift für Angewandte Mathematik und Mechanik</em>, 5(1), 17--35, 1925. <a href="https://doi.org/10.1002/zamm.19250050103" target="_blank" rel="noopener">doi:10.1002/zamm.19250050103</a>.</li>
+</ol>
+</section>
+<div class="paper-print-footer" aria-hidden="true">Latest version: <a href="https://www.unsaero.com/">www.unsaero.com</a></div>
+</div>
+<div class="lang-content" id="content-pt">
+<header>
+<h1 class="paper-title">Aerofólios em Oscilação Harmônica</h1>
+<p class="paper-brand" aria-label="UNSAERO"><a class="paper-brand-link" href="https://www.unsaero.com/" target="_blank" rel="noopener"><span class="paper-brand-uns">UNS</span><span class="paper-brand-aero">AERO</span></a></p>
+<div class="paper-print-update-note" role="note">
+  A versão mais atualizada deste documento é mantida em <a href="https://www.unsaero.com/">www.unsaero.com</a>.
+</div>
+<div class="paper-toolbar" aria-label="Ações da página">
+  <button class="paper-btn pdf-download-btn" type="button" onclick="downloadPaperPDF()"><img class="pdf-icon" src="../assets/img/pdf-icon.svg" alt="" aria-hidden="true">Download PDF</button>
+</div>
+<section class="paper-abstract">
+<h2>Resumo</h2>
+<p>Esta nota introduz aerofólios em arfagem e mergulho harmônicos como uma porta de entrada compacta para a teoria não estacionária de aerofólio fino. A ideia central é substituir histórias temporais arbitrárias por amplitudes harmônicas complexas, de modo que a memória aerodinâmica apareça por meio de funções de transferência no domínio da frequência. A formulação evidencia o papel da frequência reduzida, separa efeitos circulatórios e não circulatórios, e prepara a conexão com as teorias de Theodorsen e Sears.</p>
+</section>
+<nav class="paper-toc" aria-label="Sumário">
+<h2>Sumário</h2>
+<ol></ol>
+</nav>
+</header>
+<section id="motivacao-pt">
+<h2>Motivação</h2>
+<p>O movimento harmônico é o experimento canônico da aerodinâmica não estacionária linear. Em vez de perguntar como um aerofólio responde a qualquer movimento possível, estudam-se entradas senoidais de mergulho, arfagem ou rajada, e respostas mais gerais podem ser reconstruídas por superposição.</p>
+<p>Do ponto de vista didático, isso é especialmente útil porque atenuação de amplitude e atraso de fase tornam-se visíveis. A esteira deixa de ser apenas um objeto a jusante e passa a ser o mecanismo que atrasa e remodela a sustentação circulatória.</p>
+</section>
+<section id="cinematica-pt">
+<h2>Cinemática</h2>
+<p>Considere um aerofólio fino de corda $c$ em uma corrente uniforme de velocidade $U$. Um movimento harmônico de mergulho $h(t)$ e um movimento harmônico de arfagem $\alpha(t)$ podem ser representados por amplitudes complexas, recuperando-se o movimento físico pela parte real.</p>
+<div class="equation-block" id="eq-harmonic-kinematics-pt" data-label="eq:harmonic-kinematics" data-cref="Eq.">
+\begin{equation}
+h(t)=\Re\{\hat{h}e^{i\omega t}\},\qquad
+\alpha(t)=\Re\{\hat{\alpha}e^{i\omega t}\}.
+\end{equation}
+</div>
+<div class="definition" id="def-frequencia-reduzida-pt" data-label="def:reduced-frequency" data-cref="Definição"><strong>Definição.</strong> A frequência reduzida é
+\begin{equation}
+k=\frac{\omega c}{2U}.
+\end{equation}
+Ela compara a escala convectiva $c/(2U)$ com a escala de oscilação $1/\omega$.</div>
+<figure class="paper-figure">
+<svg viewBox="0 0 760 300" role="img" aria-label="Esquema de um aerofólio em arfagem e mergulho harmônicos com esteira">
+<defs><marker id="arrow-pt" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker></defs>
+<rect x="0" y="0" width="760" height="300" fill="#ffffff"/>
+<line x1="70" y1="150" x2="190" y2="150" stroke="#334155" stroke-width="3" marker-end="url(#arrow-pt)"/>
+<text x="92" y="133" font-family="Georgia" font-size="22" fill="#334155">U</text>
+<g transform="translate(310 150) rotate(-8)">
+<line x1="-150" y1="0" x2="150" y2="0" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>
+<circle cx="15" cy="0" r="6" fill="#0369a1"/>
+</g>
+<path d="M475 140 C535 120, 590 176, 655 148" fill="none" stroke="#0369a1" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M475 160 C535 190, 600 122, 690 165" fill="none" stroke="#0369a1" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M320 86 A72 72 0 0 1 390 115" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrow-pt)"/>
+<text x="392" y="104" font-family="Georgia" font-size="22" fill="#334155">α(t)</text>
+<path d="M270 230 C290 205, 310 205, 330 230 C350 255, 370 255, 390 230" fill="none" stroke="#64748b" stroke-width="3"/>
+<text x="285" y="270" font-family="Georgia" font-size="22" fill="#334155">h(t)</text>
+<text x="530" y="112" font-family="Georgia" font-size="20" fill="#334155">memória da esteira</text>
+</svg>
+<figcaption><strong>Figura 1.</strong> Arfagem e mergulho harmônicos impõem uma condição de contorno periódica no aerofólio. A esteira emitida convecta a jusante e armazena a história da circulação, produzindo atraso de fase na resposta aerodinâmica.</figcaption>
+</figure>
+</section>
+<section id="dominio-frequencia-pt">
+<h2>Interpretação no domínio da frequência</h2>
+<p>Em uma teoria linear, uma entrada harmônica produz uma saída harmônica na mesma frequência. A informação relevante não é apenas a frequência, mas o multiplicador complexo que conecta entrada e saída. Esse multiplicador codifica magnitude e fase.</p>
+<div class="equation-block" id="eq-funcao-transferencia-pt" data-label="eq:transfer-function" data-cref="Eq.">
+\begin{equation}
+\hat{C}_L(k)=\mathcal{G}(k)\,\hat{q},
+\end{equation}
+</div>
+<p>em que $\hat{q}$ representa a amplitude complexa relevante do movimento prescrito ou da rajada. A função de transferência $\mathcal{G}(k)$ é a assinatura, no domínio da frequência, do modelo aerodinâmico.</p>
+<div class="remark"><strong>Interpretação.</strong> Valores pequenos de $k$ correspondem a movimentos lentos em relação à convecção, aproximando o escoamento de um limite quase estacionário. Valores maiores de $k$ aumentam a importância de massa adicionada, atraso de fase da esteira e circulação não quase estacionária.</div>
+</section>
+<section id="theodorsen-pt">
+<h2>Caminho para a teoria de Theodorsen</h2>
+<p>A teoria de Theodorsen fornece a resposta clássica incompressível, invíscida e linear de um aerofólio fino em movimento harmônico. Seu objeto mais reconhecível é a função de Theodorsen, uma função complexa da frequência reduzida.</p>
+<div class="equation-block" id="eq-theodorsen-pt" data-label="eq:theodorsen" data-cref="Eq.">
+\begin{equation}
+C(k)=\frac{H_1^{(2)}(k)}{H_1^{(2)}(k)+iH_0^{(2)}(k)}.
+\end{equation}
+</div>
+<p>O módulo $|C(k)|$ mede a atenuação da contribuição circulatória, enquanto $\arg C(k)$ mede o atraso de fase induzido pela esteira. A contribuição não circulatória, geralmente associada à massa aparente, deve ser mantida separada porque não carrega o mesmo mecanismo de memória da esteira.</p>
+<p class="paper-note"><strong>Padrão de referência cruzada.</strong> Nesta estrutura HTML, referências no estilo LaTeX são escritas como âncoras, por exemplo <a class="xref" href="#eq-theodorsen-pt"></a>. Isso funciona como um <code>\cref</code> leve: o link aponta diretamente para a equação rotulada e permanece estável ao longo do artigo.</p>
+</section>
+
+<section id="dados-externos-pt">
+<h2>Gerando gráficos a partir de dados externos</h2>
+<p>Uma forma útil de aproximar esta página de um fluxo de trabalho em Overleaf é armazenar valores numéricos em um arquivo de texto simples e fazer o ambiente de gráfico ler esses dados diretamente. Em uma fonte LaTeX/PGFPlots, a figura pode ser regenerada sempre que o arquivo de dados for atualizado, sem editar manualmente o gráfico.</p>
+<p>Por exemplo, o pacote inclui <a href="../assets/data/theodorsen_sample.txt" target="_blank" rel="noopener"><code>assets/data/theodorsen_sample.txt</code></a>, uma pequena tabela provisória com frequência reduzida, módulo e fase.</p>
+<pre class="paper-code"><code>% Arquivo: figures/theodorsen_from_txt.tex
+% Compile a partir da raiz do projeto para manter o caminho relativo para assets/data.
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.82\textwidth,
+    height=0.46\textwidth,
+    grid=both,
+    xlabel={$k$},
+    ylabel={$|C(k)|$},
+    xmin=0, xmax=1,
+    ymin=0.45, ymax=1.05,
+    tick align=outside,
+    legend style={draw=none, fill=none, at={(0.98,0.98)}, anchor=north east}
+]
+\addplot+[mark=*, thick] table[
+    x=k,
+    y=Cmag,
+    col sep=space
+]{assets/data/theodorsen_sample.txt};
+\addlegendentry{dados de exemplo}
+\end{axis}
+\end{tikzpicture}</code></pre>
+<figure class="paper-figure rendered-figure">
+  <img src="../assets/img/theodorsen_from_txt_placeholder.png" alt="Gráfico provisório renderizado do módulo de Theodorsen a partir de dados externos">
+  <figcaption><strong>Figura 2.</strong> Gráfico provisório gerado a partir de <code>assets/data/theodorsen_sample.txt</code>. A página HTML chama diretamente o PNG, enquanto a fonte PGFPlots correspondente fica em <code>figures/theodorsen_from_txt.tex</code>.</figcaption>
+</figure>
+<p>O arquivo de dados correspondente é propositalmente simples:</p>
+<pre class="paper-code"><code>k     Cmag   phase_deg
+0.00  1.000   0.00
+0.05  0.918  -7.15
+0.10  0.832 -11.60
+0.20  0.742 -15.90
+0.40  0.646 -17.20
+0.70  0.574 -15.10
+1.00  0.538 -12.90</code></pre>
+<div class="remark"><strong>Observação.</strong> Os valores acima são dados didáticos de exemplo, não substituem o cálculo de $C(k)$ diretamente pela expressão com funções de Hankel. O objetivo deste bloco é mostrar o padrão de gráfico alimentado por arquivo externo.</div>
+</section>
+
+
+<section id="interactive-airfoil-pt" class="interactive-section">
+<h2>Arfagem harmônica interativa</h2>
+<p>O controle abaixo altera a frequência reduzida usada em uma animação simples no navegador. Ele não é um resolvedor numérico; é um auxílio visual para entender como oscilações mais rápidas tornam efeitos de fase mais evidentes.</p>
+<div class="interactive-card">
+  <div class="control-row">
+    <label for="kSliderPt"><strong>Frequência reduzida</strong> $k$ = <span id="kValPt">0.10</span></label>
+    <input id="kSliderPt" type="range" min="0" max="1" step="0.01" value="0.10"/>
+  </div>
+  <canvas id="airfoilCanvasPt" class="airfoil-canvas" width="720" height="280" aria-label="Aerofólio em arfagem harmônica animada"></canvas>
+  <p class="canvas-caption">A placa oscila harmonicamente em torno de um marcador de eixo elástico. A esteira tracejada é defasada para sugerir memória aerodinâmica.</p>
+</div>
+</section>
+<section id="verificacao-pt" class="quiz-block">
+<h2>Verificação rápida</h2>
+<p><strong>Pergunta.</strong> Na visão em domínio da frequência da teoria não estacionária de aerofólio fino, qual é o principal significado físico de aumentar $k$?</p>
+<div class="quiz-options">
+  <button type="button" data-answer="wrong" data-feedback="Ainda não. A amplitude quase estacionária não é o ponto central aqui; pense no tempo necessário para a vorticidade convectar para a esteira.">Apenas aumentar a inclinação de sustentação quase estacionária.</button>
+  <button type="button" data-answer="right" data-feedback="Correto — frequência reduzida maior torna efeitos de memória da esteira e atraso de fase mais importantes.">Tornar mais importantes o atraso de fase e a memória da esteira.</button>
+  <button type="button" data-answer="wrong" data-feedback="Ainda não. A teoria invíscida de aerofólio fino não usa viscosidade como mecanismo principal na resposta de Theodorsen.">Aumentar principalmente o arrasto viscoso.</button>
+</div>
+<p class="quiz-feedback" aria-live="polite"></p>
+</section>
+
+<section id="expansoes-pt">
+<h2>Expansões planejadas</h2>
+<p>Esta página foi pensada para crescer como um artigo didático em HTML nativo. As próximas camadas são: derivação da condição de contorno, representação por séries de Glauert, decomposição da sustentação circulatória e não circulatória, gráficos da função de Theodorsen, resposta de Sears a rajadas e comparação com funções indiciais no domínio do tempo.</p>
+</section>
+<section id="referencias-pt">
+<h2>Referências</h2>
+<ol class="reference-list">
+<li>Theodorsen, T. <em>General Theory of Aerodynamic Instability and the Mechanism of Flutter</em>. NACA Report 496, 1935. <a href="https://ntrs.nasa.gov/citations/19800006788" target="_blank" rel="noopener">NASA NTRS</a>.</li>
+<li>Sears, W. R. Some aspects of non-stationary airfoil theory and its practical application. <em>Journal of the Aeronautical Sciences</em>, 8(3), 104--108, 1941. <a href="https://doi.org/10.2514/8.10655" target="_blank" rel="noopener">doi:10.2514/8.10655</a>.</li>
+<li>Bisplinghoff, R. L., Ashley, H., and Halfman, R. L. <em>Aeroelasticity</em>. Addison-Wesley, 1955. ISBN 978-0201005950.</li>
+<li>Wagner, H. Über die Entstehung des dynamischen Auftriebes von Tragflügeln. <em>Zeitschrift für Angewandte Mathematik und Mechanik</em>, 5(1), 17--35, 1925. <a href="https://doi.org/10.1002/zamm.19250050103" target="_blank" rel="noopener">doi:10.1002/zamm.19250050103</a>.</li>
+</ol>
+</section>
+<div class="paper-print-footer" aria-hidden="true">Versão atualizada: <a href="https://www.unsaero.com/">www.unsaero.com</a></div>
+</div>
+</article>
+<div class="paper-actions">
+  <span class="lang-content active" id="action-en"><a href="../theory.html">← Back to Teaching</a></span>
+  <span class="lang-content" id="action-pt"><a href="../theory.html">← Voltar para Ensino</a></span>
+</div>
+</main>
+<!-- UNSAERO_FOOTER_START -->
+<div id="unsaero-footer"></div>
+<!-- UNSAERO_FOOTER_END -->
+<div class="paper-scroll-buttons" aria-label="Page navigation">
+  <button class="paper-scroll-btn" type="button" data-scroll-target="top" aria-label="Scroll to top" title="Top">↑</button>
+  <button class="paper-scroll-btn" type="button" data-scroll-target="bottom" aria-label="Scroll to bottom" title="Bottom">↓</button>
+</div>
+
+<script defer src="../assets/js/paper.js?v=20260503-autotoc"></script>
+<script>
+function setLang(lang){
+  if(!['pt','en'].includes(lang)) lang='en';
+  ['pt','en'].forEach(code=>{
+    document.getElementById(`btn-${code}`)?.classList.remove('active');
+    document.querySelectorAll(`#content-${code}, #breadcrumb-${code}, #action-${code}`).forEach(el=>{el.classList.remove('active'); el.style.display='none';});
+  });
+  document.getElementById(`btn-${lang}`)?.classList.add('active');
+  document.querySelectorAll(`#content-${lang}, #breadcrumb-${lang}, #action-${lang}`).forEach(el=>{el.classList.add('active'); el.style.display='block';});
+  document.documentElement.lang=lang==='pt'?'pt-BR':'en-US';
+  localStorage.setItem('unsaero-lang',lang);
+  if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise();}
+}
+document.addEventListener('DOMContentLoaded',()=>{const saved=localStorage.getItem('unsaero-lang'); setLang(['pt','en'].includes(saved)?saved:'en');});
+</script>
+<script>
+(function(){
+  const chromeTranslations={en:{nav_home:'Home',nav_teaching:'Teaching',nav_research:'Research',nav_tools:'Tools',nav_contact:'Contact',footer_rights:'© 2025–2026 UNSAERO. All rights reserved.'},pt:{nav_home:'Início',nav_teaching:'Ensino',nav_research:'Pesquisa',nav_tools:'Ferramentas',nav_contact:'Contato',footer_rights:'© 2025–2026 UNSAERO. Todos os direitos reservados.'}};
+  function normalizedLang(lang){return ['pt','en'].includes(lang)?lang:'en';}
+  function applyChromeI18n(lang){lang=normalizedLang(lang||localStorage.getItem('unsaero-lang')||'en');const dictionary=chromeTranslations[lang]||chromeTranslations.en;document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.getAttribute('data-i18n');if(dictionary[key]) el.textContent=dictionary[key];});}
+  window.applyChromeI18n=applyChromeI18n;
+  const existingSetLang=window.setLang;
+  if(typeof existingSetLang==='function'&&!existingSetLang.__unsaeroWrapped){const wrappedSetLang=function(lang){lang=normalizedLang(lang);existingSetLang(lang);applyChromeI18n(lang);};wrappedSetLang.__unsaeroWrapped=true;window.setLang=wrappedSetLang;}
+  applyChromeI18n(localStorage.getItem('unsaero-lang')||'en');
+})();
+</script>
+
+<script>
+function downloadPaperPDF(){
+  document.body.classList.add('print-paper-only');
+  window.print();
+  window.setTimeout(()=>document.body.classList.remove('print-paper-only'),700);
+}
+function setupAirfoilAnimation(canvasId, sliderId, labelId){
+  const canvas=document.getElementById(canvasId);
+  const slider=document.getElementById(sliderId);
+  const label=document.getElementById(labelId);
+  if(!canvas||!slider||!label) return;
+  const ctx=canvas.getContext('2d');
+  let t=0;
+  function draw(){
+    const w=canvas.width, h=canvas.height;
+    const k=parseFloat(slider.value||'0.1');
+    label.textContent=k.toFixed(2);
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+    for(let x=60;x<w;x+=60){ctx.beginPath();ctx.moveTo(x,20);ctx.lineTo(x,h-20);ctx.stroke();}
+    for(let y=60;y<h;y+=60){ctx.beginPath();ctx.moveTo(20,y);ctx.lineTo(w-20,y);ctx.stroke();}
+    ctx.strokeStyle='#334155'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(45,h/2); ctx.lineTo(135,h/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(135,h/2); ctx.lineTo(122,h/2-7); ctx.moveTo(135,h/2); ctx.lineTo(122,h/2+7); ctx.stroke();
+    ctx.font='20px Georgia'; ctx.fillStyle='#334155'; ctx.fillText('U',72,h/2-16);
+    const alpha=(0.08+0.28*k)*Math.sin(t);
+    const cx=305, cy=h/2+22*Math.sin(t+0.35);
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(alpha);
+    ctx.strokeStyle='#0f172a'; ctx.lineWidth=8; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(-135,0); ctx.lineTo(135,0); ctx.stroke();
+    ctx.fillStyle='#0369a1'; ctx.beginPath(); ctx.arc(12,0,7,0,2*Math.PI); ctx.fill();
+    ctx.restore();
+    ctx.setLineDash([9,9]); ctx.strokeStyle='#0369a1'; ctx.lineWidth=3;
+    for(let j=0;j<2;j++){
+      ctx.beginPath();
+      const off=j?22:-22;
+      ctx.moveTo(cx+145,cy+off*0.25);
+      for(let x=0;x<250;x+=10){
+        const y=cy+off+18*Math.sin((x/55)+t*0.8-j*0.8)*(0.35+0.9*k);
+        if(x===0) ctx.moveTo(cx+145+x,y); else ctx.lineTo(cx+145+x,y);
+      }
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.fillStyle='#475569'; ctx.font='18px Georgia';
+    ctx.fillText('α(t)',cx+85,cy-58);
+    ctx.fillText('wake memory',cx+230,cy-58);
+    t+=0.025+0.12*k;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+function setupFloatingScrollButtons(){
+  document.querySelectorAll('.paper-scroll-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const target=btn.dataset.scrollTarget;
+      const top=target==='bottom' ? document.documentElement.scrollHeight : 0;
+      window.scrollTo({top, behavior:'smooth'});
+    });
+  });
+}
+
+function setupQuizzes(){
+  document.querySelectorAll('.quiz-options button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const block=btn.closest('.quiz-block');
+      const fb=block?.querySelector('.quiz-feedback');
+      if(!fb) return;
+      fb.textContent=btn.dataset.feedback||'';
+      fb.className='quiz-feedback '+(btn.dataset.answer==='right'?'is-correct':'is-wrong');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  setupAirfoilAnimation('airfoilCanvasEn','kSliderEn','kValEn');
+  setupAirfoilAnimation('airfoilCanvasPt','kSliderPt','kValPt');
+  setupQuizzes();
+  setupFloatingScrollButtons();
+});
+</script>
+</body>
+</html>

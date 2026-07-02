@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&amp;family=Syncopate:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<link href="assets/css/shared.css?v=20260622-flat-flags" rel="stylesheet"/>
 <style>
 :root{--bg:#f8fafc;--panel:#ffffff;--text:#334155;--title:#0f172a;--muted:#64748b;--accent:#0284c7;--accent-dark:#0369a1;--header:#2c3e50;--border:#dbe4ee;--soft:#e0f2fe;}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
@@ -36,7 +36,9 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 .resource-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;}
 .resource-card{grid-column:span 6;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:0 4px 14px rgba(15,23,42,.055);display:flex;flex-direction:column;min-height:220px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;}
 .resource-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,23,42,.09);border-color:#bfdbfe;}
-.resource-card.featured{grid-column:span 12;}
+.resource-card.inactive{background:rgba(255,255,255,.62);box-shadow:none;opacity:.72;}
+.resource-card.inactive:hover{transform:none;box-shadow:none;border-color:var(--border);}
+.resource-card.featured{grid-column:span 6;}
 .resource-card.placeholder{grid-column:span 12;background:rgba(255,255,255,.62);}
 .card-eyebrow{font-size:.76rem;letter-spacing:.11em;text-transform:uppercase;color:var(--accent-dark);font-weight:800;margin-bottom:.7rem;}
 .card-separator{width:56px;height:1px;background:rgba(2,132,199,.28);margin:0 0 1.05rem;}
@@ -47,41 +49,19 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 .card-details li{margin:.28rem 0;}
 .card-action{display:inline-flex;align-items:center;align-self:flex-start;margin-top:auto;padding-top:1.25rem;color:var(--accent);font-weight:750;text-decoration:none;}
 .card-action:hover{text-decoration:underline;}
+.card-action-disabled{color:var(--muted);cursor:default;}
+.card-action-disabled:hover{text-decoration:none;}
 .card-muted{color:var(--muted)!important;}
 @media (max-width: 860px){.resource-card,.resource-card.featured,.resource-card.placeholder{grid-column:span 12;}#page-top{padding:30px 24px;}.resource-card{min-height:auto;}}
 @media (max-width: 560px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:26px 20px;border-radius:10px;}.resource-card{padding:20px;}}
 
 </style>
-<meta content="aerodynamics, analytical aerodynamics, unsteady aerodynamics, reduced-order models, airfoil geometry, vortex dynamics, distribution theory, thin airfoil theory, aerospace engineering" name="keywords"/><meta content="UNSAERO" name="author"/><meta content="summary_large_image" name="twitter:card"/><meta name="twitter:title" content="Teaching Analytical Aerodynamics | UNSAERO"/><meta name="twitter:description" content="Teaching resources on analytical aerodynamics, thin-airfoil theory, unsteady aerodynamics, distribution theory, vortex dynamics, and reduced-order aerodynamic modeling."/><meta content="https://www.unsaero.com/icon.png" name="twitter:image"/><link href="favicon.ico" rel="icon" type="image/x-icon"/><link href="assets/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/><link href="assets/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta content="2048" property="og:image:width"/><meta content="2048" property="og:image:height"/><meta content="en_US" property="og:locale"/><meta content="pt_BR" property="og:locale:alternate"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Teaching | UNSAERO", "url": "https://www.unsaero.com/theory.html", "description": "Teaching resources on analytical aerodynamics, reduced-order methods, distribution theory, vortex dynamics, and physically grounded aerodynamic modeling.", "isPartOf": {"@type": "WebSite", "name": "UNSAERO", "url": "https://www.unsaero.com/"}, "publisher": {"@type": "Organization", "name": "UNSAERO", "url": "https://www.unsaero.com/", "logo": "https://www.unsaero.com/icon.png"}, "inLanguage": ["en-US", "pt-BR"]}</script></head>
+<meta content="aerodynamics, analytical aerodynamics, unsteady aerodynamics, reduced-order models, airfoil geometry, vortex dynamics, distribution theory, thin airfoil theory, aerospace engineering" name="keywords"/><meta content="UNSAERO" name="author"/><meta content="summary_large_image" name="twitter:card"/><meta name="twitter:title" content="Teaching Analytical Aerodynamics | UNSAERO"/><meta name="twitter:description" content="Teaching resources on analytical aerodynamics, thin-airfoil theory, unsteady aerodynamics, distribution theory, vortex dynamics, and reduced-order aerodynamic modeling."/><meta content="https://www.unsaero.com/icon.png" name="twitter:image"/><link href="favicon.ico" rel="icon" type="image/x-icon"/><link href="assets/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/><link href="assets/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta content="2048" property="og:image:width"/><meta content="2048" property="og:image:height"/><meta content="en_US" property="og:locale"/><meta content="pt_BR" property="og:locale:alternate"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Teaching | UNSAERO", "url": "https://www.unsaero.com/theory.html", "description": "Teaching resources on analytical aerodynamics, reduced-order methods, distribution theory, vortex dynamics, and physically grounded aerodynamic modeling.", "isPartOf": {"@type": "WebSite", "name": "UNSAERO", "url": "https://www.unsaero.com/"}, "publisher": {"@type": "Organization", "name": "UNSAERO", "url": "https://www.unsaero.com/", "logo": "https://www.unsaero.com/icon.png"}, "inLanguage": ["en-US", "pt-BR"]}</script><link href="assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
+  <script defer src="assets/js/partials.js" data-root=""></script>
+</head>
 <body data-page="theory">
 <!-- UNSAERO_HEADER_START -->
-<div class="unsaero-global-header-wrap">
-  <div class="unsaero-global-header">
-    <a class="unsaero-global-logo" href="index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
-    <nav class="unsaero-global-nav" aria-label="Primary navigation">
-      <a href="index.html" data-nav="home" data-i18n="nav_home">Home</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="research.html" data-nav="research" data-i18n="nav_research">Research</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
-    </nav>
-    <div class="unsaero-global-lang-switch" aria-label="Language selector">
-      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
-        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
-        EN
-      </button>
-      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
-        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
-        PT
-      </button>
-    </div>
-  </div>
-</div>
-
+<div id="unsaero-header"></div>
 <!-- UNSAERO_HEADER_END -->
 <main>
 <header id="page-top">
@@ -106,6 +86,14 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 <p class="card-tags">Reduced-order methods · Distribution theory · Vortex dynamics</p>
 <a class="card-action" href="source/analytical_aerodynamics.html">Open resource →</a>
 </article>
+<article class="resource-card inactive" aria-disabled="true">
+<div class="card-eyebrow">Unsteady thin-airfoil theory</div>
+<div aria-hidden="true" class="card-separator"></div>
+<h2>Harmonic Oscillating Airfoils</h2>
+<p>A structured frequency-domain note on harmonic heaving and pitching airfoils, connecting reduced frequency, wake memory, circulatory lift, and the route toward Theodorsen and Sears theory.</p>
+<p class="card-tags">Harmonic motion · Reduced frequency · Theodorsen function</p>
+<span class="card-action card-action-disabled">Under development</span>
+</article>
 </section>
 </div>
 </div>
@@ -121,15 +109,20 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 <p class="card-tags">Métodos de ordem reduzida · Teoria das distribuições · Dinâmica de vórtices</p>
 <a class="card-action" href="source/analytical_aerodynamics.html">Abrir recurso →</a>
 </article>
+<article class="resource-card inactive" aria-disabled="true">
+<div class="card-eyebrow">Teoria de aerofólio fino não estacionária</div>
+<div aria-hidden="true" class="card-separator"></div>
+<h2>Aerofólios em Oscilação Harmônica</h2>
+<p>Uma nota didática no domínio da frequência sobre aerofólios em mergulho e arfagem harmônicos, conectando frequência reduzida, memória da esteira, sustentação circulatória e o caminho para as teorias de Theodorsen e Sears.</p>
+<p class="card-tags">Movimento harmônico · Frequência reduzida · Função de Theodorsen</p>
+<span class="card-action card-action-disabled">Em desenvolvimento</span>
+</article>
 </section>
 </div>
 </div>
 </main>
 <!-- UNSAERO_FOOTER_START -->
-<footer class="unsaero-global-footer">
-  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
-</footer>
-
+<div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
 <script>
 function setLang(lang){

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en-US" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Unsteady Thin-Airfoil Simulator | UNSAERO</title>
+  <meta name="description" content="A browser-based UNSAERO simulator for unsteady thin-airfoil aerodynamics, wake-vortex evolution, and time-dependent aerodynamic loads."/>
+  <meta name="robots" content="index, follow"/>
+  <meta name="theme-color" content="#0284c7"/>
+  <meta name="author" content="UNSAERO"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="UNSAERO"/>
+  <meta property="og:title" content="Unsteady Thin-Airfoil Simulator | UNSAERO"/>
+  <meta property="og:description" content="Run a lightweight unsteady thin-airfoil simulation directly in the browser and inspect wake vortices, force coefficients, moment coefficient, and LESP."/>
+  <meta property="og:url" content="https://www.unsaero.com/source/unsteady_airfoil_simulator.html"/>
+  <meta property="og:image" content="https://www.unsaero.com/icon.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Unsteady Thin-Airfoil Simulator | UNSAERO"/>
+  <meta name="twitter:description" content="Browser-based unsteady thin-airfoil simulator with wake animation and aerodynamic load plots."/>
+  <link rel="canonical" href="https://www.unsaero.com/source/unsteady_airfoil_simulator.html"/>
+  <link rel="icon" href="../favicon.ico" type="image/x-icon"/>
+  <link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
+  <link rel="stylesheet" href="../assets/css/shared.css?v=20260622-flat-flags"/>
+  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-layout-order-20260629"/>
+  <link rel="stylesheet" href="../assets/css/mobile-header-fix.css?v=20260503-index"/>
+  <script defer src="../assets/js/partials.js" data-root="../"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Unsteady Thin-Airfoil Simulator",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web browser",
+    "description": "Browser-based simulator for unsteady thin-airfoil aerodynamics, wake-vortex evolution, aerodynamic loads, and LESP.",
+    "url": "https://www.unsaero.com/source/unsteady_airfoil_simulator.html",
+    "publisher": {"@type": "Organization", "name": "UNSAERO"},
+    "softwareRequirements": "Modern browser with JavaScript modules and Web Worker support"
+  }
+  </script>
+</head>
+<body data-page="tools">
+  <!-- UNSAERO_HEADER_START -->
+<div id="unsaero-header"></div>
+<!-- UNSAERO_HEADER_END -->
+
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../tools.html" data-i18n="breadcrumb_tools">Tools</a> · <span data-i18n="page_title">Unsteady Airfoil Simulator</span></nav>
+    <header id="page-top">
+      <h1 data-i18n="page_title">Unsteady Airfoil Simulator</h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">Explore pitching and heaving thin-airfoil cases through wake-vortex animation and time-resolved aerodynamic loads.</p>
+    </header>
+
+    <section id="tool" class="tool-shell" aria-label="Unsteady thin-airfoil simulator">
+      <div class="tool-heading">
+        <div>
+          <h2 data-i18n="simulator">Unsteady Airfoil Simulator (UAS)</h2>
+        </div>
+      </div>
+
+      <div class="simulation-grid">
+        <section class="card controls collapsible-card">
+          <div class="section-title-row collapsible-title-row">
+            <h3 data-i18n="inputs">Inputs</h3>
+            <button class="secondary collapse-btn" type="button" data-collapse-target="inputsContent" aria-controls="inputsContent" aria-expanded="true">
+              <span data-collapse-label>Collapse</span>
+              <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div id="inputsContent" class="collapsible-content">
+
+          <div class="row two">
+            <div>
+              <label for="airSelect" data-i18n="airfoil">Airfoil</label>
+              <select id="airSelect"></select>
+            </div>
+            <div>
+              <label for="airfoilSections" data-i18n="airfoil_sections">Airfoil sections</label>
+              <input id="airfoilSections" type="number" value="199" step="1" min="2" max="500"/>
+            </div>
+          </div>
+
+          <div class="row two">
+            <div>
+              <label for="Uref"><span data-i18n="freestream">Freestream</span> U</label>
+              <input id="Uref" type="number" value="1" step="0.1"/>
+            </div>
+            <div>
+              <label for="c"><span data-i18n="chord">Chord</span> c</label>
+              <input id="c" type="number" value="1" step="0.1"/>
+            </div>
+          </div>
+
+          <div class="row two">
+            <div>
+              <label for="xp"><span data-i18n="pivot">Pivot</span> x<sub>p</sub>/c (%)</label>
+              <input id="xp" type="number" value="25" step="1" min="-100" max="200"/>
+            </div>
+            <div>
+              <label for="xref"><span data-i18n="moment_reference">Moment ref.</span> x<sub>ref</sub>/c (%)</label>
+              <input id="xref" type="number" value="25" step="1" min="-100" max="200"/>
+            </div>
+          </div>
+
+          <div class="row three">
+            <div>
+              <label for="nAterm" data-i18n="fourier_terms">Fourier terms</label>
+              <input id="nAterm" type="number" value="50" step="1" min="10" max="300"/>
+            </div>
+            <div>
+              <label for="dt" data-i18n="time_step">Time step Δt [s]</label>
+              <input id="dt" type="number" value="0.01" step="0.001" min="0.0001"/>
+            </div>
+            <div>
+              <label for="nSteps" data-i18n="steps">Steps</label>
+              <input id="nSteps" type="number" value="500" step="1" min="3" max="5000"/>
+            </div>
+          </div>
+          </div>
+        </section>
+
+        <div class="kinematics-grid">
+          <section class="card kinematics-card collapsible-card">
+            <div class="section-title-row collapsible-title-row">
+              <h3 data-i18n="kinematics">Kinematics</h3>
+              <button class="secondary collapse-btn" type="button" data-collapse-target="kinematicsContent" aria-controls="kinematicsContent" aria-expanded="true">
+                <span data-collapse-label>Collapse</span>
+                <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+              </button>
+            </div>
+            <div id="kinematicsContent" class="collapsible-content">
+            <div class="kinematics-inner-grid">
+              <div class="kinematic-panel">
+                <div class="row vertical">
+                  <label for="pitchKinSelect" data-i18n="pitch_source">Pitch source</label>
+                  <select id="pitchKinSelect">
+                    <option value="constant" data-i18n="source_constant">Constant</option>
+                    <option value="sinusoidal" data-i18n="source_sinusoidal">Sinusoidal</option>
+                    <option value="smooth_ramp" data-i18n="source_smooth_ramp">Smooth ramp</option>
+                    <option value="cosine_cycle" data-i18n="source_cosine_cycle">Asymmetric cosine</option>
+                  </select>
+                </div>
+                <canvas id="plotPitchKinematics" width="500" height="170"></canvas>
+                <div class="kinematic-fields" id="pitchConstantFields">
+                  <div class="row vertical">
+                    <label for="pitchConstantValue" data-i18n="pitch_constant_value">Value [deg]</label>
+                    <input id="pitchConstantValue" type="number" value="0" step="0.5"/>
+                  </div>
+                </div>
+                <div class="kinematic-fields" id="pitchSinusoidalFields" hidden>
+                  <div class="row three">
+                    <div>
+                      <label for="pitchFrequency" data-i18n="frequency">f [Hz]</label>
+                      <input id="pitchFrequency" type="number" value="1" step="0.05" min="0.0001"/>
+                    </div>
+                    <div>
+                      <label for="pitchAmplitude" data-i18n="pitch_amplitude">Aα [deg]</label>
+                      <input id="pitchAmplitude" type="number" value="3" step="0.5"/>
+                    </div>
+                    <div>
+                      <label for="pitchPhase" data-i18n="phase">φ [deg]</label>
+                      <input id="pitchPhase" type="number" value="0" step="1"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="kinematic-fields" id="pitchSmoothRampFields" hidden>
+                  <div class="row two">
+                    <div>
+                      <label for="pitchSmoothAmplitude" data-i18n="pitch_amplitude">Aα [deg]</label>
+                      <input id="pitchSmoothAmplitude" type="number" value="5" step="0.5"/>
+                    </div>
+                    <div>
+                      <label for="pitchSmoothSharpness" data-i18n="sharpness">a<sub>s</sub> [1/s]</label>
+                      <input id="pitchSmoothSharpness" type="number" value="8" step="0.5" min="0.0001"/>
+                    </div>
+                  </div>
+                  <div class="row two">
+                    <div>
+                      <label for="pitchSmoothT1" data-i18n="start_time">t<sub>1</sub> [s]</label>
+                      <input id="pitchSmoothT1" type="number" value="1" step="0.05"/>
+                    </div>
+                    <div>
+                      <label for="pitchSmoothT2" data-i18n="end_time">t<sub>2</sub> [s]</label>
+                      <input id="pitchSmoothT2" type="number" value="3" step="0.05"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="kinematic-fields" id="pitchCosineCycleFields" hidden>
+                  <div class="row two">
+                    <div>
+                      <label for="pitchCosineFrequency" data-i18n="frequency">f [Hz]</label>
+                      <input id="pitchCosineFrequency" type="number" value="1" step="0.05" min="0.0001"/>
+                    </div>
+                    <div>
+                      <label for="pitchCosineAmplitude" data-i18n="pitch_amplitude">Aα [deg]</label>
+                      <input id="pitchCosineAmplitude" type="number" value="3" step="0.5"/>
+                    </div>
+                  </div>
+                  <div class="row two">
+                    <div>
+                      <label for="pitchCosineZeta" data-i18n="zeta">ζ</label>
+                      <input id="pitchCosineZeta" type="number" value="0.5" step="0.05" min="0.001" max="0.999"/>
+                    </div>
+                    <div>
+                      <label for="pitchCosinePhase" data-i18n="phase">φ [deg]</label>
+                      <input id="pitchCosinePhase" type="number" value="0" step="1"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="kinematic-panel">
+                <div class="row vertical">
+                  <label for="plungeKinSelect" data-i18n="plunge_source">Plunge source</label>
+                  <select id="plungeKinSelect">
+                    <option value="constant" data-i18n="source_constant">Constant</option>
+                    <option value="sinusoidal" data-i18n="source_sinusoidal">Sinusoidal</option>
+                    <option value="smooth_ramp" data-i18n="source_smooth_ramp">Smooth ramp</option>
+                    <option value="cosine_cycle" data-i18n="source_cosine_cycle">Asymmetric cosine</option>
+                  </select>
+                </div>
+                <canvas id="plotPlungeKinematics" width="500" height="170"></canvas>
+                <div class="kinematic-fields" id="plungeConstantFields" hidden>
+                  <div class="row vertical">
+                    <label for="plungeConstantValue" data-i18n="plunge_constant_value">H/c</label>
+                    <input id="plungeConstantValue" type="number" value="0" step="0.005"/>
+                  </div>
+                </div>
+                <div class="kinematic-fields" id="plungeSinusoidalFields">
+                  <div class="row three">
+                    <div>
+                      <label for="plungeFrequency" data-i18n="frequency">f [Hz]</label>
+                      <input id="plungeFrequency" type="number" value="1" step="0.05" min="0.0001"/>
+                    </div>
+                    <div>
+                      <label for="plungeAmplitude" data-i18n="plunge_amplitude">H/c</label>
+                      <input id="plungeAmplitude" type="number" value="0.03" step="0.005"/>
+                    </div>
+                    <div>
+                      <label for="plungePhase" data-i18n="phase">φ [deg]</label>
+                      <input id="plungePhase" type="number" value="0" step="1"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="kinematic-fields" id="plungeSmoothRampFields" hidden>
+                  <div class="row two">
+                    <div>
+                      <label for="plungeSmoothAmplitude" data-i18n="plunge_amplitude">H/c</label>
+                      <input id="plungeSmoothAmplitude" type="number" value="0.03" step="0.005"/>
+                    </div>
+                    <div>
+                      <label for="plungeSmoothSharpness" data-i18n="sharpness">a<sub>s</sub> [1/s]</label>
+                      <input id="plungeSmoothSharpness" type="number" value="8" step="0.5" min="0.0001"/>
+                    </div>
+                  </div>
+                  <div class="row two">
+                    <div>
+                      <label for="plungeSmoothT1" data-i18n="start_time">t<sub>1</sub> [s]</label>
+                      <input id="plungeSmoothT1" type="number" value="1" step="0.05"/>
+                    </div>
+                    <div>
+                      <label for="plungeSmoothT2" data-i18n="end_time">t<sub>2</sub> [s]</label>
+                      <input id="plungeSmoothT2" type="number" value="3" step="0.05"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="kinematic-fields" id="plungeCosineCycleFields" hidden>
+                  <div class="row two">
+                    <div>
+                      <label for="plungeCosineFrequency" data-i18n="frequency">f [Hz]</label>
+                      <input id="plungeCosineFrequency" type="number" value="1" step="0.05" min="0.0001"/>
+                    </div>
+                    <div>
+                      <label for="plungeCosineAmplitude" data-i18n="plunge_amplitude">H/c</label>
+                      <input id="plungeCosineAmplitude" type="number" value="0.03" step="0.005"/>
+                    </div>
+                  </div>
+                  <div class="row two">
+                    <div>
+                      <label for="plungeCosineZeta" data-i18n="zeta">ζ</label>
+                      <input id="plungeCosineZeta" type="number" value="0.5" step="0.05" min="0.001" max="0.999"/>
+                    </div>
+                    <div>
+                      <label for="plungeCosinePhase" data-i18n="phase">φ [deg]</label>
+                      <input id="plungeCosinePhase" type="number" value="0" step="1"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="run-control-panel">
+              <div class="row buttons">
+                <button id="runBtn" data-i18n="run">Run</button>
+                <button id="stopBtn" class="secondary" disabled data-i18n="stop">Stop</button>
+              </div>
+              <div class="status run-status" id="status" data-i18n="status_ready">Ready.</div>
+              <div class="progress-wrap" id="runProgress" hidden aria-hidden="true" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-fill" id="runProgressFill"></div>
+              </div>
+            </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="card viz">
+          <div class="animation-panel">
+            <h3 data-i18n="animation">Animation</h3>
+            <div class="row action-row">
+              <button id="playPauseBtn" class="secondary play-pause-btn" disabled data-i18n="play">Play</button>
+              <button id="repeatBtn" class="secondary repeat-btn active" disabled data-i18n="auto_repeat" aria-pressed="true">Auto repeat</button>
+            </div>
+            <div class="row slider-row">
+              <label for="frameSlider" data-i18n="frame">Frame</label>
+              <div class="frame-slider-wrap">
+                <input id="frameSlider" type="range" min="0" max="0" value="0" disabled/>
+                <div class="frame-inline-controls">
+                  <button id="framePrevBtn" class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+                  <span id="frameCounter" class="frame-counter">0/0</span>
+                  <button id="frameNextBtn" class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+                </div>
+              </div>
+            </div>
+            <div class="row vortex-row">
+              <label data-i18n="vortex_colors">Vortex colors</label>
+              <div class="seg" id="vortexColorMode">
+                <button class="segbtn" data-mode="uniform" data-i18n="uniform">Uniform</button>
+                <button class="segbtn active" data-mode="gamma" data-i18n="by_circulation">By circulation</button>
+              </div>
+            </div>
+            <div class="row circulation-scale-row">
+              <label for="circulationScale" data-i18n="circulation_scale">Circulation scale</label>
+              <div class="circulation-scale-control">
+                <input id="circulationScale" type="range" min="0" max="1" step="0.01" value="1"/>
+                <output id="circulationScaleValue" for="circulationScale">1.00</output>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title-row flowfield-title-row">
+            <h3 data-i18n="flowfield">Flowfield</h3>
+          </div>
+          <canvas id="flowCanvas" width="900" height="300"></canvas>
+        </section>
+      </div>
+
+      <section class="card plots collapsible-card">
+          <div class="section-title-row collapsible-title-row">
+            <h3 data-i18n="loads">Loads</h3>
+            <button class="secondary collapse-btn" type="button" data-collapse-target="loadsContent" aria-controls="loadsContent" aria-expanded="true">
+              <span data-collapse-label>Collapse</span>
+              <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div id="loadsContent" class="collapsible-content">
+            <div class="frame-controls-row">
+              <div class="frame-mini-controls" data-frame-controls>
+              <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+              <span class="frame-mini-label" data-frame-mini-label>0/0</span>
+              <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+              </div>
+            </div>
+          <div class="plotgrid">
+            <canvas id="plotCL" width="500" height="220"></canvas>
+            <canvas id="plotCD" width="500" height="220"></canvas>
+            <canvas id="plotCM" width="500" height="220"></canvas>
+            <canvas id="plotLESP" width="500" height="220"></canvas>
+          </div>
+          </div>
+        </section>
+
+        <section class="card distributions collapsible-card">
+          <div class="section-title-row collapsible-title-row">
+            <h3 data-i18n="distributions">Distributions</h3>
+            <button class="secondary collapse-btn" type="button" data-collapse-target="distributionsContent" aria-controls="distributionsContent" aria-expanded="true">
+              <span data-collapse-label>Collapse</span>
+              <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div id="distributionsContent" class="collapsible-content">
+            <div class="frame-controls-row">
+              <div class="frame-mini-controls" data-frame-controls>
+              <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+              <span id="distributionFrameLabel" class="frame-mini-label distribution-frame" data-frame-mini-label>0/0</span>
+              <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+              </div>
+            </div>
+          <div class="plotgrid">
+            <canvas id="plotPressureDist" width="500" height="220"></canvas>
+            <canvas id="plotVorticityDist" width="500" height="220"></canvas>
+          </div>
+          </div>
+        </section>
+
+      <div id="tooltip" class="tooltip" hidden></div>
+    </section>
+  </main>
+
+  <!-- UNSAERO_FOOTER_START -->
+<div id="unsaero-footer"></div>
+<!-- UNSAERO_FOOTER_END -->
+
+  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-layout-order-20260629"></script>
+</body>
+</html>

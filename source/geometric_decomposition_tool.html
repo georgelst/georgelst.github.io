@@ -35,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-<link href="../assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<link href="../assets/css/shared.css?v=20260622-flat-flags" rel="stylesheet"/>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","name":"Geometric Decomposition Tool | UNSAERO","url":"https://www.unsaero.com/source/geometric_decomposition_tool.html","description":"Airfoil geometric decomposition into camber and thickness contributions, with physical and visual interpretation for thin-airfoil-based models.","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
 </script>
@@ -97,36 +97,12 @@ textarea{height:144px;min-height:116px;max-height:240px;resize:vertical;padding:
 @media (max-width:1060px){.plot-frame{min-height:320px;}}
 @media (max-width:720px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:28px 22px;border-radius:10px;}.visual-header{flex-direction:column;}.plot-frame{min-height:260px;padding:12px;}.tool-panel{padding:18px;}.control-row{grid-template-columns:1fr;}.button-row{grid-template-columns:1fr;}.decomp-plots{grid-template-columns:1fr;}}
 </style>
+<link href="../assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
+  <script defer src="../assets/js/partials.js" data-root="../"></script>
 </head>
 <body data-page="tools">
 <!-- UNSAERO_HEADER_START -->
-<div class="unsaero-global-header-wrap">
-  <div class="unsaero-global-header">
-    <a class="unsaero-global-logo" href="../index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
-    <nav class="unsaero-global-nav" aria-label="Primary navigation">
-      <a href="../index.html" data-nav="home" data-i18n="nav_home">Home</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../research.html" data-nav="research" data-i18n="nav_research">Research</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
-    </nav>
-    <div class="unsaero-global-lang-switch" aria-label="Language selector">
-      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
-        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
-        EN
-      </button>
-      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
-        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
-        PT
-      </button>
-    </div>
-  </div>
-</div>
-
+<div id="unsaero-header"></div>
 <!-- UNSAERO_HEADER_END -->
 <main>
 <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -233,10 +209,7 @@ textarea{height:144px;min-height:116px;max-height:240px;resize:vertical;padding:
 </div>
 </main>
 <!-- UNSAERO_FOOTER_START -->
-<footer class="unsaero-global-footer">
-  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
-</footer>
-
+<div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
 <script>
 function setLang(lang){

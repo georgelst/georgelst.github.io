@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500&family=Syncopate:wght@400;700&display=swap" rel="stylesheet"/>
-<link href="../assets/css/shared.css?v=20260424-flags-layout" rel="stylesheet"/>
+<link href="../assets/css/shared.css?v=20260622-flat-flags" rel="stylesheet"/>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","name":"Analytical Aerodynamics | UNSAERO","url":"https://www.unsaero.com/source/analytical_aerodynamics.html","description":"Foundations of Analytical Aerodynamics: interpretable, explicit, semi-explicit, and low-order models for aerodynamic insight, reduced-order dynamics, and principled coupling to CFD and experiments.","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
 </script>
@@ -76,36 +76,12 @@ ul.clean-list li::before{content:'·';color:var(--accent);font-weight:800;margin
 @media (max-width:860px){.topic-grid{grid-template-columns:1fr;}#page-top{padding:30px 24px;}.content-card{padding:22px;}}
 @media (max-width:560px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:26px 20px;border-radius:10px;}.content-card{padding:20px;}}
 </style>
+<link href="../assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
+  <script defer src="../assets/js/partials.js" data-root="../"></script>
 </head>
 <body>
 <!-- UNSAERO_HEADER_START -->
-<div class="unsaero-global-header-wrap">
-  <div class="unsaero-global-header">
-    <a class="unsaero-global-logo" href="../index.html" aria-label="UNSAERO home"><span class="unsaero-global-wordmark"><span class="unsaero-global-uns">UNS</span><span class="unsaero-global-aero">AERO</span></span></a>
-    <nav class="unsaero-global-nav" aria-label="Primary navigation">
-      <a href="../index.html" data-nav="home" data-i18n="nav_home">Home</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../theory.html" data-nav="theory" data-i18n="nav_teaching">Teaching</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../research.html" data-nav="research" data-i18n="nav_research">Research</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../tools.html" data-nav="tools" data-i18n="nav_tools">Tools</a>
-      <span class="unsaero-global-nav-sep" aria-hidden="true">·</span>
-      <a href="../contact.html" data-nav="contact" data-i18n="nav_contact">Contact</a>
-    </nav>
-    <div class="unsaero-global-lang-switch" aria-label="Language selector">
-      <button id="btn-en" class="unsaero-global-lang-option active" type="button" onclick="setLang('en')" title="Available in English" aria-label="Available in English">
-        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="1.5" y="0" fill="#bf0a30"/><rect width="24" height="1.5" y="3" fill="#bf0a30"/><rect width="24" height="1.5" y="6" fill="#bf0a30"/><rect width="24" height="1.5" y="9" fill="#bf0a30"/><rect width="24" height="1.5" y="12" fill="#bf0a30"/><rect width="24" height="1.5" y="15" fill="#bf0a30"/><rect width="10" height="8.5" fill="#002868"/></svg>
-        EN
-      </button>
-      <button id="btn-pt" class="unsaero-global-lang-option" type="button" onclick="setLang('pt')" title="Disponível em português" aria-label="Disponível em português">
-        <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><polygon points="12,1.5 22.5,8 12,14.5 1.5,8" fill="#fedf00"/><circle cx="12" cy="8" r="3.5" fill="#002776"/></svg>
-        PT
-      </button>
-    </div>
-  </div>
-</div>
-
+<div id="unsaero-header"></div>
 <!-- UNSAERO_HEADER_END -->
 <main>
 <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -232,10 +208,7 @@ ul.clean-list li::before{content:'·';color:var(--accent);font-weight:800;margin
 </div>
 </main>
 <!-- UNSAERO_FOOTER_START -->
-<footer class="unsaero-global-footer">
-  <p data-i18n="footer_rights">© 2025–2026 UNSAERO. All rights reserved.</p>
-</footer>
-
+<div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
 <script>
 function setLang(lang){

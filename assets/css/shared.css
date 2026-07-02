@@ -1,3 +1,18 @@
+
+/* Global edge reset: keep site chrome flush with the viewport. */
+html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html {
+  overflow-x: clip !important;
+}
+body {
+  overflow-x: clip !important;
+}
+
 /* UNSAERO shared global components. Unique class names prevent page-local CSS conflicts. */
 @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
 html body .unsaero-global-header-wrap, html body .unsaero-global-header-wrap * { box-sizing: border-box !important; }
@@ -16,10 +31,10 @@ html body .unsaero-global-nav-sep {
 html body .unsaero-global-nav a, html body .unsaero-global-nav a:visited { display: inline-flex !important; align-items: center !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; color: #64748b !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important; font-size: 0.88rem !important; font-weight: 650 !important; line-height: 1.2 !important; text-decoration: none !important; white-space: nowrap !important; }
 html body .unsaero-global-nav a:hover, html body .unsaero-global-nav a.active { color: #0284c7 !important; text-decoration: none !important; }
 html body .unsaero-global-lang-switch { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 1.1rem !important; flex: 0 0 auto !important; margin: 0 !important; padding: 0 !important; background: transparent !important; }
-html body .unsaero-global-lang-option { display: inline-flex !important; align-items: center !important; gap: 0.4rem !important; margin: 0 !important; padding: 0 0 2px !important; border: 0 !important; border-bottom: 2px solid transparent !important; background: transparent !important; appearance: none !important; cursor: pointer !important; color: #64748b !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important; font-size: 0.95rem !important; font-weight: 600 !important; line-height: 1.2 !important; }
+html body .unsaero-global-lang-option { display: inline-flex !important; align-items: center !important; gap: 0.4rem !important; margin: 0 !important; padding: 0 0 2px !important; border: 0 !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; appearance: none !important; cursor: pointer !important; color: #64748b !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important; font-size: 0.95rem !important; font-weight: 600 !important; line-height: 1.2 !important; }
 html body .unsaero-global-lang-option:hover, html body .unsaero-global-lang-option.active { color: #0f172a !important; border-bottom-color: #0284c7 !important; }
 html body .unsaero-global-lang-option.disabled, html body .unsaero-global-lang-option:disabled { cursor: not-allowed !important; opacity: 1 !important; border-bottom-color: transparent !important; }
-html body .unsaero-global-footer { width: 100% !important; min-height: 62px !important; margin: 0 !important; padding: 1.25rem 1rem !important; background: #0f172a !important; color: #cbd5e1 !important; text-align: center !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important; font-size: 0.85rem !important; line-height: 1.4 !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important; }
+html body .unsaero-global-footer { box-sizing: border-box !important; width: 100% !important; min-height: 62px !important; margin: 0 !important; padding: 1.25rem 1rem !important; background: #0f172a !important; color: #cbd5e1 !important; text-align: center !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important; font-size: 0.85rem !important; line-height: 1.4 !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important; }
 html body .unsaero-global-footer p { margin: 0 !important; padding: 0 !important; line-height: 1.4 !important; }
 @media (max-width: 900px) { html body .unsaero-global-header { flex-wrap: wrap !important; justify-content: center !important; } html body .unsaero-global-nav { order: 3 !important; width: 100% !important; overflow-x: auto !important; justify-content: flex-start !important; padding: 0.25rem 0 0.05rem !important; } }
 @media (max-width: 640px) { html body .unsaero-global-header { padding: 0.9rem 1rem !important; } html body .unsaero-global-logo { font-size: 1.35rem !important; } html body .unsaero-global-nav { gap: 0.45rem !important; } html body .unsaero-global-nav a { font-size: 0.82rem !important; } html body .unsaero-global-lang-switch { gap: 0.85rem !important; } }
