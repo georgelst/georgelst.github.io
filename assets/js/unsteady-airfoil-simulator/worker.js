@@ -1,5 +1,5 @@
 // worker.js — runs aeroSolver off the main thread (GitHub Pages safe)
-import { aeroSolver } from './solver.js?v=uas-layout-order-20260629';
+import { aeroSolver } from './solver.js?v=uas-controls-20260703a';
 
 let stopRequested = false;
 
@@ -22,8 +22,11 @@ self.onmessage = (ev) => {
     const outLite = {
       loads: out.loads,
       LESP: Array.from(out.LESP),
+      Gamma: Array.from(out.Gamma),
+      kelvinResidual: Array.from(out.kelvinResidual),
+      fourier: out.fourier,
       pressure: out.pressure,
-      gamma: out.gamma,
+      surfaceVelocity: out.surfaceVelocity,
       flowfield: out.flowfield,
       stopped: !!out.stopped
     };

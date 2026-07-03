@@ -1,6 +1,6 @@
 const TRANSLATIONS = {
   en: {
-    document_title: 'Unsteady Thin-Airfoil Simulator | UNSAERO',
+    document_title: 'Unsteady Airfoil Simulator | UNSAERO',
     breadcrumb_tools: 'Tools', page_title: 'Unsteady Airfoil Simulator',
     hero_subtitle: 'Explore pitching and heaving thin-airfoil cases through wake-vortex animation and time-resolved aerodynamic loads.',
     run_case: 'Run case', simulator: 'Unsteady Airfoil Simulator (UAS)', inputs: 'Inputs',
@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     pitch_angle: 'pitch α',
     plunge: 'plunge h',
     pivot: 'Pivot', moment_reference: 'Moment ref.', fourier_terms: 'Fourier terms',
-    time_step: 'Time step Δt [s]', steps: 'Steps',
+    time_step: 'Time step Δτ = 2UΔt/c', steps: 'Steps',
     run: 'Run', stop: 'Stop',
     flowfield: 'Flowfield', airfoil_lower: 'airfoil', wake_vortices: 'wake vortices',
     animation: 'Animation', play: 'Play', pause: 'Pause', auto_repeat: 'Auto repeat',
@@ -34,6 +34,7 @@ const TRANSLATIONS = {
     circulation: 'Circulation', circulation_scale: 'Circulation scale',
     collapse: 'Collapse', expand: 'Expand',
     loads: 'Loads',
+    fourier_coefficients: 'Fourier coefficients', coefficient_pair: 'Coefficient pair',
     distributions: 'Distributions',
     versus: 'vs',
     lift_coefficient: 'Lift Coefficient',
@@ -41,7 +42,8 @@ const TRANSLATIONS = {
     moment_coefficient: 'Moment Coefficient',
     lesp_title: 'Leading-Edge Suction Parameter',
     pressure_distribution: 'Pressure Distribution',
-    vorticity_distribution: 'Vorticity Distribution',
+    surface_velocity_distribution: 'Surface Velocity',
+    upper_surface: 'Upper surface', lower_surface: 'Lower surface',
     distribution_unavailable: 'Distribution data unavailable. Run the case again.',
     status_ready: 'Ready.', status_running: 'Running...',
     status_running_progress: 'Running... {progress}%', status_stopped: 'Stopped.',
@@ -52,7 +54,7 @@ const TRANSLATIONS = {
     footer_rights: '© 2025–2026 UNSAERO. All rights reserved.'
   },
   pt: {
-    document_title: 'Simulador de Aerofólio Fino Não Estacionário | UNSAERO',
+    document_title: 'Simulador de Aerofólio Não Estacionário | UNSAERO',
     breadcrumb_tools: 'Ferramentas', page_title: 'Simulador de Aerofólio Não Estacionário',
     hero_subtitle: 'Explore casos de aerofólios finos em arfagem e mergulho por meio da animação da esteira de vórtices e de cargas aerodinâmicas resolvidas no tempo.',
     run_case: 'Executar caso', simulator: 'Simulador de Aerofólio Não Estacionário (UAS)', inputs: 'Entradas',
@@ -77,7 +79,7 @@ const TRANSLATIONS = {
     pitch_angle: 'arfagem α',
     plunge: 'mergulho h',
     pivot: 'Pivô', moment_reference: 'Ref. do momento', fourier_terms: 'Termos de Fourier',
-    time_step: 'Passo de tempo Δt [s]', steps: 'Passos',
+    time_step: 'Passo de tempo Δτ = 2UΔt/c', steps: 'Passos',
     run: 'Executar', stop: 'Parar',
     flowfield: 'Campo de escoamento', airfoil_lower: 'aerofólio', wake_vortices: 'vórtices da esteira',
     animation: 'Animação', play: 'Reproduzir', pause: 'Pausar', auto_repeat: 'Repetir automaticamente',
@@ -86,6 +88,7 @@ const TRANSLATIONS = {
     circulation: 'Circulação', circulation_scale: 'Escala de circulação',
     collapse: 'Recolher', expand: 'Expandir',
     loads: 'Cargas',
+    fourier_coefficients: 'Coeficientes de Fourier', coefficient_pair: 'Par de coeficientes',
     distributions: 'Distribuições',
     versus: 'versus',
     lift_coefficient: 'Coeficiente de Sustentação',
@@ -93,7 +96,8 @@ const TRANSLATIONS = {
     moment_coefficient: 'Coeficiente de Momento',
     lesp_title: 'Parâmetro de Sucção do Bordo de Ataque',
     pressure_distribution: 'Distribuição de Pressão',
-    vorticity_distribution: 'Distribuição de Vorticidade',
+    surface_velocity_distribution: 'Velocidade de Superfície',
+    upper_surface: 'Superfície superior', lower_surface: 'Superfície inferior',
     distribution_unavailable: 'Dados de distribuição indisponíveis. Execute o caso novamente.',
     status_ready: 'Pronto.', status_running: 'Executando...',
     status_running_progress: 'Executando... {progress}%', status_stopped: 'Interrompido.',
@@ -159,6 +163,7 @@ function applyLanguage(lang){
   if (out){
     drawFrame(Number(frameSlider.value || 0));
     plotLoads();
+    plotFourierCoefficients(Number(frameSlider.value || 0));
   }
 }
 
@@ -199,8 +204,11 @@ const plotCL = document.getElementById('plotCL');
 const plotCD = document.getElementById('plotCD');
 const plotCM = document.getElementById('plotCM');
 const plotLESP = document.getElementById('plotLESP');
+const plotFourierFirst = document.getElementById('plotFourierFirst');
+const plotFourierSecond = document.getElementById('plotFourierSecond');
+const fourierPairSelect = document.getElementById('fourierPairSelect');
 const plotPressureDist = document.getElementById('plotPressureDist');
-const plotVorticityDist = document.getElementById('plotVorticityDist');
+const plotSurfaceVelocity = document.getElementById('plotSurfaceVelocity');
 const distributionFrameLabel = document.getElementById('distributionFrameLabel');
 const tooltip = document.getElementById('tooltip');
 const runProgress = document.getElementById('runProgress');
@@ -233,6 +241,7 @@ function setCardExpanded(button, expanded){
   requestAnimationFrame(() => {
     if (targetId === 'kinematicsContent' && DATA) drawKinematicsPreview();
     if (targetId === 'loadsContent' && out) plotLoads(Number(frameSlider.value || 0));
+    if (targetId === 'fourierContent' && out) plotFourierCoefficients(Number(frameSlider.value || 0));
     if (targetId === 'distributionsContent' && out) plotDistributions(Number(frameSlider.value || 0));
   });
 }
@@ -285,7 +294,7 @@ function flowPlotBox(){
 }
 
 async function loadData(){
-  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json', import.meta.url)).then(r=>r.json());
+  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json?v=uas-controls-20260703a', import.meta.url)).then(r=>r.json());
   DATA = { air };
   Object.keys(air).forEach(k=>{
     const opt=document.createElement('option');
@@ -340,7 +349,7 @@ function getStrictStepCount(id, label){
 function getTimeStep(){
   const element = document.getElementById('dt');
   if (!element) return 0.01;
-  return getStrictPositiveInputNumber('dt', 'Time step Δt');
+  return getStrictPositiveInputNumber('dt', 'Dimensionless time step Δτ');
 }
 
 function getStepCount(){
@@ -357,7 +366,7 @@ function getAirfoilSectionCount(){
   return value;
 }
 
-function interpolateAirfoilY(points, x){
+function interpolatePolylineY(points, x){
   if (!points?.length) return 0;
   if (x <= points[0][0]) return Number(points[0][1]) || 0;
   const last = points[points.length - 1];
@@ -377,20 +386,83 @@ function interpolateAirfoilY(points, x){
   return Number(last[1]) || 0;
 }
 
-function airfoilWithSections(points, sections){
-  const nSections = Math.max(2, Math.floor(sections));
-  const source = (points || [])
-    .map((p)=>[Number(p[0]), Number(p[1]) || 0])
-    .filter((p)=>Number.isFinite(p[0]) && Number.isFinite(p[1]))
-    .sort((a,b)=>a[0] - b[0]);
-
-  if (source.length < 2) throw new Error('Airfoil needs at least two source points.');
-  const out = new Array(nSections + 1);
-  for (let i=0; i<=nSections; i++){
-    const x = i / nSections;
-    out[i] = [x, interpolateAirfoilY(source, x)];
+function camberSlopeAtTheta(coefficients, theta){
+  let slope = Number(coefficients[0]) || 0;
+  for (let n=1; n<coefficients.length; n++){
+    slope += 2*(Number(coefficients[n]) || 0)*Math.cos(n*theta);
   }
-  return out;
+  return slope;
+}
+
+function camberIntegralTerm(n, theta){
+  if (n === 1) return 0.5*Math.sin(theta)**2;
+  return 0.5*(
+    (1 - Math.cos((n + 1)*theta))/(n + 1)
+    + (1 - Math.cos((1 - n)*theta))/(1 - n)
+  );
+}
+
+function camberAtTheta(coefficients, theta){
+  let camber = 0.5*(Number(coefficients[0]) || 0)*(1 - Math.cos(theta));
+  for (let n=1; n<coefficients.length; n++){
+    camber += (Number(coefficients[n]) || 0)*camberIntegralTerm(n, theta);
+  }
+  return camber;
+}
+
+function closedThicknessCoefficients(values){
+  const coefficients = Array.from(values || [], Number);
+  if (coefficients.length < 2 || coefficients.some((value)=>!Number.isFinite(value))){
+    throw new Error('Airfoil thickness coefficients are invalid.');
+  }
+  // The printed thesis coefficients are rounded. Enforce Eq. (2.60), z_t(1)=0,
+  // by absorbing the small rounding residual into the highest-order term.
+  const trailingThickness = coefficients.reduce((total, value)=>total + value, 0);
+  coefficients[coefficients.length - 1] -= trailingThickness;
+  return coefficients;
+}
+
+function thicknessAtX(coefficients, x){
+  if (x <= 0) return 0;
+  let polynomial = coefficients[coefficients.length - 1];
+  for (let k=coefficients.length - 2; k>=1; k--){
+    polynomial = coefficients[k] + x*polynomial;
+  }
+  return Math.max(0, coefficients[0]*Math.sqrt(x) + x*polynomial);
+}
+
+function airfoilWithSections(definition, sections){
+  const nSections = Math.max(2, Math.floor(sections));
+  const camberCoefficients = Array.from(definition?.camberCoefficients || [], Number);
+  if (!camberCoefficients.length || camberCoefficients.some((value)=>!Number.isFinite(value))){
+    throw new Error('Airfoil camber coefficients are invalid.');
+  }
+  const thicknessCoefficients = closedThicknessCoefficients(definition?.thicknessCoefficients);
+  const camber = new Array(nSections + 1);
+  const upper = new Array(nSections + 1);
+  const lower = new Array(nSections + 1);
+
+  for (let i=0; i<=nSections; i++){
+    const theta = Math.PI*i/nSections;
+    const x = 0.5*(1 - Math.cos(theta));
+    const zc = camberAtTheta(camberCoefficients, theta);
+    const slope = camberSlopeAtTheta(camberCoefficients, theta);
+    const angle = Math.atan(slope);
+    const zt = thicknessAtX(thicknessCoefficients, x);
+    camber[i] = [x, zc];
+    upper[i] = [x - zt*Math.sin(angle), zc + zt*Math.cos(angle)];
+    lower[i] = [x + zt*Math.sin(angle), zc - zt*Math.cos(angle)];
+  }
+
+  return {
+    chord: camber.map(([x])=>[x, 0]),
+    camber,
+    upper,
+    lower,
+    outline: [...upper, ...lower.slice().reverse()],
+    camberCoefficients,
+    thicknessCoefficients
+  };
 }
 
 function kinematicAmplitudeToPhysical(kind, value, chord){
@@ -567,14 +639,19 @@ function checkSeries(name, values, n){
   }
 }
 
-function selectedKinematics(chord = getStrictPositiveInputNumber('c', 'Chord c')){
+function selectedKinematics(
+  chord = getStrictPositiveInputNumber('c', 'Chord c'),
+  Uref = getStrictPositiveInputNumber('Uref', 'Freestream U')
+){
   const pitchConfig = getKinematicConfig('pitch', { strict: true, chord });
   const plungeConfig = getKinematicConfig('plunge', { strict: true, chord });
-  const dt = getTimeStep();
+  const dtau = getTimeStep();
+  const dt = dtau*chord/(2*Uref);
   const n = getStepCount();
   const duration = dt * (n - 1);
 
   const t = new Array(n);
+  const tau = new Array(n);
   const alpha = new Array(n);
   const h = new Array(n);
   const dalpha = new Array(n);
@@ -588,6 +665,7 @@ function selectedKinematics(chord = getStrictPositiveInputNumber('c', 'Chord c')
     const pitch = evaluateKinematic(pitchConfig, time);
     const plunge = evaluateKinematic(plungeConfig, time);
     t[i] = time;
+    tau[i] = i * dtau;
     alpha[i] = pitch.y;
     dalpha[i] = pitch.dy;
     d2alpha[i] = pitch.d2y;
@@ -612,6 +690,7 @@ function selectedKinematics(chord = getStrictPositiveInputNumber('c', 'Chord c')
     plungeConfig,
     rows,
     t,
+    tau,
     alpha,
     h,
     dalpha,
@@ -619,6 +698,7 @@ function selectedKinematics(chord = getStrictPositiveInputNumber('c', 'Chord c')
     dh,
     d2h,
     dt,
+    dtau,
     duration
   };
 }
@@ -634,7 +714,7 @@ stopBtn.addEventListener('click', ()=>{
 async function loadDirectSolver(){
   if (directSolverModule) return directSolverModule;
   try{
-    directSolverModule = await import(new URL('./solver.js?v=uas-layout-order-20260629', import.meta.url).href);
+    directSolverModule = await import(new URL('./solver.js?v=uas-controls-20260703a', import.meta.url).href);
   } catch(error){
     console.warn('Versioned solver import failed; falling back to plain solver import.', error);
     directSolverModule = await import('./solver.js');
@@ -656,7 +736,7 @@ async function runSolverInWorker(params, hooks){
 
   if (!worker){
     try{
-      worker = new Worker(new URL('./worker.js?v=uas-layout-order-20260629', import.meta.url), { type: 'module' });
+      worker = new Worker(new URL('./worker.js?v=uas-controls-20260703a', import.meta.url), { type: 'module' });
     } catch(error){
       console.warn('Worker construction failed; falling back to direct solver.', error);
       return runSolverDirect(params, hooks);
@@ -723,18 +803,24 @@ runBtn.addEventListener('click', async ()=>{
   clearCanvas(plotCD);
   clearCanvas(plotCM);
   clearCanvas(plotLESP);
+  clearCanvas(plotFourierFirst);
+  clearCanvas(plotFourierSecond);
   clearCanvas(plotPressureDist);
-  clearCanvas(plotVorticityDist);
+  clearCanvas(plotSurfaceVelocity);
+  if (fourierPairSelect){
+    fourierPairSelect.replaceChildren();
+    fourierPairSelect.disabled = true;
+  }
   if (distributionFrameLabel) distributionFrameLabel.textContent = '0/0';
   setStatus('status_running');
 
   try{
     const Uref = getStrictPositiveInputNumber('Uref', 'Freestream U');
     const chord = getStrictPositiveInputNumber('c', 'Chord c');
-    const motion = selectedKinematics(chord);
-    const { pitchName, plungeName, rows: kin, t, alpha, h, dalpha, d2alpha, dh, d2h } = motion;
+    const motion = selectedKinematics(chord, Uref);
+    const { pitchName, plungeName, rows: kin, t, tau, alpha, h, dalpha, d2alpha, dh, d2h } = motion;
     const airName = airSelect.value;
-    const airfoil = airfoilWithSections(DATA.air[airName], getAirfoilSectionCount()); // [[x,y],...]
+    const geometry = airfoilWithSections(DATA.air[airName], getAirfoilSectionCount());
 
     const hooks = {
       onProgress: (k, it)=>{
@@ -747,11 +833,17 @@ runBtn.addEventListener('click', async ()=>{
       plungeName,
       kin,
       airName,
-      t, alpha, h, dalpha, d2alpha, dh, d2h,
+      t, tau, alpha, h, dalpha, d2alpha, dh, d2h,
       Uref,
       c: chord,
       xp: getPercent('xp'),
-      airfoil
+      airfoil: geometry.chord,
+      camberLine: geometry.camber,
+      airfoilOutline: geometry.outline,
+      airfoilUpper: geometry.upper,
+      airfoilLower: geometry.lower,
+      camberCoefficients: geometry.camberCoefficients,
+      thicknessCoefficients: geometry.thicknessCoefficients
     };
 
     const params = {
@@ -761,13 +853,17 @@ runBtn.addEventListener('click', async ()=>{
       xref: getPercent('xref'),
       nAterm: Math.floor(getNum('nAterm')),
       t, alpha, h, dalpha, d2alpha, dh, d2h,
-      airfoil,
-      maxWake: 800,
+      airfoil: geometry.chord,
+      camberCoefficients: geometry.camberCoefficients,
+      thicknessCoefficients: geometry.thicknessCoefficients,
+      nascentBeta: 0.5,
+      maxWake: 0,
       wakeSaveStride: 1,
-      wakeWakeNeighbors: 0
+      wakeWakeNeighbors: -1
     };
 
     out = await runSolverInWorker(params, hooks);
+    populateFourierPairSelector();
     GLOBAL_GSCALE = null;
     GLOBAL_FLOW_BOUNDS = null;
     GLOBAL_DISTRIBUTION_BOUNDS = null;
@@ -777,21 +873,29 @@ runBtn.addEventListener('click', async ()=>{
     stopBtn.disabled = true;
     runBtn.disabled = false;
 
-    // enable animation
+    // Enable animation and begin automatically at human-readable frame 1.
     const nFrames = getFrameCount();
     frameSlider.max = String(nFrames - 1);
-    const finalFrame = Math.max(0, nFrames - 1);
-    frameSlider.value = String(finalFrame);
-    anim.frame = finalFrame;
+    frameSlider.value = '0';
+    anim.frame = -1;
     frameSlider.disabled = false;
     playPauseBtn.disabled = false;
     repeatBtn.disabled = false;
-    updatePlayPauseButton();
     updateRepeatButton();
     updateFrameCounter();
 
-    drawFrame(finalFrame);
-    plotLoads();
+    plotLoads(0);
+    plotFourierCoefficients(0);
+    if (!out.stopped && nFrames > 0){
+      anim.playing = true;
+      updatePlayPauseButton();
+      tick();
+    } else {
+      anim.frame = 0;
+      anim.playing = false;
+      updatePlayPauseButton();
+      drawFrame(0);
+    }
 
   } catch(e){
     setStatus('status_error', { message: e.message });
@@ -906,9 +1010,8 @@ function updatePlayPauseButton(){
 
 function updateRepeatButton(){
   if (!repeatBtn) return;
-  repeatBtn.textContent = translated('auto_repeat');
-  repeatBtn.classList.toggle('active', !!anim.repeat);
-  repeatBtn.setAttribute('aria-pressed', anim.repeat ? 'true' : 'false');
+  repeatBtn.checked = !!anim.repeat;
+  repeatBtn.setAttribute('aria-checked', anim.repeat ? 'true' : 'false');
 }
 
 function updateFrameCounter(){
@@ -924,8 +1027,7 @@ function updateFrameCounter(){
   if (frameCounter) frameCounter.textContent = label;
   frameMiniLabels.forEach((element)=>{ element.textContent = label; });
   frameStepButtons.forEach((button)=>{
-    const step = Number(button.dataset.frameStep || 0);
-    button.disabled = !out || (step < 0 && current <= 0) || (step > 0 && current >= total - 1);
+    button.disabled = !out;
   });
 }
 
@@ -948,7 +1050,9 @@ function stepFrame(delta){
     updatePlayPauseButton();
   }
   const current = Number(frameSlider.value || anim.frame || 0);
-  setFrame(current + delta);
+  const total = getFrameCount();
+  const next = ((Math.round(current + delta) % total) + total) % total;
+  setFrame(next);
 }
 
 let frameHoldDelay = null;
@@ -1019,8 +1123,8 @@ playPauseBtn.addEventListener('click', ()=>{
   updatePlayPauseButton();
 });
 
-repeatBtn?.addEventListener('click', ()=>{
-  anim.repeat = !anim.repeat;
+repeatBtn?.addEventListener('change', ()=>{
+  anim.repeat = !!repeatBtn.checked;
   updateRepeatButton();
 });
 
@@ -1414,7 +1518,7 @@ function getGlobalFlowBounds(){
   if (!out || !SIM || !DATA) return null;
 
   const kin = SIM.kin || [];
-  const airfoil = SIM.airfoil || [];
+  const airfoil = SIM.airfoilOutline || SIM.airfoil || [];
   const chord = Math.max(Math.abs(SIM.c), 1e-9);
   const pivot = SIM.xp * SIM.c;
   const U = SIM.Uref;
@@ -1593,7 +1697,7 @@ function drawFrame(frame){
   drawAxes(ctx,w,h,box);
 
   const kin = SIM.kin;
-  const air = SIM.airfoil || DATA.air[airSelect.value];
+  const air = SIM.airfoilOutline || SIM.airfoil || [];
 
   const U = getNum('Uref');
   const c = getNum('c');
@@ -1773,9 +1877,14 @@ function drawFrame(frame){
   }
   drawCirculationColorbox(ctx, box, activeGScale || getActiveGScale());
 
-  // Pivot marker in the fixed frame: body point (x/c = xp, z/c = 0)
-  // transformed with the same inertial mapping as the airfoil.
-  const pivotPoint = worldToCanvas(-U*tK - xOrigin, hK, box, bounds);
+  // Place the pivot marker on the reconstructed camber line at x_p/c.
+  const pivotZ = interpolatePolylineY(SIM.camberLine || SIM.airfoil || [], xp)*c;
+  const pivotPoint = worldToCanvas(
+    pivotZ*sa - U*tK - xOrigin,
+    pivotZ*ca + hK,
+    box,
+    bounds
+  );
   ctx.save();
   ctx.fillStyle = '#ef4444';
   ctx.beginPath();
@@ -1791,6 +1900,7 @@ function drawFrame(frame){
   updateFrameCounter();
   plotDistributions(frame);
   updateLoadMarkers(frame);
+  updateFourierMarkers(frame);
 }
 
 // simple line plot on canvas
@@ -1880,7 +1990,8 @@ function drawPlot(canvas, state, hoverIdx = null){
   ymin -= py; ymax += py;
 
   state.bounds = {xmin,xmax,ymin,ymax, box};
-  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 't', state.ylabel);
+  const xlabel = state.xlabel || 't';
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, xlabel, state.ylabel);
 
   const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
   ctx.strokeStyle = COLORS.accent;
@@ -1945,8 +2056,8 @@ function attachPlotHover(canvas){
     const yVal = st.y[idx];
 
     tooltip.innerHTML =
-      '<div><b>'+st.ylabel+'</b> <span class="muted">'+translated('versus')+'</span> <b>t</b></div>' +
-      '<div class="muted">t = '+xVal.toFixed(4)+'</div>' +
+      '<div><b>'+st.ylabel+'</b> <span class="muted">'+translated('versus')+'</span> <b>'+(st.xlabel || 't')+'</b></div>' +
+      '<div class="muted">'+(st.xlabel || 't')+' = '+xVal.toFixed(4)+'</div>' +
       '<div class="muted">'+st.ylabel+' = '+yVal.toFixed(6)+'</div>';
     tooltip.hidden = false;
     tooltip.style.left = (ev.clientX + 14) + 'px';
@@ -1968,17 +2079,17 @@ function activeFrameIndex(frame = Number(frameSlider.value || 0)){
 }
 
 function plotLoads(frame = Number(frameSlider.value || 0)){
-  const x = SIM.t;
+  const x = SIM.tau || SIM.t;
   const CL = out.loads.map(r=>r[2]);
   const CD = out.loads.map(r=>r[3]);
   const CM = out.loads.map(r=>r[4]);
   const LESP = Array.from(out.LESP);
   const activeIdx = activeFrameIndex(frame);
 
-  plotCL.__plotState = { x, y: CL, title: translated('lift_coefficient'), ylabel: 'C_L', activeIdx };
-  plotCD.__plotState = { x, y: CD, title: translated('drag_coefficient'), ylabel: 'C_D', activeIdx };
-  plotCM.__plotState = { x, y: CM, title: translated('moment_coefficient'), ylabel: 'C_M', activeIdx };
-  plotLESP.__plotState = { x, y: LESP, title: translated('lesp_title'), ylabel: 'LESP', activeIdx };
+  plotCL.__plotState = { x, y: CL, title: translated('lift_coefficient'), ylabel: 'C_L', xlabel: 'τ', activeIdx };
+  plotCD.__plotState = { x, y: CD, title: translated('drag_coefficient'), ylabel: 'C_D', xlabel: 'τ', activeIdx };
+  plotCM.__plotState = { x, y: CM, title: translated('moment_coefficient'), ylabel: 'C_M', xlabel: 'τ', activeIdx };
+  plotLESP.__plotState = { x, y: LESP, title: translated('lesp_title'), ylabel: 'LESP', xlabel: 'τ', activeIdx };
 
   drawPlot(plotCL, plotCL.__plotState);
   drawPlot(plotCD, plotCD.__plotState);
@@ -2001,8 +2112,67 @@ function updateLoadMarkers(frame = Number(frameSlider.value || 0)){
   }
 }
 
+function populateFourierPairSelector(){
+  if (!fourierPairSelect) return;
+  const previous = Number(fourierPairSelect.value || 0);
+  fourierPairSelect.replaceChildren();
+  const coefficientCount = Number(out?.fourier?.[0]?.length || 0);
+  for (let first=0; first<coefficientCount; first+=2){
+    const second = Math.min(first + 1, coefficientCount - 1);
+    const option = document.createElement('option');
+    option.value = String(first);
+    option.textContent = first === second ? `A${first}` : `A${first}–A${second}`;
+    fourierPairSelect.appendChild(option);
+  }
+  const available = Array.from(fourierPairSelect.options).map((option)=>Number(option.value));
+  fourierPairSelect.value = String(available.includes(previous) ? previous : (available[0] || 0));
+  fourierPairSelect.disabled = available.length === 0;
+}
+
+function plotFourierCoefficients(frame = Number(frameSlider.value || 0)){
+  if (!out?.fourier?.length || !SIM) return;
+  const x = SIM.tau || SIM.t;
+  const first = Math.max(0, Math.floor(Number(fourierPairSelect?.value || 0)));
+  const coefficientCount = Number(out.fourier[0]?.length || 0);
+  const activeIdx = activeFrameIndex(frame);
+  const configure = (canvas, mode)=>{
+    if (!canvas) return;
+    if (mode >= coefficientCount){
+      canvas.__plotState = null;
+      clearCanvas(canvas);
+      return;
+    }
+    const y = out.fourier.map((coefficients)=>Number(coefficients?.[mode]));
+    canvas.__plotState = {
+      x, y,
+      title: `A${mode}(τ)`,
+      ylabel: `A_${mode}`,
+      xlabel: 'τ',
+      activeIdx
+    };
+    drawPlot(canvas, canvas.__plotState);
+    if (!canvas.__hoverAttached){ attachPlotHover(canvas); canvas.__hoverAttached = true; }
+  };
+  configure(plotFourierFirst, first);
+  configure(plotFourierSecond, first + 1);
+}
+
+function updateFourierMarkers(frame = Number(frameSlider.value || 0)){
+  const activeIdx = activeFrameIndex(frame);
+  for (const canvas of [plotFourierFirst, plotFourierSecond]){
+    const state = canvas?.__plotState;
+    if (!state) continue;
+    state.activeIdx = activeIdx;
+    drawPlot(canvas, state);
+  }
+}
+
+fourierPairSelect?.addEventListener('change', ()=>{
+  plotFourierCoefficients(Number(frameSlider.value || 0));
+});
+
 function panelCenterX(){
-  const air = SIM?.airfoil || DATA?.air?.[airSelect.value] || [];
+  const air = SIM?.airfoil || [];
   const x = [];
   for (let i=0; i<air.length - 1; i++){
     x.push(0.5 * (Number(air[i][0]) + Number(air[i + 1][0])));
@@ -2011,15 +2181,6 @@ function panelCenterX(){
 }
 
 let GLOBAL_DISTRIBUTION_BOUNDS = null;
-
-function quantileSorted(sorted, q){
-  if (!sorted.length) return NaN;
-  const pos = Math.max(0, Math.min(sorted.length - 1, q * (sorted.length - 1)));
-  const lo = Math.floor(pos);
-  const hi = Math.ceil(pos);
-  if (lo === hi) return sorted[lo];
-  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
-}
 
 function niceDistributionBounds(ymin, ymax, fallbackSpan = 1, symmetric = false){
   if (!Number.isFinite(ymin) || !Number.isFinite(ymax) || ymin === ymax){
@@ -2046,40 +2207,37 @@ function niceDistributionBounds(ymin, ymax, fallbackSpan = 1, symmetric = false)
 }
 
 function computeDistributionBounds(kind){
-  const frames = kind === 'gamma' ? out?.gamma : out?.pressure;
+  const frames = kind === 'velocity' ? out?.surfaceVelocity : out?.pressure;
   if (!Array.isArray(frames) || !frames.length){
-    return kind === 'gamma' ? { ymin: -1, ymax: 1 } : { ymin: -4, ymax: 4 };
+    return kind === 'velocity' ? { ymin: -2, ymax: 2 } : { ymin: -4, ymax: 4 };
   }
 
-  const samples = [];
+  let ymin = Infinity;
+  let ymax = -Infinity;
+  let sampleCount = 0;
   for (const frameValues of frames){
-    const values = Array.from(frameValues || []);
-    const n = values.length;
-    if (!n) continue;
-    // Exclude both edges and use quantiles: this keeps the leading-edge
-    // singular behavior from setting the visual scale while still fitting the
-    // useful body of the distribution across the full simulation.
-    const margin = Math.max(2, Math.floor(0.08 * n));
-    const start = Math.min(margin, n - 1);
-    const end = Math.max(start + 1, n - margin);
-    for (let i=start; i<end; i++){
-      const v = Number(values[i]);
-      if (Number.isFinite(v)) samples.push(v);
+    const series = [frameValues?.upper, frameValues?.lower];
+    for (const valuesInput of series){
+      const values = Array.from(valuesInput || []);
+      for (const value of values){
+        const v = Number(value);
+        if (!Number.isFinite(v)) continue;
+        ymin = Math.min(ymin, v);
+        ymax = Math.max(ymax, v);
+        sampleCount++;
+      }
     }
   }
 
-  if (samples.length < 8){
-    return kind === 'gamma' ? { ymin: -1, ymax: 1 } : { ymin: -4, ymax: 4 };
+  if (sampleCount < 8){
+    return kind === 'velocity' ? { ymin: -2, ymax: 2 } : { ymin: -4, ymax: 4 };
   }
 
-  samples.sort((a, b)=>a - b);
-  const ymin = quantileSorted(samples, 0.05);
-  const ymax = quantileSorted(samples, 0.95);
   return niceDistributionBounds(
     ymin,
     ymax,
-    kind === 'gamma' ? 0.25 : 1,
-    kind === 'gamma'
+    kind === 'velocity' ? 0.5 : 1,
+    false
   );
 }
 
@@ -2087,7 +2245,7 @@ function distributionBounds(kind){
   if (!GLOBAL_DISTRIBUTION_BOUNDS){
     GLOBAL_DISTRIBUTION_BOUNDS = {
       pressure: computeDistributionBounds('pressure'),
-      gamma: computeDistributionBounds('gamma')
+      velocity: computeDistributionBounds('velocity')
     };
   }
   return GLOBAL_DISTRIBUTION_BOUNDS[kind] || { ymin: -1, ymax: 1 };
@@ -2182,6 +2340,111 @@ function drawDistributionPlot(canvas, x, y, title, ylabel, hoverIdx = null, kind
   ctx.fillText(title, 10, 16);
 }
 
+function drawDistributionMultiPlot(canvas, x, seriesInput, title, ylabel, hoverIdx = null, kind = 'pressure'){
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  clear(ctx,w,h);
+  const series = (seriesInput || [])
+    .map((entry)=>({
+      label: entry.label,
+      color: entry.color,
+      y: Array.from(entry.y || [], Number)
+    }))
+    .filter((entry)=>entry.y.length);
+  if (!x?.length || !series.length){
+    canvas.__distributionState = null;
+    ctx.fillStyle = COLORS.muted;
+    ctx.font = '13px system-ui';
+    ctx.fillText(translated('distribution_unavailable'), 18, 34);
+    return;
+  }
+
+  const n = Math.min(x.length, ...series.map((entry)=>entry.y.length));
+  const xPlot = x.slice(0, n);
+  series.forEach((entry)=>{ entry.y = entry.y.slice(0, n); });
+  const box = {x:62,y:38,w:w-90,h:h-78};
+  const xmin = 0, xmax = 1;
+  const { ymin, ymax } = distributionBounds(kind);
+  const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 'x/c', ylabel);
+
+  canvas.__distributionState = {
+    x: xPlot, series, title, ylabel, kind,
+    bounds: { xmin, xmax, ymin, ymax, box }
+  };
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(box.x, box.y, box.w, box.h);
+  ctx.clip();
+  for (const entry of series){
+    ctx.strokeStyle = entry.color;
+    ctx.lineWidth = 1.75;
+    ctx.beginPath();
+    let drawing = false;
+    for (let i=0; i<n; i++){
+      const yValue = entry.y[i];
+      if (!Number.isFinite(xPlot[i]) || !Number.isFinite(yValue)){
+        drawing = false;
+        continue;
+      }
+      const q = worldToCanvas(xPlot[i], yValue, box, bounds);
+      if (!drawing){ ctx.moveTo(q.X,q.Y); drawing = true; }
+      else ctx.lineTo(q.X,q.Y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  if (Number.isFinite(hoverIdx)){
+    const markerIdx = Math.max(0, Math.min(n - 1, Math.round(hoverIdx)));
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(box.x, box.y, box.w, box.h);
+    ctx.clip();
+    for (const entry of series){
+      if (!Number.isFinite(xPlot[markerIdx]) || !Number.isFinite(entry.y[markerIdx])) continue;
+      const q = worldToCanvas(xPlot[markerIdx], entry.y[markerIdx], box, bounds);
+      ctx.fillStyle = entry.color;
+      ctx.beginPath(); ctx.arc(q.X, q.Y, 3.5, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = COLORS.canvasBg; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  ctx.fillStyle = COLORS.canvasText;
+  ctx.font = '12px system-ui';
+  ctx.textAlign = 'left';
+  ctx.fillText(title, 10, 16);
+  let legendX = w - 12;
+  ctx.textAlign = 'right';
+  for (let i=series.length - 1; i>=0; i--){
+    const entry = series[i];
+    ctx.fillStyle = COLORS.canvasText;
+    ctx.fillText(entry.label, legendX, 16);
+    const width = ctx.measureText(entry.label).width;
+    ctx.fillStyle = entry.color;
+    ctx.fillRect(legendX - width - 17, 11, 11, 3);
+    legendX -= width + 34;
+  }
+  ctx.textAlign = 'left';
+}
+
+function redrawDistributionState(canvas, hoverIdx = null){
+  const state = canvas.__distributionState;
+  if (!state) return;
+  if (state.series){
+    drawDistributionMultiPlot(
+      canvas, state.x, state.series, state.title, state.ylabel, hoverIdx, state.kind
+    );
+  } else {
+    drawDistributionPlot(
+      canvas, state.x, state.y, state.title, state.ylabel, hoverIdx, state.kind
+    );
+  }
+}
+
 function attachDistributionHover(canvas){
   canvas.addEventListener('mousemove', (ev)=>{
     const st = canvas.__distributionState;
@@ -2194,28 +2457,28 @@ function attachDistributionHover(canvas){
     const { xmin, xmax, box } = st.bounds;
     if (mx < box.x || mx > box.x + box.w || my < box.y || my > box.y + box.h){
       tooltip.hidden = true;
-      drawDistributionPlot(canvas, st.x, st.y, st.title, st.ylabel, null, st.kind);
+      redrawDistributionState(canvas);
       return;
     }
 
     const xValue = xmin + ((mx - box.x) / box.w) * (xmax - xmin);
-    const idx = nearestFiniteIndex(st.x, st.y, xValue);
-    drawDistributionPlot(canvas, st.x, st.y, st.title, st.ylabel, idx, st.kind);
+    const referenceY = st.series?.[0]?.y || st.y;
+    const idx = nearestFiniteIndex(st.x, referenceY, xValue);
+    redrawDistributionState(canvas, idx);
 
     const xVal = st.x[idx];
-    const yVal = st.y[idx];
-    tooltip.innerHTML =
-      '<div><b>'+st.ylabel+'</b> <span class="muted">'+translated('versus')+'</span> <b>x/c</b></div>' +
-      '<div class="muted">x/c = '+formatPlotValue(xVal)+'</div>' +
-      '<div class="muted">'+st.ylabel+' = '+formatPlotValue(yVal)+'</div>';
+    const values = st.series
+      ? st.series.map((entry)=>'<div class="muted">'+entry.label+' = '+formatPlotValue(entry.y[idx])+'</div>').join('')
+      : '<div class="muted">'+st.ylabel+' = '+formatPlotValue(st.y[idx])+'</div>';
+    tooltip.innerHTML = '<div><b>'+st.ylabel+'</b> <span class="muted">'+translated('versus')+'</span> <b>x/c</b></div>'
+      + '<div class="muted">x/c = '+formatPlotValue(xVal)+'</div>' + values;
     tooltip.hidden = false;
     tooltip.style.left = (ev.clientX + 14) + 'px';
     tooltip.style.top  = (ev.clientY + 14) + 'px';
   });
 
   canvas.addEventListener('mouseleave', ()=>{
-    const st = canvas.__distributionState;
-    if (st) drawDistributionPlot(canvas, st.x, st.y, st.title, st.ylabel, null, st.kind);
+    redrawDistributionState(canvas);
     tooltip.hidden = true;
   });
 }
@@ -2226,27 +2489,35 @@ function plotDistributions(frame = Number(frameSlider.value || 0)){
   if (!nFrames) return;
   const k = Math.max(0, Math.min(nFrames - 1, Number(frame) || 0));
   const x = panelCenterX();
+  const pressure = out.pressure?.[k];
+  const surfaceVelocity = out.surfaceVelocity?.[k];
 
-  drawDistributionPlot(
+  drawDistributionMultiPlot(
     plotPressureDist,
     x,
-    out.pressure?.[k],
+    [
+      { label: translated('upper_surface'), y: pressure?.upper, color: '#dc2626' },
+      { label: translated('lower_surface'), y: pressure?.lower, color: '#2563eb' }
+    ],
     translated('pressure_distribution'),
-    'ΔC_p',
+    'C_p',
     null,
     'pressure'
   );
-  drawDistributionPlot(
-    plotVorticityDist,
+  drawDistributionMultiPlot(
+    plotSurfaceVelocity,
     x,
-    out.gamma?.[k],
-    translated('vorticity_distribution'),
-    'γ_b',
+    [
+      { label: translated('upper_surface'), y: surfaceVelocity?.upper, color: '#dc2626' },
+      { label: translated('lower_surface'), y: surfaceVelocity?.lower, color: '#2563eb' }
+    ],
+    translated('surface_velocity_distribution'),
+    'V/U_ref',
     null,
-    'gamma'
+    'velocity'
   );
   if (!plotPressureDist.__hoverAttached){ attachDistributionHover(plotPressureDist); plotPressureDist.__hoverAttached = true; }
-  if (!plotVorticityDist.__hoverAttached){ attachDistributionHover(plotVorticityDist); plotVorticityDist.__hoverAttached = true; }
+  if (!plotSurfaceVelocity.__hoverAttached){ attachDistributionHover(plotSurfaceVelocity); plotSurfaceVelocity.__hoverAttached = true; }
   if (distributionFrameLabel) distributionFrameLabel.textContent = `${k + 1}/${nFrames}`;
 }
 

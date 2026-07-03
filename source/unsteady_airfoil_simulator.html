@@ -22,7 +22,7 @@
   <link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
   <link rel="stylesheet" href="../assets/css/shared.css?v=20260622-flat-flags"/>
-  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-layout-order-20260629"/>
+  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-controls-20260703a"/>
   <link rel="stylesheet" href="../assets/css/mobile-header-fix.css?v=20260503-index"/>
   <script defer src="../assets/js/partials.js" data-root="../"></script>
   <script type="application/ld+json">
@@ -82,11 +82,11 @@
 
           <div class="row two">
             <div>
-              <label for="Uref"><span data-i18n="freestream">Freestream</span> U</label>
+              <label for="Uref"><span data-i18n="freestream">Freestream</span> U [m/s]</label>
               <input id="Uref" type="number" value="1" step="0.1"/>
             </div>
             <div>
-              <label for="c"><span data-i18n="chord">Chord</span> c</label>
+              <label for="c"><span data-i18n="chord">Chord</span> c [m]</label>
               <input id="c" type="number" value="1" step="0.1"/>
             </div>
           </div>
@@ -108,7 +108,7 @@
               <input id="nAterm" type="number" value="50" step="1" min="10" max="300"/>
             </div>
             <div>
-              <label for="dt" data-i18n="time_step">Time step Δt [s]</label>
+              <label for="dt" data-i18n="time_step">Time step Δτ = 2UΔt/c</label>
               <input id="dt" type="number" value="0.01" step="0.001" min="0.0001"/>
             </div>
             <div>
@@ -304,22 +304,31 @@
 
         <section class="card viz">
           <div class="animation-panel">
-            <h3 data-i18n="animation">Animation</h3>
-            <div class="row action-row">
-              <button id="playPauseBtn" class="secondary play-pause-btn" disabled data-i18n="play">Play</button>
-              <button id="repeatBtn" class="secondary repeat-btn active" disabled data-i18n="auto_repeat" aria-pressed="true">Auto repeat</button>
-            </div>
-            <div class="row slider-row">
-              <label for="frameSlider" data-i18n="frame">Frame</label>
-              <div class="frame-slider-wrap">
-                <input id="frameSlider" type="range" min="0" max="0" value="0" disabled/>
-                <div class="frame-inline-controls">
-                  <button id="framePrevBtn" class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
-                  <span id="frameCounter" class="frame-counter">0/0</span>
-                  <button id="frameNextBtn" class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+            <h3 data-i18n="flowfield">Flowfield</h3>
+            <div class="animation-main-row">
+              <div class="playback-controls">
+                <button id="playPauseBtn" class="secondary play-pause-btn" disabled data-i18n="play">Play</button>
+                <label class="auto-repeat-checkbox">
+                  <input id="repeatBtn" type="checkbox" checked disabled/>
+                  <span data-i18n="auto_repeat">Auto repeat</span>
+                </label>
+              </div>
+              <div class="frame-control-group">
+                <label for="frameSlider" data-i18n="frame">Frame</label>
+                <div class="frame-slider-wrap">
+                  <input id="frameSlider" type="range" min="0" max="0" value="0" disabled/>
+                  <div class="frame-inline-controls">
+                    <button id="framePrevBtn" class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+                    <span id="frameCounter" class="frame-counter">0/0</span>
+                    <button id="frameNextBtn" class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          <canvas id="flowCanvas" width="900" height="300"></canvas>
+          <div class="flowfield-options">
             <div class="row vortex-row">
               <label data-i18n="vortex_colors">Vortex colors</label>
               <div class="seg" id="vortexColorMode">
@@ -335,30 +344,25 @@
               </div>
             </div>
           </div>
-
-          <div class="section-title-row flowfield-title-row">
-            <h3 data-i18n="flowfield">Flowfield</h3>
-          </div>
-          <canvas id="flowCanvas" width="900" height="300"></canvas>
         </section>
       </div>
 
       <section class="card plots collapsible-card">
           <div class="section-title-row collapsible-title-row">
-            <h3 data-i18n="loads">Loads</h3>
+            <div class="section-title-main">
+              <h3 data-i18n="loads">Loads</h3>
+              <div class="frame-mini-controls" data-frame-controls>
+                <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+                <span class="frame-mini-label" data-frame-mini-label>0/0</span>
+                <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+              </div>
+            </div>
             <button class="secondary collapse-btn" type="button" data-collapse-target="loadsContent" aria-controls="loadsContent" aria-expanded="true">
               <span data-collapse-label>Collapse</span>
               <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
             </button>
           </div>
           <div id="loadsContent" class="collapsible-content">
-            <div class="frame-controls-row">
-              <div class="frame-mini-controls" data-frame-controls>
-              <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
-              <span class="frame-mini-label" data-frame-mini-label>0/0</span>
-              <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
-              </div>
-            </div>
           <div class="plotgrid">
             <canvas id="plotCL" width="500" height="220"></canvas>
             <canvas id="plotCD" width="500" height="220"></canvas>
@@ -368,25 +372,52 @@
           </div>
         </section>
 
+        <section class="card fourier-coefficients collapsible-card">
+          <div class="section-title-row collapsible-title-row">
+            <div class="section-title-main">
+              <h3 data-i18n="fourier_coefficients">Fourier coefficients</h3>
+              <div class="frame-mini-controls" data-frame-controls>
+                <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+                <span class="frame-mini-label" data-frame-mini-label>0/0</span>
+                <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+              </div>
+            </div>
+            <button class="secondary collapse-btn" type="button" data-collapse-target="fourierContent" aria-controls="fourierContent" aria-expanded="true">
+              <span data-collapse-label>Collapse</span>
+              <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div id="fourierContent" class="collapsible-content">
+            <div class="row fourier-pair-row">
+              <label for="fourierPairSelect" data-i18n="coefficient_pair">Coefficient pair</label>
+              <select id="fourierPairSelect" disabled></select>
+            </div>
+            <div class="plotgrid">
+              <canvas id="plotFourierFirst" width="500" height="220"></canvas>
+              <canvas id="plotFourierSecond" width="500" height="220"></canvas>
+            </div>
+          </div>
+        </section>
+
         <section class="card distributions collapsible-card">
           <div class="section-title-row collapsible-title-row">
-            <h3 data-i18n="distributions">Distributions</h3>
+            <div class="section-title-main">
+              <h3 data-i18n="distributions">Distributions</h3>
+              <div class="frame-mini-controls" data-frame-controls>
+                <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+                <span id="distributionFrameLabel" class="frame-mini-label distribution-frame" data-frame-mini-label>0/0</span>
+                <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+              </div>
+            </div>
             <button class="secondary collapse-btn" type="button" data-collapse-target="distributionsContent" aria-controls="distributionsContent" aria-expanded="true">
               <span data-collapse-label>Collapse</span>
               <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
             </button>
           </div>
           <div id="distributionsContent" class="collapsible-content">
-            <div class="frame-controls-row">
-              <div class="frame-mini-controls" data-frame-controls>
-              <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
-              <span id="distributionFrameLabel" class="frame-mini-label distribution-frame" data-frame-mini-label>0/0</span>
-              <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
-              </div>
-            </div>
           <div class="plotgrid">
             <canvas id="plotPressureDist" width="500" height="220"></canvas>
-            <canvas id="plotVorticityDist" width="500" height="220"></canvas>
+            <canvas id="plotSurfaceVelocity" width="500" height="220"></canvas>
           </div>
           </div>
         </section>
@@ -399,6 +430,6 @@
 <div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
 
-  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-layout-order-20260629"></script>
+  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-controls-20260703a"></script>
 </body>
 </html>

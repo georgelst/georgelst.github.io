@@ -1,6 +1,6 @@
-// solver.js — minimal JS port of aero_solver.m (U‑TAS v1.1)
-// NOTE: This is a faithful structural port for the thin-airfoil data shipped with this repo.
-//       For thick/cambered airfoils, you will likely need to revisit the theta mapping and panel geometry.
+// Direct linear discrete-vortex implementation of the thesis-exact attached-flow model.
+// Camber enters through the full B_n series. The matched-asymptotic finite-radius
+// correction regularizes pressure and surface velocity at the leading edge.
 
 export function aeroSolver(params, hooks = {}) {
   const {
@@ -11,18 +11,17 @@ export function aeroSolver(params, hooks = {}) {
     d2h: d2hInput,
     xp = 0.25, xref = 0.25,
     nAterm = 80,
-    iterMax = 100,
-    tol = 1e-6,
+    nascentBeta = 0.5,
 
     // --- performance knobs (safe defaults for browser) ---
     // Max number of wake vortices kept for physics + visualization.
     // (Oldest vortices are purged in chunks.)
-    maxWake = 800,
+    maxWake = 0,
     // Save a wake snapshot at every time step.
     wakeSaveStride = 1,
-    // Wake self-induction model: 0 disables wake-wake influence;
-    // otherwise, each vortex interacts only with neighbors within +/- wakeWakeNeighbors indices.
-    wakeWakeNeighbors = 120
+    // Wake self-induction model: a negative value uses every shed vortex, zero disables
+    // wake-wake influence, and a positive value applies an index-neighborhood approximation.
+    wakeWakeNeighbors = -1
   } = params;
 
   const it = t.length;
@@ -37,8 +36,16 @@ export function aeroSolver(params, hooks = {}) {
 
   // panels between nodes -> panel_center length = nNodes-1
   const m = nNodes - 1;               // collocation count
-  const N = m - 1;                    // matches MATLAB: N = length(panel)-1
   if (m < 2) throw new Error("Airfoil needs at least 3 points.");
+  if (!Number.isInteger(nAterm) || nAterm < 2 || nAterm > m){
+    throw new Error(`Fourier terms must be an integer between 2 and ${m}.`);
+  }
+  if (!Number.isFinite(nascentBeta) || nascentBeta <= 0 || nascentBeta >= 1){
+    throw new Error("Nascent-vortex placement beta must lie strictly between 0 and 1.");
+  }
+  const camberCoefficients = finiteSeries(params.camberCoefficients, [0]);
+  const thicknessCoefficients = finiteSeries(params.thicknessCoefficients, [0, 0]);
+  const leadingEdgeRadius = 0.5*Math.pow(thicknessCoefficients[0] || 0, 2);
 
   const xc = new Float64Array(m);
   const yc = new Float64Array(m);
@@ -52,13 +59,20 @@ export function aeroSolver(params, hooks = {}) {
     panelAngle[i] = Math.atan2(y2 - y1, x2 - x1);
   }
 
-  // theta mapping: theta = acos(1 - 2*x_center) (assumes x in [0,1])
+  // Midpoint grid in theta. The UI supplies cosine-spaced chord nodes, so panel
+  // centers correspond to theta midpoints and the Fourier quadrature is uniform.
   const theta = new Float64Array(m);
   for (let i=0;i<m;i++){
-    const x = xc[i];
-    theta[i] = Math.acos(1 - 2*x);
+    theta[i] = (i + 0.5)*Math.PI/m;
+    const xTheta = 0.5*(1 - Math.cos(theta[i]));
+    const x1 = coords[i][0], y1 = coords[i][1];
+    const x2 = coords[i+1][0], y2 = coords[i+1][1];
+    const span = x2 - x1;
+    const fraction = Math.abs(span) < 1e-14 ? 0.5 : (xTheta - x1)/span;
+    xc[i] = xTheta;
+    yc[i] = y1 + fraction*(y2 - y1);
   }
-  const dtheta = theta[1] - theta[0];
+  const dtheta = Math.PI/m;
 
   // Precompute trig tables (MATLAB: I.theta and I.sin_theta)
   const n = nAterm - 1; // number of An terms (n>=1)
@@ -78,11 +92,9 @@ export function aeroSolver(params, hooks = {}) {
     I_sin_theta[i]=rowS;
   }
 
-  // --- kinematics coefficients B, dB (calc_B) ---
-  const B0 = new Float64Array(it);
-  const B1 = new Float64Array(it);
-  const dB0 = new Float64Array(it);
-  const dB1 = new Float64Array(it);
+  // --- lifting coefficients B_n and physical-time derivatives ---
+  const B = new Array(it);
+  const dB = new Array(it);
 
   const dalpha = validSeries(dalphaInput, it) ? Float64Array.from(dalphaInput) : firstDerivativeForward(dt, alpha);
   const d2alpha = validSeries(d2alphaInput, it) ? Float64Array.from(d2alphaInput) : secondDerivativeForward(dt, alpha);
@@ -92,10 +104,22 @@ export function aeroSolver(params, hooks = {}) {
   for (let k=0;k<it;k++){
     const a = alpha[k];
     const sa = Math.sin(a), ca = Math.cos(a);
-    B0[k]  = -sa + (dh[k]/Uref)*ca + (c/Uref)*dalpha[k]*(xp - 0.5);
-    dB0[k] = -ca*dalpha[k] + (d2h[k]/Uref)*ca - (dh[k]/Uref)*sa*dalpha[k] + (c/Uref)*d2alpha[k]*(xp - 0.5);
-    B1[k]  = (c*dalpha[k])/(2*Uref);
-    dB1[k] = (c*d2alpha[k])/(2*Uref);
+    const vt = Uref*ca + dh[k]*sa;
+    const dvt = -Uref*sa*dalpha[k] + d2h[k]*sa + dh[k]*ca*dalpha[k];
+    const row = new Float64Array(nAterm);
+    const drow = new Float64Array(nAterm);
+    row[0] = -sa + (dh[k]/Uref)*ca + (c/Uref)*dalpha[k]*(xp - 0.5)
+      + (vt/Uref)*(camberCoefficients[0] || 0);
+    drow[0] = -ca*dalpha[k] + (d2h[k]/Uref)*ca
+      - (dh[k]/Uref)*sa*dalpha[k] + (c/Uref)*d2alpha[k]*(xp - 0.5)
+      + (dvt/Uref)*(camberCoefficients[0] || 0);
+    for (let mode=1; mode<nAterm; mode++){
+      const eta = camberCoefficients[mode] || 0;
+      row[mode] = 2*(vt/Uref)*eta + (mode === 1 ? (c*dalpha[k])/(2*Uref) : 0);
+      drow[mode] = 2*(dvt/Uref)*eta + (mode === 1 ? (c*d2alpha[k])/(2*Uref) : 0);
+    }
+    B[k] = row;
+    dB[k] = drow;
   }
 
   // --- outputs ---
@@ -103,8 +127,10 @@ export function aeroSolver(params, hooks = {}) {
     loads: new Array(it),      // [Cn, Cs, CL, CD, Cm]
     LESP: new Float64Array(it),
     Gamma: new Float64Array(it),
-    gamma: new Array(it),      // bound-vorticity distribution along the airfoil
-    pressure: new Array(it),   // Float64Array(m)
+    kelvinResidual: new Float64Array(it),
+    fourier: new Array(it),    // A_0 ... A_N at every time step
+    pressure: new Array(it),   // {delta, upper, lower}
+    surfaceVelocity: new Array(it), // {upper, lower}, normalized by Uref
     flowfield: {
       TE: new Array(it),              // sparse wake snapshots for animation
       wakeSaveStride,
@@ -142,9 +168,6 @@ export function aeroSolver(params, hooks = {}) {
     };
   }
 
-  // lambda storage for time-derivative
-  let lambdaOld = new Float64Array(nAterm);
-
   // --- main loop ---
   let stop = false;
   const shouldStop = (typeof hooks.shouldStop === 'function') ? hooks.shouldStop : null;
@@ -156,6 +179,8 @@ export function aeroSolver(params, hooks = {}) {
     // inertial coords of collocation points: (coord - xp*c)*exp(-i alpha) - U t + i h
     const a = alpha[k];
     const ca = Math.cos(a), sa = Math.sin(a);
+    const Bk = B[k];
+    const dBk = dB[k];
     const zRe = new Float64Array(m);
     const zIm = new Float64Array(m);
     const xpAbs = xp*c;
@@ -211,57 +236,64 @@ export function aeroSolver(params, hooks = {}) {
       }
     }
 
-    // Fourier coefficients lambda from W/U
-    const lambda = sFourier(scaleArray(W, 1.0/Uref), theta, dtheta, I_theta, nAterm);
+    // Modal contribution of the previously shed wake.
+    const lambdaBase = sFourier(scaleArray(W, 1.0/Uref), dtheta, I_theta, nAterm);
+    const A0Base = -2*(lambdaBase[0] + Bk[0]);
+    const A1Base =  2*(lambdaBase[1] + Bk[1]);
+    const GammaBase = 0.5*Math.PI*c*Uref*(A0Base + 0.5*A1Base);
 
-    // provisional Gamma_bound from lambda and B
-    const A0 = -lambda[0] - B0[k];
-    const A1 =  lambda[1] + B1[k];
-    let Gamma_bound = Math.PI*c*Uref*(A0 + 0.5*A1);
+    // Nascent TE vortex placement, Eq. (122). In this fixed frame the airfoil translates
+    // through still fluid, which is equivalent to the thesis freestream/body-frame form.
+    const teX = coords[nNodes - 1][0]*c - xpAbs;
+    const teY = coords[nNodes - 1][1]*c;
+    const TERe = teX*ca + teY*sa - Uref*t[k];
+    const TEIm = -teX*sa + teY*ca + h[k];
+    let wakeTeRe = 0;
+    let wakeTeIm = 0;
+    for (let j=0;j<nWake;j++){
+      const dx = TERe - wakeRe[j];
+      const dy = TEIm - wakeIm[j];
+      const r2 = dx*dx + dy*dy;
+      if (r2 < 1e-24) continue;
+      const factor = wakeG[j]/(2*Math.PI*r2);
+      wakeTeRe += dy*factor;
+      wakeTeIm -= dx*factor;
+    }
+    const vTe = Uref*ca + dh[k]*sa
+      + wakeTeRe*tanRe[m-1] + wakeTeIm*tanIm[m-1];
+    const offset = nascentBeta*Math.max(Math.abs(vTe), 1e-8*Uref)*dt;
+    const newVRe = TERe + offset*tanRe[m-1];
+    const newVIm = TEIm + offset*tanIm[m-1];
 
-    // shed new vortex position at TE: use last collocation point as TE proxy
-    const TERe = zRe[m-1], TEIm = zIm[m-1];
-    let newVRe, newVIm;
-    if (k > 0){
-      const prevRe = wakeRe[nWake-1], prevIm = wakeIm[nWake-1];
-      newVRe = (2/3)*TERe + (1/3)*prevRe;
-      newVIm = (2/3)*TEIm + (1/3)*prevIm;
-    } else {
-      newVRe = TERe + 0.5*Uref*dt;
-      newVIm = TEIm;
+    // Direct linear DVM closure. The modal response to the nascent vortex is linear
+    // in its circulation, so Kelvin's condition is solved once, algebraically.
+    const Wunit = inducedDownwashFromSingleVortex(
+      zRe, zIm, norRe, norIm, newVRe, newVIm, 1
+    );
+    const lambdaUnit = sFourier(scaleArray(Wunit, 1.0/Uref), dtheta, I_theta, nAterm);
+    const A0Influence = -2*lambdaUnit[0];
+    const A1Influence =  2*lambdaUnit[1];
+    const dGammaDg = 0.5*Math.PI*c*Uref*(A0Influence + 0.5*A1Influence);
+    const denominator = 1 + dGammaDg;
+    if (!Number.isFinite(denominator) || Math.abs(denominator) < 1e-12){
+      throw new Error(`Singular trailing-edge vortex solve at time step ${k + 1}.`);
     }
 
-    // Solve Kelvin for new vortex circulation using secant-like Newton
-    let g0 = -0.01, g1 = 0.0;
-    let f0 = 1.0,  f1 = Gamma_bound + sum(wakeG); // like MATLAB init
-
-    let lambdaKelvin = lambda;
-    let GammaKelvinBound = Gamma_bound;
-
-    for (let iter=0; iter<iterMax && Math.abs(f0) > tol; iter++){
-      // induced by new vortex at bound points: Vind_new = g0 * pv(z, newV)
-      const Wnew = inducedDownwashFromSingleVortex(zRe, zIm, norRe, norIm, newVRe, newVIm, g0);
-      const Wtot = addArrays(W, Wnew);
-      lambdaKelvin = sFourier(scaleArray(Wtot, 1.0/Uref), theta, dtheta, I_theta, nAterm);
-
-      const A0k = -lambdaKelvin[0] - B0[k];
-      const A1k =  lambdaKelvin[1] + B1[k];
-      GammaKelvinBound = Math.PI*c*Uref*(A0k + 0.5*A1k);
-
-      f0 = GammaKelvinBound + g0 + sum(wakeG);
-      const dfdg = (f0 - f1)/(g0 - g1);
-      f1 = f0;
-      g1 = g0;
-      g0 = g0 - f0/dfdg;
-      if (!Number.isFinite(g0)) { g0 = 0; break; }
+    const oldWakeGamma = sum(wakeG);
+    const g0 = -(GammaBase + oldWakeGamma)/denominator;
+    if (!Number.isFinite(g0)){
+      throw new Error(`Non-finite trailing-edge circulation at time step ${k + 1}.`);
     }
 
-    // finalize lambda and dlambda
-    const dlambda = new Float64Array(nAterm);
-    for (let j=0;j<nAterm;j++) dlambda[j] = (lambdaKelvin[j] - lambdaOld[j])/dt;
-    lambdaOld = lambdaKelvin;
+    const lambdaKelvin = new Float64Array(nAterm);
+    for (let j=0;j<nAterm;j++){
+      lambdaKelvin[j] = lambdaBase[j] + g0*lambdaUnit[j];
+    }
+    const GammaKelvinBound = GammaBase + g0*dGammaDg;
+    out.kelvinResidual[k] = GammaKelvinBound + oldWakeGamma + g0;
+
     // track global max |Gamma| for stable color scaling
-    if (Number.isFinite(g0)) maxAbsG = Math.max(maxAbsG, Math.abs(g0));
+    maxAbsG = Math.max(maxAbsG, Math.abs(g0));
 
     // store wake vortex
     wakeRe.push(newVRe); wakeIm.push(newVIm); wakeG.push(g0);
@@ -269,55 +301,100 @@ export function aeroSolver(params, hooks = {}) {
 
 
     // LESP and bound circulation
-    out.LESP[k] = -lambdaKelvin[0] - B0[k];
+    out.LESP[k] = -2*(lambdaKelvin[0] + Bk[0]);
     out.Gamma[k] = GammaKelvinBound;
+    const fourierCoefficients = new Float64Array(nAterm);
+    fourierCoefficients[0] = out.LESP[k];
+    for (let mode=1; mode<nAterm; mode++){
+      fourierCoefficients[mode] = 2*(lambdaKelvin[mode] + Bk[mode]);
+    }
+    out.fourier[k] = fourierCoefficients;
 
     // gamma distribution + Gamma weights vector
     const gammaOut = calcGamma({
-      lambda: lambdaKelvin, dlambda,
-      B0: B0[k], B1: B1[k], dB0: dB0[k], dB1: dB1[k],
+      lambda: lambdaKelvin,
+      B: Bk,
       Uref, c, theta, dtheta, I_sin_theta
     });
-    out.gamma[k] = gammaOut.gamma;
-
-    // pressure (matches MATLAB expression)
-    const pr = new Float64Array(m);
+    // Matched-asymptotic, finite-radius distributions: thesis Eqs. (120) and (122).
+    // These retain the complete camber B_n series while removing the sharp-edge
+    // singularity from the displayed pressure and surface velocities.
+    const tauScale = c/(2*Uref);
+    const Bprime = new Float64Array(nAterm);
+    for (let mode=0; mode<nAterm; mode++) Bprime[mode] = tauScale*dBk[mode];
+    const deltaCp = new Float64Array(m);
+    const velocityUpper = new Float64Array(m);
+    const velocityLower = new Float64Array(m);
+    const cpUpper = new Float64Array(m);
+    const cpLower = new Float64Array(m);
+    const vtNormalized = ca + (dh[k]/Uref)*sa;
     for (let i=0;i<m;i++){
       const th = theta[i];
       const s = Math.sin(th);
       const cs = Math.cos(th);
-      const term1 = out.LESP[k]*(1+cs)/s;
-      const term2 = (B1[k] - dB0[k])*s;
-      const term3 = -dB1[k]*Math.sin(2*th);
-      pr[i] = 4*(term1 + term2) + term3;
-    }
-    out.pressure[k] = pr;
+      const regularizedLeadingEdge = Math.sqrt(2)/Math.sqrt(1 + leadingEdgeRadius - cs)
+        - Math.tan(th/4);
+      let pressureJump = 2*out.LESP[k]*regularizedLeadingEdge - 4*Bprime[0]*s;
+      for (let mode=1; mode<nAterm; mode++){
+        pressureJump += 4*Bk[mode]*Math.sin(mode*th);
+      }
+      if (nAterm > 1) pressureJump -= Bprime[1]*Math.sin(2*th);
+      for (let mode=2; mode<nAterm; mode++){
+        pressureJump += 2*Bprime[mode]*(
+          Math.sin((mode - 1)*th)/(mode - 1)
+          - Math.sin((mode + 1)*th)/(mode + 1)
+        );
+      }
+      deltaCp[i] = pressureJump;
 
-    // loads (matches MATLAB)
-    const Cn = -2*Math.PI*(lambdaKelvin[0] + B0[k] - 0.5*B1[k]) - Math.PI*c/(2*Uref)*dB0[k];
-    const Cs =  2*Math.PI*out.LESP[k]*out.LESP[k];
+      const x = Math.max(1e-14, xc[i]);
+      const baseVelocity = vtNormalized*Math.sqrt(x)/Math.sqrt(x + leadingEdgeRadius/2);
+      const matchedLiftingVelocity = 0.5*(
+        gammaOut.gamma[i]/Uref
+        + out.LESP[k]*(1/Math.sqrt(x + leadingEdgeRadius/2) - 1/Math.sqrt(x))
+      );
+      velocityUpper[i] = baseVelocity + matchedLiftingVelocity;
+      velocityLower[i] = baseVelocity - matchedLiftingVelocity;
+      const meanCp = 1 - 0.5*(
+        velocityUpper[i]*velocityUpper[i] + velocityLower[i]*velocityLower[i]
+      );
+      cpUpper[i] = meanCp - 0.5*pressureJump;
+      cpLower[i] = meanCp + 0.5*pressureJump;
+    }
+    out.pressure[k] = { delta: deltaCp, upper: cpUpper, lower: cpLower };
+    out.surfaceVelocity[k] = { upper: velocityUpper, lower: velocityLower };
+
+    // General cambered-airfoil loads, thesis Eqs. (82), (83), and (99)-(104).
+    const B1 = Bk[1] || 0;
+    const B2 = Bk[2] || 0;
+    const B0prime = Bprime[0] || 0;
+    const B1prime = Bprime[1] || 0;
+    const B2prime = Bprime[2] || 0;
+    const B3prime = Bprime[3] || 0;
+    const Cn = Math.PI*(out.LESP[k] + B1) - Math.PI*(B0prime - 0.5*B2prime);
+    const Cs = 0.5*Math.PI*out.LESP[k]*out.LESP[k];
 
     const CL = Cn*Math.cos(a) + Cs*Math.sin(a);
     const CD = Cn*Math.sin(a) - Cs*Math.cos(a);
 
-    const Cm = (xref - 0.25)*Cn - (Math.PI/4)*B1[k] + (Math.PI*c/(8*Uref))*(dB0[k] - 0.25*dB1[k]);
+    const Cm = (xref - 0.25)*Cn + (Math.PI/4)*(B2 - B1)
+      + (Math.PI/4)*(B0prime - 0.25*B1prime - 0.5*B2prime + 0.25*B3prime);
 
     out.loads[k] = [Cn, Cs, CL, CD, Cm];
 
-    // convect wake
-    convectWake({
-      dt, wakeRe, wakeIm, wakeG,
-      boundGammaWeights: gammaOut.GammaWeights,
-      boundZRe: zRe, boundZIm: zIm,
-      wakeWakeNeighbors
-    });
-
-    // keep wake bounded (physics + visualization)
-    purgeWakeIfNeeded();
-
-    // save wake snapshots sparsely for animation
+    // Snapshot belongs to the current instant; roll-up advances the wake to k + 1.
     if (k === 0 || k === it-1 || (wakeSaveStride > 0 && (k % wakeSaveStride === 0))){
       saveWakeSnapshot(k);
+    }
+
+    if (k < it - 1){
+      convectWake({
+        dt, wakeRe, wakeIm, wakeG,
+        boundGammaWeights: gammaOut.GammaWeights,
+        boundZRe: zRe, boundZIm: zIm,
+        wakeWakeNeighbors
+      });
+      purgeWakeIfNeeded();
     }
   }
   out.flowfield.maxAbsG = maxAbsG;
@@ -336,6 +413,15 @@ function validSeries(arr, n){
     if (!Number.isFinite(Number(arr[i]))) return false;
   }
   return true;
+}
+
+function finiteSeries(values, fallback){
+  const source = values && typeof values.length === 'number' ? values : fallback;
+  const result = Float64Array.from(source, Number);
+  for (let i=0; i<result.length; i++){
+    if (!Number.isFinite(result[i])) throw new Error("Airfoil coefficient data must be finite.");
+  }
+  return result;
 }
 
 function firstDerivativeForward(dt, f){
@@ -360,40 +446,19 @@ function scaleArray(a, s){
   for (let i=0;i<a.length;i++) out[i]=a[i]*s;
   return out;
 }
-function addArrays(a,b){
-  const out=new Float64Array(a.length);
-  for (let i=0;i<a.length;i++) out[i]=a[i]+b[i];
-  return out;
-}
 
-function intRule(f, dx){
-  const nx = f.length;
-  let I=0;
-  if (nx % 2 === 1){
-    // Simpson
-    let sum2=0, sum4=0;
-    for (let i=2;i<=nx-3;i+=2) sum2 += f[i];
-    for (let i=1;i<=nx-2;i+=2) sum4 += f[i];
-    I = (dx/3)*(f[0] + f[nx-1] + 2*sum2 + 4*sum4);
-  } else {
-    // trapezoid
-    let s=0;
-    for (let i=1;i<nx-1;i++) s += f[i];
-    I = (dx/2)*(f[0] + f[nx-1] + 2*s);
-  }
-  return I;
-}
-
-function sFourier(W, theta, dtheta, I_theta, nAterm){
+function sFourier(W, dtheta, I_theta, nAterm){
   const n = nAterm - 1;
   const lambda = new Float64Array(nAterm);
-  // A0
-  lambda[0] = (1/Math.PI)*intRule(W, dtheta);
-  // An
+  let meanSum = 0;
+  for (let i=0;i<W.length;i++) meanSum += W[i];
+  lambda[0] = (dtheta/Math.PI)*meanSum;
+
+  // Midpoint quadrature on the uniform theta grid.
   for (let j=0;j<n;j++){
-    const tmp = new Float64Array(W.length);
-    for (let i=0;i<W.length;i++) tmp[i] = W[i]*I_theta[i][j];
-    lambda[j+1] = (2/Math.PI)*intRule(tmp, dtheta);
+    let modalSum = 0;
+    for (let i=0;i<W.length;i++) modalSum += W[i]*I_theta[i][j];
+    lambda[j+1] = (2*dtheta/Math.PI)*modalSum;
   }
   return lambda;
 }
@@ -414,48 +479,37 @@ function inducedDownwashFromSingleVortex(zRe,zIm,norRe,norIm,vRe,vIm,G){
   return W;
 }
 
-function calcGamma({lambda, dlambda, B0, B1, dB0, dB1, Uref, c, theta, dtheta, I_sin_theta}){
+function calcGamma({lambda, B, Uref, c, theta, dtheta, I_sin_theta}){
   const m = theta.length;
   const n = lambda.length - 1;
 
-  // lambda_n = lambda(2:end); adjust lambda_n(2) += B1 (MATLAB indexing)
-  const lambda_n = new Float64Array(n);
-  for (let j=0;j<n;j++) lambda_n[j]=lambda[j+1];
-  if (n >= 2) lambda_n[1] += B1;
+  const A0 = -2*(lambda[0] + (B[0] || 0));
+  const An = new Float64Array(n);
+  for (let j=0;j<n;j++){
+    An[j] = 2*(lambda[j+1] + (B[j + 1] || 0));
+  }
 
-  // sum_{n} lambda_n[n]*sin(n*theta)*sin(theta)
-  const sumLam = new Float64Array(m);
+  // gamma*sin(theta) is finite at the leading edge and is the natural integration variable.
+  const gammaSin = new Float64Array(m);
   for (let i=0;i<m;i++){
-    let s=0;
+    let modal = 0;
     const row = I_sin_theta[i];
-    for (let j=0;j<n;j++) s += lambda_n[j]*row[j];
-    sumLam[i]=s;
+    for (let j=0;j<n;j++) modal += An[j]*row[j];
+    gammaSin[i] = Uref*A0*(1 + Math.cos(theta[i])) + Uref*modal;
   }
 
-  const gamma_sin = new Float64Array(m);
-  for (let i=0;i<m;i++){
-    const th=theta[i];
-    gamma_sin[i] = -2*Uref*(lambda[0] + B0)*(1+Math.cos(th)) + 2*Uref*sumLam[i];
-  }
-
-  // GammaWeights: tri-diagonal apply then * (dtheta/8)*(c/2)
+  // Point-vortex weights for the bound-sheet induction integral.
   const w = new Float64Array(m);
   for (let i=0;i<m;i++){
-    let val = 6*gamma_sin[i];
-    if (i===0) val = 3*gamma_sin[i] + gamma_sin[i+1];
-    else if (i===m-1) val = gamma_sin[i-1] + 3*gamma_sin[i];
-    else val = gamma_sin[i-1] + 6*gamma_sin[i] + gamma_sin[i+1];
-    w[i] = (c/2) * val * (dtheta/8);
+    w[i] = 0.5*c*gammaSin[i]*dtheta;
   }
 
-  // gamma = gamma_sin/sin(theta) (avoid division by zero at endpoints)
   const gamma = new Float64Array(m);
   for (let i=0;i<m;i++){
     const s = Math.sin(theta[i]);
-    gamma[i] = (Math.abs(s) < 1e-12) ? 0 : (gamma_sin[i]/s);
+    gamma[i] = gammaSin[i]/s;
   }
 
-  // dlambda section not required for convection in this port (kept for future)
   return { gamma, GammaWeights: w };
 }
 
@@ -485,11 +539,13 @@ function convectWake({dt, wakeRe, wakeIm, wakeG, boundGammaWeights, boundZRe, bo
     boundVindIm[j] = -sIm;
   }
 
-  // wake-wake influence (optional, bandwidth-limited for performance)
+  // Wake-wake roll-up. Negative bandwidth means the full DVM interaction.
   const wakeVindRe = new Float64Array(nWake);
   const wakeVindIm = new Float64Array(nWake);
-  if (wakeWakeNeighbors > 0){
-    const bw = Math.min(wakeWakeNeighbors|0, nWake);
+  if (wakeWakeNeighbors !== 0){
+    const bw = wakeWakeNeighbors < 0
+      ? nWake
+      : Math.min(wakeWakeNeighbors|0, nWake);
     for (let j=0;j<nWake;j++){
       const pjRe = wakeRe[j], pjIm = wakeIm[j];
       let sRe=0, sIm=0;
