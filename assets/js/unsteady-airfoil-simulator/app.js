@@ -1,10 +1,15 @@
+import { createZip, encodeMatFile, payloadToCsvEntries } from './export.js?v=uas-export-columns-20260704e';
+
 const TRANSLATIONS = {
   en: {
     document_title: 'Unsteady Airfoil Simulator | UNSAERO',
     breadcrumb_tools: 'Tools', page_title: 'Unsteady Airfoil Simulator',
     hero_subtitle: 'Explore pitching and heaving thin-airfoil cases through wake-vortex animation and time-resolved aerodynamic loads.',
     run_case: 'Run case', simulator: 'Unsteady Airfoil Simulator (UAS)', inputs: 'Inputs',
-    kinematics: 'Kinematics', airfoil: 'Airfoil', airfoil_sections: 'Airfoil sections',
+    kinematics: 'Kinematics', kinematic_inputs: 'Kinematic inputs', airfoil: 'Airfoil', airfoil_sections: 'Airfoil sections',
+    naca_4_digit: 'NACA 4-Digit', naca_max_camber: 'Maximum camber m [%c]',
+    naca_camber_location: 'Camber location p [%c]', naca_thickness: 'Maximum thickness t [%c]',
+    camber_line: 'Camber', leading_edge_circle: 'LE radius',
     freestream: 'Freestream', chord: 'Chord',
     pitch_source: 'Pitch source',
     plunge_source: 'Plunge source',
@@ -30,12 +35,25 @@ const TRANSLATIONS = {
     flowfield: 'Flowfield', airfoil_lower: 'airfoil', wake_vortices: 'wake vortices',
     animation: 'Animation', play: 'Play', pause: 'Pause', auto_repeat: 'Auto repeat',
     frame: 'Frame', vortex_colors: 'Vortex colors',
-    uniform: 'Uniform', by_circulation: 'By circulation',
+    uniform: 'Uniform', edge: 'Edge', by_circulation: 'By circulation',
+    trailing_edge: 'Trailing edge', leading_edge: 'Leading edge',
     circulation: 'Circulation', circulation_scale: 'Circulation scale',
     collapse: 'Collapse', expand: 'Expand',
-    loads: 'Loads',
-    fourier_coefficients: 'Fourier coefficients', coefficient_pair: 'Coefficient pair',
+    loads: 'Loads', circulation_history: 'Bound Circulation', stagnation_point_location: 'Stagnation-point location',
+    fourier_coefficients: 'Fourier coefficients', coefficient_pair: 'Coefficient group',
+    pitch_angle_history: 'Pitch angle', pitch_rate_history: 'Pitch rate',
+    pitch_acceleration_history: 'Pitch acceleration', plunge_history: 'Plunge displacement',
+    plunge_rate_history: 'Plunge rate', plunge_acceleration_history: 'Plunge acceleration',
     distributions: 'Distributions',
+    export_data: 'Export Data',
+    export_scope: 'Data scope', export_scope_all: 'All simulation data',
+    export_scope_histories: 'Kinematics and loads', export_scope_flowfield: 'Flowfield and wake',
+    export_scope_frame: 'Distributions', export_format: 'File format',
+    export_format_mat: 'MATLAB structure (.mat) — recommended',
+    export_format_csv: 'CSV bundle (.zip)', export_format_json: 'Structured JSON (.json)',
+    export_action: 'Export data', export_frontend_note: 'Run a case to enable export.',
+    export_working: 'Preparing export…',
+    export_done: 'Export created.', export_error: 'Export failed: {message}',
     versus: 'vs',
     lift_coefficient: 'Lift Coefficient',
     drag_coefficient: 'Pressure Drag Coefficient',
@@ -58,7 +76,10 @@ const TRANSLATIONS = {
     breadcrumb_tools: 'Ferramentas', page_title: 'Simulador de Aerofólio Não Estacionário',
     hero_subtitle: 'Explore casos de aerofólios finos em arfagem e mergulho por meio da animação da esteira de vórtices e de cargas aerodinâmicas resolvidas no tempo.',
     run_case: 'Executar caso', simulator: 'Simulador de Aerofólio Não Estacionário (UAS)', inputs: 'Entradas',
-    kinematics: 'Cinemática', airfoil: 'Aerofólio', airfoil_sections: 'Seções do aerofólio',
+    kinematics: 'Cinemática', kinematic_inputs: 'Entradas cinemáticas', airfoil: 'Aerofólio', airfoil_sections: 'Seções do aerofólio',
+    naca_4_digit: 'NACA de 4 dígitos', naca_max_camber: 'Cambra máxima m [%c]',
+    naca_camber_location: 'Posição da cambra p [%c]', naca_thickness: 'Espessura máxima t [%c]',
+    camber_line: 'Cambra', leading_edge_circle: 'Raio do BA',
     freestream: 'Escoamento livre', chord: 'Corda',
     pitch_source: 'Fonte da arfagem',
     plunge_source: 'Fonte do mergulho',
@@ -84,12 +105,25 @@ const TRANSLATIONS = {
     flowfield: 'Campo de escoamento', airfoil_lower: 'aerofólio', wake_vortices: 'vórtices da esteira',
     animation: 'Animação', play: 'Reproduzir', pause: 'Pausar', auto_repeat: 'Repetir automaticamente',
     frame: 'Quadro', vortex_colors: 'Cores dos vórtices',
-    uniform: 'Uniforme', by_circulation: 'Por circulação',
+    uniform: 'Uniforme', edge: 'Bordo', by_circulation: 'Por circulação',
+    trailing_edge: 'Bordo de fuga', leading_edge: 'Bordo de ataque',
     circulation: 'Circulação', circulation_scale: 'Escala de circulação',
     collapse: 'Recolher', expand: 'Expandir',
-    loads: 'Cargas',
-    fourier_coefficients: 'Coeficientes de Fourier', coefficient_pair: 'Par de coeficientes',
+    loads: 'Cargas', circulation_history: 'Circulação Ligada', stagnation_point_location: 'Posição do ponto de estagnação',
+    fourier_coefficients: 'Coeficientes de Fourier', coefficient_pair: 'Grupo de coeficientes',
+    pitch_angle_history: 'Ângulo de arfagem', pitch_rate_history: 'Velocidade de arfagem',
+    pitch_acceleration_history: 'Aceleração de arfagem', plunge_history: 'Deslocamento de mergulho',
+    plunge_rate_history: 'Velocidade de mergulho', plunge_acceleration_history: 'Aceleração de mergulho',
     distributions: 'Distribuições',
+    export_data: 'Exportar Dados',
+    export_scope: 'Escopo dos dados', export_scope_all: 'Todos os dados da simulação',
+    export_scope_histories: 'Cinemática e cargas', export_scope_flowfield: 'Campo de escoamento e esteira',
+    export_scope_frame: 'Distribuições', export_format: 'Formato do arquivo',
+    export_format_mat: 'Estrutura MATLAB (.mat) — recomendado',
+    export_format_csv: 'Pacote CSV (.zip)', export_format_json: 'JSON estruturado (.json)',
+    export_action: 'Exportar dados', export_frontend_note: 'Execute um caso para habilitar a exportação.',
+    export_working: 'Preparando exportação…',
+    export_done: 'Exportação criada.', export_error: 'Falha na exportação: {message}',
     versus: 'versus',
     lift_coefficient: 'Coeficiente de Sustentação',
     drag_coefficient: 'Coeficiente de Arrasto de Pressão',
@@ -160,11 +194,14 @@ function applyLanguage(lang){
   updateFrameCounter();
   updateCollapseButtons();
   if (DATA) drawKinematicsPreview();
+  if (DATA) drawAirfoilPreview();
   if (out){
     drawFrame(Number(frameSlider.value || 0));
+    plotKinematicHistories(Number(frameSlider.value || 0));
     plotLoads();
     plotFourierCoefficients(Number(frameSlider.value || 0));
   }
+  syncExportControls();
 }
 
 window.setLang = applyLanguage;
@@ -175,6 +212,10 @@ const vortexColorMode = document.getElementById('vortexColorMode');
 const circulationScaleInput = document.getElementById('circulationScale');
 const circulationScaleValue = document.getElementById('circulationScaleValue');
 const collapseButtons = Array.from(document.querySelectorAll('[data-collapse-target]'));
+const exportScope = document.getElementById('exportScope');
+const exportFormat = document.getElementById('exportFormat');
+const exportButton = document.getElementById('exportButton');
+const exportNote = document.getElementById('exportNote');
 
 const pitchKinSelect = document.getElementById('pitchKinSelect');
 const plungeKinSelect = document.getElementById('plungeKinSelect');
@@ -184,6 +225,8 @@ const plungeConstantFields = document.getElementById('plungeConstantFields');
 const plungeSinusoidalFields = document.getElementById('plungeSinusoidalFields');
 const airSelect = document.getElementById('airSelect');
 const airfoilSectionsInput = document.getElementById('airfoilSections');
+const airfoilCanvas = document.getElementById('airfoilCanvas');
+const naca4Fields = document.getElementById('naca4Fields');
 
 const runBtn = document.getElementById('runBtn');
 const stopBtn = document.getElementById('stopBtn');
@@ -200,12 +243,22 @@ const flowCanvas = document.getElementById('flowCanvas');
 
 const plotPitchKinematics = document.getElementById('plotPitchKinematics');
 const plotPlungeKinematics = document.getElementById('plotPlungeKinematics');
+const plotGamma = document.getElementById('plotGamma');
+const plotStagnationPoint = document.getElementById('plotStagnationPoint');
 const plotCL = document.getElementById('plotCL');
 const plotCD = document.getElementById('plotCD');
 const plotCM = document.getElementById('plotCM');
 const plotLESP = document.getElementById('plotLESP');
+const plotAlpha = document.getElementById('plotAlpha');
+const plotDAlpha = document.getElementById('plotDAlpha');
+const plotD2Alpha = document.getElementById('plotD2Alpha');
+const plotH = document.getElementById('plotH');
+const plotDH = document.getElementById('plotDH');
+const plotD2H = document.getElementById('plotD2H');
 const plotFourierFirst = document.getElementById('plotFourierFirst');
 const plotFourierSecond = document.getElementById('plotFourierSecond');
+const plotFourierThird = document.getElementById('plotFourierThird');
+const plotFourierFourth = document.getElementById('plotFourierFourth');
 const fourierPairSelect = document.getElementById('fourierPairSelect');
 const plotPressureDist = document.getElementById('plotPressureDist');
 const plotSurfaceVelocity = document.getElementById('plotSurfaceVelocity');
@@ -240,6 +293,8 @@ function setCardExpanded(button, expanded){
   if (!expanded) return;
   requestAnimationFrame(() => {
     if (targetId === 'kinematicsContent' && DATA) drawKinematicsPreview();
+    if (targetId === 'airfoilContent' && DATA) drawAirfoilPreview();
+    if (targetId === 'kinematicsHistoryContent' && out) plotKinematicHistories(Number(frameSlider.value || 0));
     if (targetId === 'loadsContent' && out) plotLoads(Number(frameSlider.value || 0));
     if (targetId === 'fourierContent' && out) plotFourierCoefficients(Number(frameSlider.value || 0));
     if (targetId === 'distributionsContent' && out) plotDistributions(Number(frameSlider.value || 0));
@@ -294,18 +349,25 @@ function flowPlotBox(){
 }
 
 async function loadData(){
-  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json?v=uas-controls-20260703a', import.meta.url)).then(r=>r.json());
+  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json?v=uas-airfoil-legend-20260703f', import.meta.url)).then(r=>r.json());
   DATA = { air };
   Object.keys(air).forEach(k=>{
     const opt=document.createElement('option');
     opt.value=k; opt.textContent=k;
     airSelect.appendChild(opt);
   });
+  const nacaOption = document.createElement('option');
+  nacaOption.value = 'naca4';
+  nacaOption.dataset.i18n = 'naca_4_digit';
+  nacaOption.textContent = translated('naca_4_digit');
+  airSelect.appendChild(nacaOption);
   pitchKinSelect.value = 'constant';
   plungeKinSelect.value = 'sinusoidal';
   syncKinematicPanels();
+  syncAirfoilControls();
   setStatus('status_ready');
   drawKinematicsPreview();
+  drawAirfoilPreview();
 }
 
 function getNum(id){ return Number(document.getElementById(id).value); }
@@ -361,7 +423,8 @@ function getStepCount(){
 function getAirfoilSectionCount(){
   const element = airfoilSectionsInput || document.getElementById('airfoilSections');
   if (!element) return 199;
-  const value = getStrictStepCount('airfoilSections', 'Airfoil sections');
+  const value = getStrictPositiveInputNumber('airfoilSections', 'Airfoil sections');
+  if (!Number.isInteger(value)) throw new Error('Airfoil sections must be an integer.');
   if (value < 2) throw new Error('Airfoil sections must be at least 2.');
   return value;
 }
@@ -460,9 +523,276 @@ function airfoilWithSections(definition, sections){
     upper,
     lower,
     outline: [...upper, ...lower.slice().reverse()],
+    leadingEdgeSlope: camberSlopeAtTheta(camberCoefficients, 0),
     camberCoefficients,
     thicknessCoefficients
   };
+}
+
+function naca4Parameters(){
+  const maximumCamberPercent = getStrictInputNumber('nacaMaxCamber', 'Maximum camber m');
+  const camberLocationPercent = getStrictInputNumber('nacaCamberLocation', 'Camber location p');
+  const thicknessPercent = getStrictPositiveInputNumber('nacaThickness', 'Maximum thickness t');
+  if (![maximumCamberPercent, camberLocationPercent, thicknessPercent].every(Number.isInteger)){
+    throw new Error('NACA 4-digit parameters must be integers.');
+  }
+  if (maximumCamberPercent < 0 || maximumCamberPercent > 9){
+    throw new Error('Maximum camber m must be between 0 and 9% of chord.');
+  }
+  if (camberLocationPercent < 10 || camberLocationPercent > 90 || camberLocationPercent % 10 !== 0){
+    throw new Error('Camber location p must be 10, 20, ..., or 90% of chord.');
+  }
+  if (thicknessPercent > 40){
+    throw new Error('Maximum thickness t must not exceed 40% of chord.');
+  }
+  const camberDigit = maximumCamberPercent;
+  const locationDigit = maximumCamberPercent === 0 ? 0 : camberLocationPercent/10;
+  const thicknessDigits = String(thicknessPercent).padStart(2, '0');
+  return {
+    maximumCamberPercent,
+    camberLocationPercent,
+    thicknessPercent,
+    m: maximumCamberPercent/100,
+    p: camberLocationPercent/100,
+    t: thicknessPercent/100,
+    code: `${camberDigit}${locationDigit}${thicknessDigits}`
+  };
+}
+
+function nacaCamberAtX(x, m, p){
+  if (m === 0) return { z:0, slope:0 };
+  if (x < p){
+    const factor = m/(p*p);
+    return {
+      z: factor*(2*p*x - x*x),
+      slope: 2*factor*(p - x)
+    };
+  }
+  const factor = m/((1-p)*(1-p));
+  return {
+    z: factor*((1 - 2*p) + 2*p*x - x*x),
+    slope: 2*factor*(p - x)
+  };
+}
+
+let nacaCamberCoefficientCache = null;
+function nacaCamberCoefficients(m, p, modes = 300){
+  const key = `${m.toFixed(12)}:${p.toFixed(12)}:${modes}`;
+  if (nacaCamberCoefficientCache?.key === key){
+    return nacaCamberCoefficientCache.values.slice();
+  }
+  const samples = 4096;
+  const sums = new Float64Array(modes);
+  for (let i=0; i<samples; i++){
+    const theta = Math.PI*(i + 0.5)/samples;
+    const x = 0.5*(1 - Math.cos(theta));
+    const slope = nacaCamberAtX(x, m, p).slope;
+    sums[0] += slope;
+    const cosine = Math.cos(theta);
+    let previous = 1;
+    let current = cosine;
+    for (let mode=1; mode<modes; mode++){
+      sums[mode] += slope*current;
+      const next = 2*cosine*current - previous;
+      previous = current;
+      current = next;
+    }
+  }
+  const coefficients = Array.from(sums, (sum)=>sum/samples);
+  nacaCamberCoefficientCache = { key, values:coefficients.slice() };
+  return coefficients;
+}
+
+function naca4Geometry(parameters, sections){
+  const nSections = Math.max(2, Math.floor(sections));
+  const { m, p, t } = parameters;
+  const camber = new Array(nSections + 1);
+  const upper = new Array(nSections + 1);
+  const lower = new Array(nSections + 1);
+
+  for (let i=0; i<=nSections; i++){
+    const theta = Math.PI*i/nSections;
+    const x = 0.5*(1 - Math.cos(theta));
+    const { z:zc, slope } = nacaCamberAtX(x, m, p);
+    const zt = 5*t*(
+      0.2969*Math.sqrt(x) - 0.1260*x - 0.3516*x*x
+      + 0.2843*x*x*x - 0.1036*x*x*x*x
+    );
+    const angle = Math.atan(slope);
+    camber[i] = [x, zc];
+    upper[i] = [x - zt*Math.sin(angle), zc + zt*Math.cos(angle)];
+    lower[i] = [x + zt*Math.sin(angle), zc - zt*Math.cos(angle)];
+  }
+
+  const thicknessCoefficients = [0.2969, -0.1260, -0.3516, 0.2843, -0.1036]
+    .map((coefficient)=>5*t*coefficient);
+  return {
+    name: `NACA ${parameters.code}`,
+    nacaCode: parameters.code,
+    chord: camber.map(([x])=>[x, 0]),
+    camber,
+    upper,
+    lower,
+    outline: [...upper, ...lower.slice().reverse()],
+    leadingEdgeSlope: nacaCamberAtX(0, m, p).slope,
+    camberCoefficients: nacaCamberCoefficients(m, p),
+    thicknessCoefficients
+  };
+}
+
+function selectedAirfoilGeometry(sections = getAirfoilSectionCount()){
+  if (airSelect?.value === 'naca4') return naca4Geometry(naca4Parameters(), sections);
+  const definition = DATA?.air?.[airSelect?.value];
+  if (!definition) throw new Error('Select a valid airfoil.');
+  return { name:airSelect.value, ...airfoilWithSections(definition, sections) };
+}
+
+function drawAirfoilPreview(){
+  if (!airfoilCanvas) return;
+  const ctx = airfoilCanvas.getContext('2d');
+  const w = airfoilCanvas.width;
+  const h = airfoilCanvas.height;
+  clear(ctx, w, h);
+  if (!DATA?.air || !airSelect?.value) return;
+
+  let geometry;
+  try{
+    geometry = selectedAirfoilGeometry();
+  } catch(error){
+    ctx.fillStyle = COLORS.muted;
+    ctx.font = '13px system-ui';
+    ctx.fillText(error.message, 18, 32);
+    return;
+  }
+
+  const points = [...geometry.upper, ...geometry.lower];
+  let xmin = Infinity, xmax = -Infinity, maxAbsZ = 0;
+  for (const [x, z] of points){
+    if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+    xmin = Math.min(xmin, x);
+    xmax = Math.max(xmax, x);
+    maxAbsZ = Math.max(maxAbsZ, Math.abs(z));
+  }
+  const box = { x:62, y:34, w:w-90, h:h-76 };
+  const xSpan = Math.max(xmax - xmin, 1);
+  const xPad = 0.035*xSpan;
+  const equalScaleZLimit = 0.5*(xSpan + 2*xPad)*(box.h/box.w);
+  const zLimit = Math.max(1.28*maxAbsZ, equalScaleZLimit);
+  const bounds = { xmin:xmin-xPad, xmax:xmax+xPad, zmin:-zLimit, zmax:zLimit };
+  drawPlotAxes(ctx, box, bounds.xmin, bounds.xmax, bounds.zmin, bounds.zmax, 'x/c', 'z/c');
+
+  const drawPolyline = (coordinates, color, width, dash = [])=>{
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dash);
+    ctx.beginPath();
+    coordinates.forEach(([x, z], index)=>{
+      const q = worldToCanvas(x, z, box, bounds);
+      if (index === 0) ctx.moveTo(q.X, q.Y);
+      else ctx.lineTo(q.X, q.Y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  };
+  drawPolyline([[0, 0], [1, 0]], COLORS.canvasAxis, 1.35, [7, 5]);
+  drawPolyline(geometry.camber, COLORS.accent, 1.35, [5, 4]);
+  drawPolyline(geometry.outline, COLORS.text, 2.1);
+
+  const beta0 = Number(geometry.thicknessCoefficients?.[0]) || 0;
+  const leadingEdgeRadius = 0.5*beta0*beta0;
+  const darkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+  const leadingEdgeRadiusColor = darkTheme ? '#f0abfc' : '#a21caf';
+  const momentReferenceColor = darkTheme ? '#60a5fa' : '#1d4ed8';
+  if (leadingEdgeRadius > 0){
+    const leadingEdgeZ = Number(geometry.camber?.[0]?.[1]) || 0;
+    const leadingEdgeAngle = Math.atan(Number(geometry.leadingEdgeSlope) || 0);
+    const centerX = leadingEdgeRadius*Math.cos(leadingEdgeAngle);
+    const centerZ = leadingEdgeZ + leadingEdgeRadius*Math.sin(leadingEdgeAngle);
+    const center = worldToCanvas(centerX, centerZ, box, bounds);
+    const leadingEdge = worldToCanvas(0, leadingEdgeZ, box, bounds);
+    const radiusPixels = Math.hypot(center.X - leadingEdge.X, center.Y - leadingEdge.Y);
+    ctx.save();
+    ctx.strokeStyle = leadingEdgeRadiusColor;
+    ctx.fillStyle = leadingEdgeRadiusColor;
+    ctx.lineWidth = 1.35;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.arc(center.X, center.Y, radiusPixels, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(center.X, center.Y);
+    ctx.lineTo(leadingEdge.X, leadingEdge.Y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  const xp = getInputNumber('xp', 25)/100;
+  const pivotZ = interpolatePolylineY(geometry.camber, xp);
+  const pivot = worldToCanvas(xp, pivotZ, box, bounds);
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath();
+  ctx.arc(pivot.X, pivot.Y, 3.6, 0, Math.PI*2);
+  ctx.fill();
+
+  const xref = getInputNumber('xref', 25)/100;
+  const momentReferenceZ = interpolatePolylineY(geometry.camber, xref);
+  const momentReference = worldToCanvas(xref, momentReferenceZ, box, bounds);
+  ctx.save();
+  ctx.strokeStyle = momentReferenceColor;
+  ctx.lineWidth = 2.1;
+  ctx.beginPath();
+  ctx.moveTo(momentReference.X - 4.5, momentReference.Y - 4.5);
+  ctx.lineTo(momentReference.X + 4.5, momentReference.Y + 4.5);
+  ctx.moveTo(momentReference.X + 4.5, momentReference.Y - 4.5);
+  ctx.lineTo(momentReference.X - 4.5, momentReference.Y + 4.5);
+  ctx.stroke();
+  ctx.restore();
+
+  if (geometry.nacaCode){
+    ctx.fillStyle = COLORS.canvasText;
+    ctx.font = '12px system-ui';
+    ctx.fillText(`NACA ${geometry.nacaCode}`, 12, 17);
+  }
+
+  const legend = [
+    { label:translated('chord'), color:COLORS.canvasAxis, type:'line', dash:[6, 4] },
+    { label:translated('camber_line'), color:COLORS.accent, type:'line', dash:[5, 4] },
+    { label:translated('pivot'), color:'#ef4444', type:'point' },
+    { label:translated('moment_reference'), color:momentReferenceColor, type:'cross' },
+    { label:translated('leading_edge_circle'), color:leadingEdgeRadiusColor, type:'circle' }
+  ];
+  ctx.save();
+  ctx.font = '11px system-ui';
+  ctx.textBaseline = 'middle';
+  let legendX = w - 12;
+  for (let i=legend.length - 1; i>=0; i--){
+    const item = legend[i];
+    ctx.textAlign = 'right';
+    ctx.fillStyle = COLORS.canvasText;
+    ctx.fillText(item.label, legendX, 16);
+    const textWidth = ctx.measureText(item.label).width;
+    const sampleX = legendX - textWidth - 18;
+    ctx.strokeStyle = item.color;
+    ctx.fillStyle = item.color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash(item.dash || []);
+    if (item.type === 'point'){
+      ctx.beginPath(); ctx.arc(sampleX - 5, 16, 3, 0, Math.PI*2); ctx.fill();
+    } else if (item.type === 'cross'){
+      ctx.beginPath();
+      ctx.moveTo(sampleX - 9, 12); ctx.lineTo(sampleX - 1, 20);
+      ctx.moveTo(sampleX - 1, 12); ctx.lineTo(sampleX - 9, 20);
+      ctx.stroke();
+    } else if (item.type === 'circle'){
+      ctx.beginPath(); ctx.arc(sampleX - 5, 16, 4, 0, Math.PI*2); ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.moveTo(sampleX - 12, 16); ctx.lineTo(sampleX + 2, 16); ctx.stroke();
+    }
+    legendX = sampleX - 25;
+  }
+  ctx.restore();
 }
 
 function kinematicAmplitudeToPhysical(kind, value, chord){
@@ -714,7 +1044,7 @@ stopBtn.addEventListener('click', ()=>{
 async function loadDirectSolver(){
   if (directSolverModule) return directSolverModule;
   try{
-    directSolverModule = await import(new URL('./solver.js?v=uas-controls-20260703a', import.meta.url).href);
+    directSolverModule = await import(new URL('./solver.js?v=uas-load-histories-20260704f', import.meta.url).href);
   } catch(error){
     console.warn('Versioned solver import failed; falling back to plain solver import.', error);
     directSolverModule = await import('./solver.js');
@@ -736,7 +1066,7 @@ async function runSolverInWorker(params, hooks){
 
   if (!worker){
     try{
-      worker = new Worker(new URL('./worker.js?v=uas-controls-20260703a', import.meta.url), { type: 'module' });
+      worker = new Worker(new URL('./worker.js?v=uas-load-histories-20260704f', import.meta.url), { type: 'module' });
     } catch(error){
       console.warn('Worker construction failed; falling back to direct solver.', error);
       return runSolverDirect(params, hooks);
@@ -788,6 +1118,8 @@ runBtn.addEventListener('click', async ()=>{
   playPauseBtn.disabled = true;
   repeatBtn.disabled = true;
   frameSlider.disabled = true;
+  if (exportButton) exportButton.disabled = true;
+  if (exportNote) exportNote.textContent = translated('export_working');
 
   // Reset plots and lock animation controls
   anim.playing = false;
@@ -803,8 +1135,18 @@ runBtn.addEventListener('click', async ()=>{
   clearCanvas(plotCD);
   clearCanvas(plotCM);
   clearCanvas(plotLESP);
+  clearCanvas(plotGamma);
+  clearCanvas(plotStagnationPoint);
+  clearCanvas(plotAlpha);
+  clearCanvas(plotDAlpha);
+  clearCanvas(plotD2Alpha);
+  clearCanvas(plotH);
+  clearCanvas(plotDH);
+  clearCanvas(plotD2H);
   clearCanvas(plotFourierFirst);
   clearCanvas(plotFourierSecond);
+  clearCanvas(plotFourierThird);
+  clearCanvas(plotFourierFourth);
   clearCanvas(plotPressureDist);
   clearCanvas(plotSurfaceVelocity);
   if (fourierPairSelect){
@@ -819,8 +1161,8 @@ runBtn.addEventListener('click', async ()=>{
     const chord = getStrictPositiveInputNumber('c', 'Chord c');
     const motion = selectedKinematics(chord, Uref);
     const { pitchName, plungeName, rows: kin, t, tau, alpha, h, dalpha, d2alpha, dh, d2h } = motion;
-    const airName = airSelect.value;
-    const geometry = airfoilWithSections(DATA.air[airName], getAirfoilSectionCount());
+    const geometry = selectedAirfoilGeometry(getAirfoilSectionCount());
+    const airName = geometry.name || airSelect.value;
 
     const hooks = {
       onProgress: (k, it)=>{
@@ -837,6 +1179,7 @@ runBtn.addEventListener('click', async ()=>{
       Uref,
       c: chord,
       xp: getPercent('xp'),
+      xref: getPercent('xref'),
       airfoil: geometry.chord,
       camberLine: geometry.camber,
       airfoilOutline: geometry.outline,
@@ -870,6 +1213,7 @@ runBtn.addEventListener('click', async ()=>{
     getGlobalFlowBounds();
 
     setStatus(out.stopped ? 'status_stopped' : 'status_done');
+    syncExportControls();
     stopBtn.disabled = true;
     runBtn.disabled = false;
 
@@ -884,6 +1228,7 @@ runBtn.addEventListener('click', async ()=>{
     updateRepeatButton();
     updateFrameCounter();
 
+    plotKinematicHistories(0);
     plotLoads(0);
     plotFourierCoefficients(0);
     if (!out.stopped && nFrames > 0){
@@ -906,6 +1251,7 @@ runBtn.addEventListener('click', async ()=>{
     updatePlayPauseButton();
     updateRepeatButton();
     updateFrameCounter();
+    syncExportControls();
   }
 });
 
@@ -968,6 +1314,39 @@ function bindKinematicControls(){
 
 bindKinematicControls();
 
+function bindAirfoilControls(){
+  [airSelect, airfoilSectionsInput, document.getElementById('xp'), document.getElementById('xref')].forEach((element)=>{
+    element?.addEventListener('input', syncAirfoilControls);
+    element?.addEventListener('change', syncAirfoilControls);
+  });
+
+  const nacaInputs = [
+    document.getElementById('nacaMaxCamber'),
+    document.getElementById('nacaCamberLocation'),
+    document.getElementById('nacaThickness')
+  ];
+  nacaInputs.forEach((element)=>{
+    element?.addEventListener('keydown', (event)=>{
+      if (['.', ',', 'e', 'E', '+', '-'].includes(event.key)) event.preventDefault();
+    });
+    element?.addEventListener('input', ()=>{
+      const value = Number(element.value);
+      if (element.value !== '' && Number.isFinite(value) && !Number.isInteger(value)){
+        element.value = String(Math.trunc(value));
+      }
+      syncAirfoilControls();
+    });
+    element?.addEventListener('change', syncAirfoilControls);
+  });
+}
+
+function syncAirfoilControls(){
+  if (naca4Fields) naca4Fields.hidden = airSelect?.value !== 'naca4';
+  drawAirfoilPreview();
+}
+
+bindAirfoilControls();
+
 function getCirculationScaleFactor(){
   const raw = Number(circulationScaleInput?.value);
   if (!Number.isFinite(raw)) return 1;
@@ -981,12 +1360,19 @@ function updateCirculationScaleOutput(){
 }
 
 // segmented control for vortex colors
+function syncVortexColorControls(){
+  const scaleActive = vortexMode === 'gamma' || vortexMode === 'edge';
+  if (circulationScaleInput) circulationScaleInput.disabled = !scaleActive;
+  circulationScaleInput?.closest('.circulation-scale-row')?.classList.toggle('is-disabled', !scaleActive);
+}
+
 vortexColorMode?.addEventListener('click', (ev)=>{
   const btn = ev.target.closest('button');
   if (!btn) return;
   const mode = btn.dataset.mode;
   vortexMode = mode;
   [...vortexColorMode.querySelectorAll('.segbtn')].forEach(b=>b.classList.toggle('active', b===btn));
+  syncVortexColorControls();
   drawFrame(Number(frameSlider.value||0));
 });
 
@@ -996,6 +1382,7 @@ circulationScaleInput?.addEventListener('input', ()=>{
 });
 circulationScaleInput?.addEventListener('change', updateCirculationScaleOutput);
 updateCirculationScaleOutput();
+syncVortexColorControls();
 
 
 function updatePlayPauseButton(){
@@ -1488,21 +1875,45 @@ function vortexColor(G, Gmax){
   }
 }
 
-function getWakeSnapshot(frame){
-  if (!out?.flowfield?.TE) return null;
-  const TE = out.flowfield.TE;
-  if (TE[frame]) return TE[frame];
+function displayedVortexColor(G, Gmax, edge){
+  if (vortexMode === 'uniform') return COLORS.accent2;
+  if (vortexMode === 'edge'){
+    const circulation = Number(G);
+    const strength = (!Number.isFinite(Gmax) || Gmax <= 0)
+      ? 1
+      : Math.max(0.08, Math.min(1, Number.isFinite(circulation) ? Math.abs(circulation)/Gmax : 0.08));
+    return edgeVortexColor(edge, strength);
+  }
+  return vortexColor(G, Gmax);
+}
+
+function edgeVortexColor(edge, alpha = 1){
+  const darkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+  const rgb = edge === 'TE'
+    ? (darkTheme ? [251,113,133] : [220,38,38])
+    : (darkTheme ? [96,165,250] : [37,99,235]);
+  return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${Math.max(0, Math.min(1, alpha))})`;
+}
+
+function getWakeSnapshot(frame, edge = 'TE'){
+  const snapshots = out?.flowfield?.[edge];
+  if (!snapshots) return null;
+  if (snapshots[frame]) return snapshots[frame];
   const stride = Math.max(1, out.flowfield.wakeSaveStride || 1);
   // jump directly to the last saved stride-aligned snapshot
   let k = frame - (frame % stride);
   for (; k >= 0; k -= stride){
-    if (TE[k]) return TE[k];
+    if (snapshots[k]) return snapshots[k];
   }
-  return TE[0] || null;
+  return snapshots[0] || null;
 }
 
 function getFrameCount(){
-  return out?.flowfield?.TE?.length || SIM?.t?.length || 0;
+  return Math.max(
+    out?.flowfield?.TE?.length || 0,
+    out?.flowfield?.LE?.length || 0,
+    SIM?.t?.length || 0
+  );
 }
 
 function wakeLength(w){
@@ -1533,27 +1944,28 @@ function getGlobalFlowBounds(){
     const t = Number(row[0]) || 0;
     const alpha = Number(row[1]) || 0;
     const plunge = Number(row[2]) || 0;
-    const wake = getWakeSnapshot(frame);
-
-    if (Array.isArray(wake)){
-      for (const vortex of wake){
-        const x = Number(vortex.re);
-        const z = Number(vortex.im);
-        if (Number.isFinite(x)){
-          xmin = Math.min(xmin, x);
-          xmax = Math.max(xmax, x);
+    for (const edge of ['TE', 'LE']){
+      const wake = getWakeSnapshot(frame, edge);
+      if (Array.isArray(wake)){
+        for (const vortex of wake){
+          const x = Number(vortex.re);
+          const z = Number(vortex.im);
+          if (Number.isFinite(x)){
+            xmin = Math.min(xmin, x);
+            xmax = Math.max(xmax, x);
+          }
+          if (Number.isFinite(z)) maxAbsVortexZ = Math.max(maxAbsVortexZ, Math.abs(z));
         }
-        if (Number.isFinite(z)) maxAbsVortexZ = Math.max(maxAbsVortexZ, Math.abs(z));
-      }
-    } else if (wake?.im){
-      for (let i=0; i<wake.im.length; i++){
-        const x = Number(wake.re[i]);
-        const z = Number(wake.im[i]);
-        if (Number.isFinite(x)){
-          xmin = Math.min(xmin, x);
-          xmax = Math.max(xmax, x);
+      } else if (wake?.im){
+        for (let i=0; i<wake.im.length; i++){
+          const x = Number(wake.re[i]);
+          const z = Number(wake.im[i]);
+          if (Number.isFinite(x)){
+            xmin = Math.min(xmin, x);
+            xmax = Math.max(xmax, x);
+          }
+          if (Number.isFinite(z)) maxAbsVortexZ = Math.max(maxAbsVortexZ, Math.abs(z));
         }
-        if (Number.isFinite(z)) maxAbsVortexZ = Math.max(maxAbsVortexZ, Math.abs(z));
       }
     }
 
@@ -1621,38 +2033,33 @@ function getGlobalGScale(){
   if (Number.isFinite(GLOBAL_GSCALE) && GLOBAL_GSCALE > 0) return GLOBAL_GSCALE;
 
   let gmax = 0;
-  const lastG = ff.last?.G;
-  if (lastG && typeof lastG.length === 'number'){
-    for (let i=0;i<lastG.length;i++){
-      const g = lastG[i];
-      if (Number.isFinite(g)) gmax = Math.max(gmax, Math.abs(g));
-    }
-  }
-  if (gmax <= 0 && Array.isArray(ff.TE)){
-    for (let k=0;k<ff.TE.length;k++){
-      const w = ff.TE[k];
-      if (!w || !w.G) continue;
-      const G = w.G;
-      for (let i=0;i<G.length;i++){
-        const g = G[i];
-        if (Number.isFinite(g)) gmax = Math.max(gmax, Math.abs(g));
+  for (const edge of ['TE', 'LE']){
+    const snapshots = ff[edge];
+    if (!Array.isArray(snapshots)) continue;
+    for (const snapshot of snapshots){
+      if (Array.isArray(snapshot)){
+        for (const vortex of snapshot){
+          const g = Number(vortex?.G);
+          if (Number.isFinite(g)) gmax = Math.max(gmax, Math.abs(g));
+        }
+      } else if (snapshot?.G && typeof snapshot.G.length === 'number'){
+        for (let i=0; i<snapshot.G.length; i++){
+          const g = Number(snapshot.G[i]);
+          if (Number.isFinite(g)) gmax = Math.max(gmax, Math.abs(g));
+        }
       }
     }
   }
-
   GLOBAL_GSCALE = Math.max(gmax, 1e-12);
-  ff.maxAbsG = GLOBAL_GSCALE;
   return GLOBAL_GSCALE;
 }
 
 function getActiveGScale(){
-  const global = getGlobalGScale();
-  return Math.max(global * getCirculationScaleFactor(), 1e-10);
+  return Math.max(getGlobalGScale()*getCirculationScaleFactor(), 1e-10);
 }
 
 function drawCirculationColorbox(ctx, box, gLimit){
   if (vortexMode !== 'gamma' || !Number.isFinite(gLimit) || gLimit <= 0) return;
-
   const width = 154;
   const height = 11;
   const x = box.x + 14;
@@ -1672,18 +2079,46 @@ function drawCirculationColorbox(ctx, box, gLimit){
   ctx.strokeStyle = COLORS.border;
   ctx.lineWidth = 1;
   ctx.strokeRect(x, y, width, height);
-
   ctx.fillStyle = COLORS.canvasText;
   ctx.font = '10.5px system-ui';
   ctx.textBaseline = 'top';
   ctx.textAlign = 'left';
   ctx.fillText(`−${formatPlotValue(gLimit)}`, x, y + height + 4);
   ctx.textAlign = 'center';
-  ctx.fillText('0', x + width / 2, y + height + 4);
+  ctx.fillText('0', x + width/2, y + height + 4);
   ctx.textAlign = 'right';
   ctx.fillText(formatPlotValue(gLimit), x + width, y + height + 4);
   ctx.textAlign = 'center';
-  ctx.fillText(translated('circulation'), x + width / 2, y - 10);
+  ctx.fillText(translated('circulation'), x + width/2, y - 10);
+  ctx.restore();
+}
+
+function drawEdgeLegend(ctx, box){
+  if (vortexMode !== 'edge') return;
+  const entries = [
+    { edge:'TE', label:translated('trailing_edge') },
+    { edge:'LE', label:translated('leading_edge') }
+  ];
+  const x = box.x + 14;
+  const y = box.y + 14;
+  ctx.save();
+  ctx.font = '11px system-ui';
+  ctx.textBaseline = 'middle';
+  const widest = Math.max(...entries.map(({ label })=>ctx.measureText(label).width));
+  ctx.fillStyle = COLORS.canvasBg;
+  ctx.globalAlpha = 0.88;
+  ctx.fillRect(x - 8, y - 9, widest + 38, entries.length*22 + 8);
+  ctx.globalAlpha = 1;
+  entries.forEach(({ edge, label }, index)=>{
+    const rowY = y + index*22;
+    ctx.fillStyle = edgeVortexColor(edge);
+    ctx.fillRect(x, rowY - 5, 10, 10);
+    ctx.strokeStyle = COLORS.border;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, rowY - 5, 10, 10);
+    ctx.fillStyle = COLORS.canvasText;
+    ctx.fillText(label, x + 17, rowY);
+  });
   ctx.restore();
 }
 
@@ -1714,21 +2149,24 @@ function drawFrame(frame){
   let xmin = Infinity, xmax = -Infinity;
   let zmin = Infinity, zmax = -Infinity;
 
-  const wake = getWakeSnapshot(frame);
-  if (wake){
-    if (Array.isArray(wake)){
-      for (const p of wake){
-        const Xp = p.re - xOrigin;
-        const Zp = p.im;
-        xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
-        zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
-      }
-    } else {
-      for (let i=0;i<wake.re.length;i++){
-        const Xp = wake.re[i] - xOrigin;
-        const Zp = wake.im[i];
-        xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
-        zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
+  const wake = getWakeSnapshot(frame, 'TE');
+  const leWake = getWakeSnapshot(frame, 'LE');
+  for (const edgeWake of [wake, leWake]){
+    if (edgeWake){
+      if (Array.isArray(edgeWake)){
+        for (const p of edgeWake){
+          const Xp = p.re - xOrigin;
+          const Zp = p.im;
+          xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
+          zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
+        }
+      } else {
+        for (let i=0;i<edgeWake.re.length;i++){
+          const Xp = edgeWake.re[i] - xOrigin;
+          const Zp = edgeWake.im[i];
+          xmin = Math.min(xmin, Xp); xmax = Math.max(xmax, Xp);
+          zmin = Math.min(zmin, Zp); zmax = Math.max(zmax, Zp);
+        }
       }
     }
   }
@@ -1849,33 +2287,35 @@ function drawFrame(frame){
   if (showWake.checked){
     activeGScale = getActiveGScale();
 
-    if (wake){
-      if (Array.isArray(wake)){
-        for (let i=0;i<wake.length;i++){
-          const p = wake[i];
+    const drawWakeSnapshot = (edgeWake, edge)=>{
+      if (!edgeWake) return;
+      if (Array.isArray(edgeWake)){
+        for (let i=0;i<edgeWake.length;i++){
+          const p = edgeWake[i];
           const g = (p.G ?? 0);
           const q = worldToCanvas(p.re - xOrigin, p.im, box, bounds);
-
-          ctx.fillStyle = (vortexMode === 'uniform') ? COLORS.accent2 : vortexColor(g, activeGScale);
+          ctx.fillStyle = displayedVortexColor(g, activeGScale, edge);
           ctx.beginPath();
           ctx.arc(q.X,q.Y,3.0,0,Math.PI*2);
           ctx.fill();
         }
       } else {
-        const wr = wake.re, wi = wake.im, wG = wake.G;
+        const wr = edgeWake.re, wi = edgeWake.im, wG = edgeWake.G;
         for (let i=0;i<wr.length;i++){
           const g = wG[i];
           const q = worldToCanvas(wr[i] - xOrigin, wi[i], box, bounds);
-
-          ctx.fillStyle = (vortexMode === 'uniform') ? COLORS.accent2 : vortexColor(g, activeGScale);
+          ctx.fillStyle = displayedVortexColor(g, activeGScale, edge);
           ctx.beginPath();
           ctx.arc(q.X,q.Y,3.0,0,Math.PI*2);
           ctx.fill();
         }
       }
-    }
+    };
+    drawWakeSnapshot(wake, 'TE');
+    drawWakeSnapshot(leWake, 'LE');
   }
   drawCirculationColorbox(ctx, box, activeGScale || getActiveGScale());
+  drawEdgeLegend(ctx, box);
 
   // Place the pivot marker on the reconstructed camber line at x_p/c.
   const pivotZ = interpolatePolylineY(SIM.camberLine || SIM.airfoil || [], xp)*c;
@@ -1886,10 +2326,14 @@ function drawFrame(frame){
     bounds
   );
   ctx.save();
-  ctx.fillStyle = '#ef4444';
+  const darkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+  ctx.fillStyle = '#000000';
+  ctx.strokeStyle = darkTheme ? '#f8fafc' : '#ffffff';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(pivotPoint.X, pivotPoint.Y, 3.8, 0, Math.PI * 2);
+  ctx.arc(pivotPoint.X, pivotPoint.Y, 2.6, 0, Math.PI * 2);
   ctx.fill();
+  ctx.stroke();
   ctx.restore();
 
 // footer text
@@ -1899,6 +2343,7 @@ function drawFrame(frame){
   ctx.fillText(`frame ${frame + 1}/${nFrames}`, 50, h-18);
   updateFrameCounter();
   plotDistributions(frame);
+  updateKinematicHistoryMarkers(frame);
   updateLoadMarkers(frame);
   updateFourierMarkers(frame);
 }
@@ -1984,8 +2429,12 @@ function drawPlot(canvas, state, hoverIdx = null){
   const x = state.x, y = state.y;
   const xmin = x[0], xmax = x[x.length-1];
   let ymin = Infinity, ymax = -Infinity;
-  for (const v of y){ ymin = Math.min(ymin,v); ymax = Math.max(ymax,v); }
-  if (!isFinite(ymin) || ymin===ymax){ ymin -= 1; ymax += 1; }
+  for (const v of y){
+    if (!Number.isFinite(v)) continue;
+    ymin = Math.min(ymin,v); ymax = Math.max(ymax,v);
+  }
+  if (!Number.isFinite(ymin) || !Number.isFinite(ymax)){ ymin = -1; ymax = 1; }
+  else if (ymin===ymax){ ymin -= 1; ymax += 1; }
   const py = 0.10*(ymax - ymin + 1e-9);
   ymin -= py; ymax += py;
 
@@ -1997,9 +2446,15 @@ function drawPlot(canvas, state, hoverIdx = null){
   ctx.strokeStyle = COLORS.accent;
   ctx.lineWidth = 1.75;
   ctx.beginPath();
+  let drawing = false;
   for (let i=0;i<x.length;i++){
+    if (!Number.isFinite(x[i]) || !Number.isFinite(y[i])){
+      drawing = false;
+      continue;
+    }
     const q = worldToCanvas(x[i], y[i], box, bounds);
-    if (i===0) ctx.moveTo(q.X,q.Y); else ctx.lineTo(q.X,q.Y);
+    if (!drawing){ ctx.moveTo(q.X,q.Y); drawing = true; }
+    else ctx.lineTo(q.X,q.Y);
   }
   ctx.stroke();
 
@@ -2010,6 +2465,7 @@ function drawPlot(canvas, state, hoverIdx = null){
   const markerIdxRaw = hoverIdx !== null ? hoverIdx : state.activeIdx;
   if (Number.isFinite(markerIdxRaw)){
     const markerIdx = Math.max(0, Math.min(x.length - 1, Math.round(markerIdxRaw)));
+    if (!Number.isFinite(x[markerIdx]) || !Number.isFinite(y[markerIdx])) return;
     const q = worldToCanvas(x[markerIdx], y[markerIdx], box, bounds);
     const markerColor = hoverIdx !== null ? COLORS.accent2 : '#ef4444';
     ctx.save();
@@ -2078,24 +2534,72 @@ function activeFrameIndex(frame = Number(frameSlider.value || 0)){
   return Math.max(0, Math.min(total - 1, Number.isFinite(value) ? Math.round(value) : 0));
 }
 
+function plotKinematicHistories(frame = Number(frameSlider.value || 0)){
+  if (!SIM?.tau?.length) return;
+  const x = SIM.tau;
+  const activeIdx = activeFrameIndex(frame);
+  const timeScale = SIM.c/(2*SIM.Uref);
+  const radiansToDegrees = 180/Math.PI;
+  const alpha = SIM.alpha.map((value)=>value*radiansToDegrees);
+  const dalpha = SIM.dalpha.map((value)=>value*timeScale*radiansToDegrees);
+  const d2alpha = SIM.d2alpha.map((value)=>value*timeScale*timeScale*radiansToDegrees);
+  const plunge = SIM.h.map((value)=>value/SIM.c);
+  const dplunge = SIM.dh.map((value)=>value*timeScale/SIM.c);
+  const d2plunge = SIM.d2h.map((value)=>value*timeScale*timeScale/SIM.c);
+  const plots = [
+    [plotAlpha, alpha, translated('pitch_angle_history'), 'α [deg]'],
+    [plotDAlpha, dalpha, translated('pitch_rate_history'), 'α′ [deg]'],
+    [plotD2Alpha, d2alpha, translated('pitch_acceleration_history'), 'α″ [deg]'],
+    [plotH, plunge, translated('plunge_history'), 'h/c'],
+    [plotDH, dplunge, translated('plunge_rate_history'), 'h′/c'],
+    [plotD2H, d2plunge, translated('plunge_acceleration_history'), 'h″/c']
+  ];
+
+  for (const [canvas, y, title, ylabel] of plots){
+    if (!canvas) continue;
+    canvas.__plotState = { x, y, title, ylabel, xlabel:'τ', activeIdx };
+    drawPlot(canvas, canvas.__plotState);
+    if (!canvas.__hoverAttached){ attachPlotHover(canvas); canvas.__hoverAttached = true; }
+  }
+}
+
+function updateKinematicHistoryMarkers(frame = Number(frameSlider.value || 0)){
+  const activeIdx = activeFrameIndex(frame);
+  for (const canvas of [plotAlpha, plotDAlpha, plotD2Alpha, plotH, plotDH, plotD2H]){
+    const state = canvas?.__plotState;
+    if (!state) continue;
+    state.activeIdx = activeIdx;
+    drawPlot(canvas, state);
+  }
+}
+
 function plotLoads(frame = Number(frameSlider.value || 0)){
   const x = SIM.tau || SIM.t;
+  const circulationScale = Math.PI*SIM.c*SIM.Uref;
+  const Gamma = Array.from(out.Gamma || [], (value)=>Number(value)/circulationScale);
+  const stagnationPoint = Array.from(out.stagnationPoint || [], (value)=>100*Number(value));
   const CL = out.loads.map(r=>r[2]);
   const CD = out.loads.map(r=>r[3]);
   const CM = out.loads.map(r=>r[4]);
   const LESP = Array.from(out.LESP);
   const activeIdx = activeFrameIndex(frame);
 
+  plotGamma.__plotState = { x, y: Gamma, title: translated('circulation_history'), ylabel: 'Γ_b/(πcU_ref)', xlabel: 'τ', activeIdx };
+  plotStagnationPoint.__plotState = { x, y: stagnationPoint, title: translated('stagnation_point_location'), ylabel: 'x_s/c [%]', xlabel: 'τ', activeIdx };
   plotCL.__plotState = { x, y: CL, title: translated('lift_coefficient'), ylabel: 'C_L', xlabel: 'τ', activeIdx };
   plotCD.__plotState = { x, y: CD, title: translated('drag_coefficient'), ylabel: 'C_D', xlabel: 'τ', activeIdx };
   plotCM.__plotState = { x, y: CM, title: translated('moment_coefficient'), ylabel: 'C_M', xlabel: 'τ', activeIdx };
   plotLESP.__plotState = { x, y: LESP, title: translated('lesp_title'), ylabel: 'LESP', xlabel: 'τ', activeIdx };
 
+  drawPlot(plotGamma, plotGamma.__plotState);
+  drawPlot(plotStagnationPoint, plotStagnationPoint.__plotState);
   drawPlot(plotCL, plotCL.__plotState);
   drawPlot(plotCD, plotCD.__plotState);
   drawPlot(plotCM, plotCM.__plotState);
   drawPlot(plotLESP, plotLESP.__plotState);
 
+  if (!plotGamma.__hoverAttached){ attachPlotHover(plotGamma); plotGamma.__hoverAttached = true; }
+  if (!plotStagnationPoint.__hoverAttached){ attachPlotHover(plotStagnationPoint); plotStagnationPoint.__hoverAttached = true; }
   if (!plotCL.__hoverAttached){ attachPlotHover(plotCL); plotCL.__hoverAttached = true; }
   if (!plotCD.__hoverAttached){ attachPlotHover(plotCD); plotCD.__hoverAttached = true; }
   if (!plotCM.__hoverAttached){ attachPlotHover(plotCM); plotCM.__hoverAttached = true; }
@@ -2104,7 +2608,7 @@ function plotLoads(frame = Number(frameSlider.value || 0)){
 
 function updateLoadMarkers(frame = Number(frameSlider.value || 0)){
   const activeIdx = activeFrameIndex(frame);
-  for (const canvas of [plotCL, plotCD, plotCM, plotLESP]){
+  for (const canvas of [plotGamma, plotStagnationPoint, plotCL, plotCD, plotCM, plotLESP]){
     const state = canvas?.__plotState;
     if (!state) continue;
     state.activeIdx = activeIdx;
@@ -2117,11 +2621,11 @@ function populateFourierPairSelector(){
   const previous = Number(fourierPairSelect.value || 0);
   fourierPairSelect.replaceChildren();
   const coefficientCount = Number(out?.fourier?.[0]?.length || 0);
-  for (let first=0; first<coefficientCount; first+=2){
-    const second = Math.min(first + 1, coefficientCount - 1);
+  for (let first=0; first<coefficientCount; first+=4){
+    const last = Math.min(first + 3, coefficientCount - 1);
     const option = document.createElement('option');
     option.value = String(first);
-    option.textContent = first === second ? `A${first}` : `A${first}–A${second}`;
+    option.textContent = first === last ? `A${first}` : `A${first}–A${last}`;
     fourierPairSelect.appendChild(option);
   }
   const available = Array.from(fourierPairSelect.options).map((option)=>Number(option.value));
@@ -2155,11 +2659,13 @@ function plotFourierCoefficients(frame = Number(frameSlider.value || 0)){
   };
   configure(plotFourierFirst, first);
   configure(plotFourierSecond, first + 1);
+  configure(plotFourierThird, first + 2);
+  configure(plotFourierFourth, first + 3);
 }
 
 function updateFourierMarkers(frame = Number(frameSlider.value || 0)){
   const activeIdx = activeFrameIndex(frame);
-  for (const canvas of [plotFourierFirst, plotFourierSecond]){
+  for (const canvas of [plotFourierFirst, plotFourierSecond, plotFourierThird, plotFourierFourth]){
     const state = canvas?.__plotState;
     if (!state) continue;
     state.activeIdx = activeIdx;
@@ -2520,6 +3026,241 @@ function plotDistributions(frame = Number(frameSlider.value || 0)){
   if (!plotSurfaceVelocity.__hoverAttached){ attachDistributionHover(plotSurfaceVelocity); plotSurfaceVelocity.__hoverAttached = true; }
   if (distributionFrameLabel) distributionFrameLabel.textContent = `${k + 1}/${nFrames}`;
 }
+
+function exportTable(columns, data){
+  const names = Array.isArray(columns)
+    ? columns
+    : String(columns).split(',').map((name)=>name.trim()).filter(Boolean);
+  const rows = Array.from(data || []);
+  const table = {};
+  names.forEach((name, column)=>{
+    table[name] = rows.map((row)=>{
+      const value = Number(row?.[column]);
+      return Number.isFinite(value) ? value : NaN;
+    });
+  });
+  return table;
+}
+
+function numericRows(rows){
+  return Array.from(rows || [], (row)=>Array.from(row || [], (value)=>Number(value)));
+}
+
+function captureSimulationInputs(){
+  const inputs = {};
+  const selector = [
+    '#inputsContent input[id]', '#inputsContent select[id]',
+    '#airfoilContent input[id]', '#airfoilContent select[id]',
+    '#kinematicsContent input[id]', '#kinematicsContent select[id]'
+  ].join(',');
+  document.querySelectorAll(selector).forEach((element)=>{
+    if (element.type === 'checkbox') inputs[element.id] = element.checked;
+    else if (element.type === 'number' || element.type === 'range'){
+      const value = Number(element.value);
+      inputs[element.id] = Number.isFinite(value) ? value : element.value;
+    } else inputs[element.id] = element.value;
+  });
+  return inputs;
+}
+
+function geometryExportData(){
+  const coefficientRows = (values)=>Array.from(values || [], (value, index)=>[index, Number(value)]);
+  return {
+    name:SIM.airName || '',
+    chord:exportTable('x_over_c,z_over_c', numericRows(SIM.airfoil)),
+    camber:exportTable('x_over_c,z_over_c', numericRows(SIM.camberLine)),
+    outline:exportTable('x_over_c,z_over_c', numericRows(SIM.airfoilOutline)),
+    upper:exportTable('x_over_c,z_over_c', numericRows(SIM.airfoilUpper)),
+    lower:exportTable('x_over_c,z_over_c', numericRows(SIM.airfoilLower)),
+    camber_coefficients:exportTable('mode,value', coefficientRows(SIM.camberCoefficients)),
+    thickness_coefficients:exportTable('mode,value', coefficientRows(SIM.thicknessCoefficients))
+  };
+}
+
+function historyExportData(){
+  const count = SIM.t?.length || 0;
+  const kinematics = [];
+  const loads = [];
+  const aerodynamics = [];
+  const fourier = [];
+  for (let frame=0; frame<count; frame++){
+    const prefix = [frame, Number(SIM.t?.[frame]), Number(SIM.tau?.[frame])];
+    kinematics.push([
+      ...prefix,
+      Number(SIM.alpha?.[frame]), Number(SIM.h?.[frame]),
+      Number(SIM.dalpha?.[frame]), Number(SIM.d2alpha?.[frame]),
+      Number(SIM.dh?.[frame]), Number(SIM.d2h?.[frame])
+    ]);
+    loads.push([...prefix, ...Array.from(out.loads?.[frame] || [], Number)]);
+    aerodynamics.push([
+      ...prefix,
+      Number(out.Gamma?.[frame]),
+      Number(out.Gamma?.[frame])/(Math.PI*SIM.c*SIM.Uref),
+      Number(out.stagnationPoint?.[frame]), 100*Number(out.stagnationPoint?.[frame]),
+      Number(out.LESP?.[frame]), Number(out.kelvinResidual?.[frame])
+    ]);
+    fourier.push([...prefix, ...Array.from(out.fourier?.[frame] || [], Number)]);
+  }
+  let fourierCount = 0;
+  for (const row of out.fourier || []) fourierCount = Math.max(fourierCount, row?.length || 0);
+  return {
+    kinematics:exportTable(
+      'frame,t_s,tau,alpha_rad,h_m,dalpha_rad_per_s,d2alpha_rad_per_s2,dh_m_per_s,d2h_m_per_s2',
+      kinematics
+    ),
+    loads:exportTable('frame,t_s,tau,Cn,Cs,CL,CD,Cm', loads),
+    aerodynamics:exportTable(
+      'frame,t_s,tau,Gamma_b_m2_per_s,Gamma_b_over_pi_c_Uref,x_s_over_c,x_s_percent,LESP,kelvin_residual',
+      aerodynamics
+    ),
+    fourier:exportTable(
+      ['frame', 't_s', 'tau', ...Array.from({length:fourierCount}, (_, index)=>`A${index}`)].join(','),
+      fourier
+    )
+  };
+}
+
+function distributionExportData(){
+  const x = panelCenterX();
+  const pressureRows = [];
+  const velocityRows = [];
+  const frameCount = Math.max(out.pressure?.length || 0, out.surfaceVelocity?.length || 0);
+  for (let frame=0; frame<frameCount; frame++){
+    const pressure = out.pressure?.[frame];
+    const velocity = out.surfaceVelocity?.[frame];
+    const count = Math.max(
+      x.length,
+      pressure?.upper?.length || 0, pressure?.lower?.length || 0, pressure?.delta?.length || 0,
+      velocity?.upper?.length || 0, velocity?.lower?.length || 0
+    );
+    for (let index=0; index<count; index++){
+      const prefix = [frame, Number(SIM.t?.[frame]), Number(SIM.tau?.[frame]), index, Number(x[index])];
+      pressureRows.push([
+        ...prefix,
+        Number(pressure?.delta?.[index]), Number(pressure?.upper?.[index]), Number(pressure?.lower?.[index])
+      ]);
+      velocityRows.push([
+        ...prefix,
+        Number(velocity?.upper?.[index]), Number(velocity?.lower?.[index])
+      ]);
+    }
+  }
+  return {
+    pressure:exportTable('frame,t_s,tau,panel,x_over_c,delta_cp,upper_cp,lower_cp', pressureRows),
+    surface_velocity:exportTable('frame,t_s,tau,panel,x_over_c,upper_V_over_Uref,lower_V_over_Uref', velocityRows)
+  };
+}
+
+function wakeExportTable(edge){
+  const rows = [];
+  const snapshots = out.flowfield?.[edge] || [];
+  for (let frame=0; frame<snapshots.length; frame++){
+    const snapshot = snapshots[frame];
+    if (!snapshot) continue;
+    if (Array.isArray(snapshot)){
+      snapshot.forEach((vortex, index)=>rows.push([
+        frame, Number(SIM.t?.[frame]), Number(SIM.tau?.[frame]), index,
+        Number(vortex?.re), Number(vortex?.im), Number(vortex?.G)
+      ]));
+    } else {
+      const count = Math.max(snapshot.re?.length || 0, snapshot.im?.length || 0, snapshot.G?.length || 0);
+      for (let index=0; index<count; index++) rows.push([
+        frame, Number(SIM.t?.[frame]), Number(SIM.tau?.[frame]), index,
+        Number(snapshot.re?.[index]), Number(snapshot.im?.[index]), Number(snapshot.G?.[index])
+      ]);
+    }
+  }
+  return exportTable('frame,t_s,tau,vortex,x_m,z_m,Gamma_m2_per_s', rows);
+}
+
+function buildExportPayload(scope){
+  const payload = {
+    metadata:{
+      schema_version:'1.0', generator:'UNSAERO Unsteady Airfoil Simulator',
+      exported_at:new Date().toISOString(), scope, language:currentLanguage,
+      airfoil:SIM.airName || '', frame_count:getFrameCount()
+    },
+    inputs:captureSimulationInputs(),
+    solver:{
+      stopped:!!out.stopped,
+      wake_save_stride:Number(out.flowfield?.wakeSaveStride ?? 1),
+      max_abs_wake_circulation_m2_per_s:Number(out.flowfield?.maxAbsG ?? NaN)
+    }
+  };
+  const histories = historyExportData();
+  const geometry = geometryExportData();
+  const distributions = distributionExportData();
+  const wake = { TE:wakeExportTable('TE'), LE:wakeExportTable('LE') };
+
+  if (scope === 'histories') return { ...payload, ...histories };
+  if (scope === 'flowfield') return { ...payload, geometry, wake };
+  if (scope === 'distributions') return { ...payload, geometry, distributions };
+  return { ...payload, geometry, ...histories, distributions, wake };
+}
+
+function exportFilename(scope, extension){
+  const airfoil = String(SIM.airName || 'airfoil').replace(/[^A-Za-z0-9_-]+/g, '_');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  return `unsaero_${airfoil}_${scope}_${stamp}.${extension}`;
+}
+
+function downloadExport(bytes, type, filename){
+  const blob = new Blob([bytes], { type });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+function syncExportControls(messageKey = null){
+  const ready = !!out;
+  if (exportButton) exportButton.disabled = !ready;
+  if (exportNote){
+    exportNote.textContent = messageKey
+      ? translated(messageKey)
+      : (ready ? '' : translated('export_frontend_note'));
+  }
+}
+
+exportButton?.addEventListener('click', async ()=>{
+  if (!out || !SIM) return;
+  const scope = exportScope?.value || 'all';
+  const format = exportFormat?.value || 'mat';
+  exportButton.disabled = true;
+  if (exportNote) exportNote.textContent = translated('export_working');
+  try{
+    await new Promise((resolve)=>setTimeout(resolve, 0));
+    const payload = buildExportPayload(scope);
+    if (format === 'json'){
+      const bytes = new TextEncoder().encode(JSON.stringify({ unsaero_case:payload }, null, 2));
+      downloadExport(bytes, 'application/json', exportFilename(scope, 'json'));
+    } else if (format === 'csv-zip'){
+      const csvEntries = payloadToCsvEntries(payload);
+      csvEntries.push({
+        name:'unsaero_case/schema.json',
+        data:new TextEncoder().encode(JSON.stringify(payload.metadata, null, 2))
+      });
+      downloadExport(createZip(csvEntries), 'application/zip', exportFilename(scope, 'zip'));
+    } else {
+      downloadExport(
+        encodeMatFile('unsaero_case', payload),
+        'application/x-matlab-data',
+        exportFilename(scope, 'mat')
+      );
+    }
+    if (exportNote) exportNote.textContent = translated('export_done');
+  } catch(error){
+    if (exportNote){
+      exportNote.textContent = translated('export_error').replace('{message}', error?.message || String(error));
+    }
+  } finally {
+    exportButton.disabled = false;
+  }
+});
 
 
 

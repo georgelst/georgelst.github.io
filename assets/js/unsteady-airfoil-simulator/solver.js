@@ -127,12 +127,14 @@ export function aeroSolver(params, hooks = {}) {
     loads: new Array(it),      // [Cn, Cs, CL, CD, Cm]
     LESP: new Float64Array(it),
     Gamma: new Float64Array(it),
+    stagnationPoint: new Float64Array(it),
     kelvinResidual: new Float64Array(it),
     fourier: new Array(it),    // A_0 ... A_N at every time step
     pressure: new Array(it),   // {delta, upper, lower}
     surfaceVelocity: new Array(it), // {upper, lower}, normalized by Uref
     flowfield: {
       TE: new Array(it),              // sparse wake snapshots for animation
+      LE: new Array(it),              // reserved for future LESP-triggered LEV snapshots
       wakeSaveStride,
       // global max |Gamma| in the wake (for stable color scaling)
       maxAbsG: 0
@@ -303,6 +305,10 @@ export function aeroSolver(params, hooks = {}) {
     // LESP and bound circulation
     out.LESP[k] = -2*(lambdaKelvin[0] + Bk[0]);
     out.Gamma[k] = GammaKelvinBound;
+    const vtNormalized = ca + (dh[k]/Uref)*sa;
+    out.stagnationPoint[k] = Math.abs(vtNormalized) > 1e-12
+      ? 0.25*Math.pow(out.LESP[k]/vtNormalized, 2)
+      : NaN;
     const fourierCoefficients = new Float64Array(nAterm);
     fourierCoefficients[0] = out.LESP[k];
     for (let mode=1; mode<nAterm; mode++){
@@ -327,7 +333,6 @@ export function aeroSolver(params, hooks = {}) {
     const velocityLower = new Float64Array(m);
     const cpUpper = new Float64Array(m);
     const cpLower = new Float64Array(m);
-    const vtNormalized = ca + (dh[k]/Uref)*sa;
     for (let i=0;i<m;i++){
       const th = theta[i];
       const s = Math.sin(th);

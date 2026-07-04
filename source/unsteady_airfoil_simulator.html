@@ -22,7 +22,7 @@
   <link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
   <link rel="stylesheet" href="../assets/css/shared.css?v=20260622-flat-flags"/>
-  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-controls-20260703a"/>
+  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-load-histories-20260704f"/>
   <link rel="stylesheet" href="../assets/css/mobile-header-fix.css?v=20260503-index"/>
   <script defer src="../assets/js/partials.js" data-root="../"></script>
   <script type="application/ld+json">
@@ -71,17 +71,6 @@
 
           <div class="row two">
             <div>
-              <label for="airSelect" data-i18n="airfoil">Airfoil</label>
-              <select id="airSelect"></select>
-            </div>
-            <div>
-              <label for="airfoilSections" data-i18n="airfoil_sections">Airfoil sections</label>
-              <input id="airfoilSections" type="number" value="199" step="1" min="2" max="500"/>
-            </div>
-          </div>
-
-          <div class="row two">
-            <div>
               <label for="Uref"><span data-i18n="freestream">Freestream</span> U [m/s]</label>
               <input id="Uref" type="number" value="1" step="0.1"/>
             </div>
@@ -119,10 +108,49 @@
           </div>
         </section>
 
+        <section class="card airfoil-card collapsible-card">
+          <div class="section-title-row collapsible-title-row">
+            <h3 data-i18n="airfoil">Airfoil</h3>
+            <button class="secondary collapse-btn" type="button" data-collapse-target="airfoilContent" aria-controls="airfoilContent" aria-expanded="true">
+              <span data-collapse-label>Collapse</span>
+              <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div id="airfoilContent" class="collapsible-content">
+            <canvas id="airfoilCanvas" width="1020" height="260"></canvas>
+            <div class="row two airfoil-controls">
+              <div>
+                <label for="airSelect" data-i18n="airfoil">Airfoil</label>
+                <select id="airSelect"></select>
+              </div>
+              <div>
+                <label for="airfoilSections" data-i18n="airfoil_sections">Airfoil sections</label>
+                <input id="airfoilSections" type="number" value="199" step="1" min="2" max="500"/>
+              </div>
+            </div>
+            <div id="naca4Fields" class="naca-fields" hidden>
+              <div class="row three">
+                <div>
+                  <label for="nacaMaxCamber" data-i18n="naca_max_camber">Maximum camber m [%c]</label>
+                  <input id="nacaMaxCamber" type="number" value="2" step="1" min="0" max="9" inputmode="numeric"/>
+                </div>
+                <div>
+                  <label for="nacaCamberLocation" data-i18n="naca_camber_location">Camber location p [%c]</label>
+                  <input id="nacaCamberLocation" type="number" value="40" step="10" min="10" max="90" inputmode="numeric"/>
+                </div>
+                <div>
+                  <label for="nacaThickness" data-i18n="naca_thickness">Maximum thickness t [%c]</label>
+                  <input id="nacaThickness" type="number" value="12" step="1" min="1" max="40" inputmode="numeric"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div class="kinematics-grid">
           <section class="card kinematics-card collapsible-card">
             <div class="section-title-row collapsible-title-row">
-              <h3 data-i18n="kinematics">Kinematics</h3>
+              <h3 data-i18n="kinematic_inputs">Kinematic inputs</h3>
               <button class="secondary collapse-btn" type="button" data-collapse-target="kinematicsContent" aria-controls="kinematicsContent" aria-expanded="true">
                 <span data-collapse-label>Collapse</span>
                 <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
@@ -332,20 +360,48 @@
             <div class="row vortex-row">
               <label data-i18n="vortex_colors">Vortex colors</label>
               <div class="seg" id="vortexColorMode">
+                <button class="segbtn active" data-mode="gamma" data-i18n="circulation">Circulation</button>
+                <button class="segbtn" data-mode="edge" data-i18n="edge">Edge</button>
                 <button class="segbtn" data-mode="uniform" data-i18n="uniform">Uniform</button>
-                <button class="segbtn active" data-mode="gamma" data-i18n="by_circulation">By circulation</button>
               </div>
             </div>
             <div class="row circulation-scale-row">
               <label for="circulationScale" data-i18n="circulation_scale">Circulation scale</label>
               <div class="circulation-scale-control">
-                <input id="circulationScale" type="range" min="0" max="1" step="0.01" value="1"/>
-                <output id="circulationScaleValue" for="circulationScale">1.00</output>
+                <input id="circulationScale" type="range" min="0" max="1" step="0.01" value="0.5"/>
+                <output id="circulationScaleValue" for="circulationScale">0.50</output>
               </div>
             </div>
           </div>
         </section>
       </div>
+
+      <section class="card kinematics-history collapsible-card">
+        <div class="section-title-row collapsible-title-row">
+          <div class="section-title-main">
+            <h3 data-i18n="kinematics">Kinematics</h3>
+            <div class="frame-mini-controls" data-frame-controls>
+              <button class="secondary frame-step-btn" type="button" data-frame-step="-1" aria-label="Previous frame">&lt;</button>
+              <span class="frame-mini-label" data-frame-mini-label>0/0</span>
+              <button class="secondary frame-step-btn" type="button" data-frame-step="1" aria-label="Next frame">&gt;</button>
+            </div>
+          </div>
+          <button class="secondary collapse-btn" type="button" data-collapse-target="kinematicsHistoryContent" aria-controls="kinematicsHistoryContent" aria-expanded="true">
+            <span data-collapse-label>Collapse</span>
+            <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+          </button>
+        </div>
+        <div id="kinematicsHistoryContent" class="collapsible-content">
+          <div class="plotgrid kinematics-history-grid">
+            <canvas id="plotAlpha" width="500" height="220"></canvas>
+            <canvas id="plotH" width="500" height="220"></canvas>
+            <canvas id="plotDAlpha" width="500" height="220"></canvas>
+            <canvas id="plotDH" width="500" height="220"></canvas>
+            <canvas id="plotD2Alpha" width="500" height="220"></canvas>
+            <canvas id="plotD2H" width="500" height="220"></canvas>
+          </div>
+        </div>
+      </section>
 
       <section class="card plots collapsible-card">
           <div class="section-title-row collapsible-title-row">
@@ -364,6 +420,8 @@
           </div>
           <div id="loadsContent" class="collapsible-content">
           <div class="plotgrid">
+            <canvas id="plotGamma" width="500" height="220"></canvas>
+            <canvas id="plotStagnationPoint" width="500" height="220"></canvas>
             <canvas id="plotCL" width="500" height="220"></canvas>
             <canvas id="plotCD" width="500" height="220"></canvas>
             <canvas id="plotCM" width="500" height="220"></canvas>
@@ -389,12 +447,14 @@
           </div>
           <div id="fourierContent" class="collapsible-content">
             <div class="row fourier-pair-row">
-              <label for="fourierPairSelect" data-i18n="coefficient_pair">Coefficient pair</label>
+              <label for="fourierPairSelect" data-i18n="coefficient_pair">Coefficient group</label>
               <select id="fourierPairSelect" disabled></select>
             </div>
             <div class="plotgrid">
               <canvas id="plotFourierFirst" width="500" height="220"></canvas>
               <canvas id="plotFourierSecond" width="500" height="220"></canvas>
+              <canvas id="plotFourierThird" width="500" height="220"></canvas>
+              <canvas id="plotFourierFourth" width="500" height="220"></canvas>
             </div>
           </div>
         </section>
@@ -422,6 +482,41 @@
           </div>
         </section>
 
+        <section class="card export-data collapsible-card">
+          <div class="section-title-row collapsible-title-row">
+            <h3 data-i18n="export_data">Export Data</h3>
+            <button class="secondary collapse-btn" type="button" data-collapse-target="exportContent" aria-controls="exportContent" aria-expanded="true">
+              <span data-collapse-label>Collapse</span>
+              <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            </button>
+          </div>
+          <div id="exportContent" class="collapsible-content">
+            <div class="export-controls">
+              <div class="export-field">
+                <label for="exportScope" data-i18n="export_scope">Data scope</label>
+                <select id="exportScope">
+                  <option value="all" data-i18n="export_scope_all">All simulation data</option>
+                  <option value="histories" data-i18n="export_scope_histories">Kinematics and loads</option>
+                  <option value="flowfield" data-i18n="export_scope_flowfield">Flowfield and wake</option>
+                  <option value="distributions" data-i18n="export_scope_frame">Distributions</option>
+                </select>
+              </div>
+              <div class="export-field">
+                <label for="exportFormat" data-i18n="export_format">File format</label>
+                <select id="exportFormat">
+                  <option value="mat" data-i18n="export_format_mat">MATLAB structure (.mat) — recommended</option>
+                  <option value="csv-zip" data-i18n="export_format_csv">CSV bundle (.zip)</option>
+                  <option value="json" data-i18n="export_format_json">Structured JSON (.json)</option>
+                </select>
+              </div>
+            </div>
+            <div class="export-actions">
+              <button id="exportButton" type="button" disabled data-i18n="export_action">Export data</button>
+              <span id="exportNote" data-i18n="export_frontend_note">Run a case to enable export.</span>
+            </div>
+          </div>
+        </section>
+
       <div id="tooltip" class="tooltip" hidden></div>
     </section>
   </main>
@@ -430,6 +525,6 @@
 <div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
 
-  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-controls-20260703a"></script>
+  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-bound-circulation-20260704g"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 // worker.js — runs aeroSolver off the main thread (GitHub Pages safe)
-import { aeroSolver } from './solver.js?v=uas-controls-20260703a';
+import { aeroSolver } from './solver.js?v=uas-load-histories-20260704f';
 
 let stopRequested = false;
 
@@ -23,6 +23,7 @@ self.onmessage = (ev) => {
       loads: out.loads,
       LESP: Array.from(out.LESP),
       Gamma: Array.from(out.Gamma),
+      stagnationPoint: Array.from(out.stagnationPoint),
       kelvinResidual: Array.from(out.kelvinResidual),
       fourier: out.fourier,
       pressure: out.pressure,
