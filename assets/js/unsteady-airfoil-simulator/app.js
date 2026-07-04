@@ -59,7 +59,7 @@ const TRANSLATIONS = {
     drag_coefficient: 'Pressure Drag Coefficient',
     moment_coefficient: 'Moment Coefficient',
     lesp_title: 'Leading-Edge Suction Parameter',
-    pressure_distribution: 'Pressure Distribution',
+    pressure_distribution: 'Pressure Distribution (C_p,s = 1 reference)',
     surface_velocity_distribution: 'Surface Velocity',
     upper_surface: 'Upper surface', lower_surface: 'Lower surface',
     distribution_unavailable: 'Distribution data unavailable. Run the case again.',
@@ -129,7 +129,7 @@ const TRANSLATIONS = {
     drag_coefficient: 'Coeficiente de Arrasto de Pressão',
     moment_coefficient: 'Coeficiente de Momento',
     lesp_title: 'Parâmetro de Sucção do Bordo de Ataque',
-    pressure_distribution: 'Distribuição de Pressão',
+    pressure_distribution: 'Distribuição de Pressão (referência C_p,s = 1)',
     surface_velocity_distribution: 'Velocidade de Superfície',
     upper_surface: 'Superfície superior', lower_surface: 'Superfície inferior',
     distribution_unavailable: 'Dados de distribuição indisponíveis. Execute o caso novamente.',
@@ -1044,7 +1044,7 @@ stopBtn.addEventListener('click', ()=>{
 async function loadDirectSolver(){
   if (directSolverModule) return directSolverModule;
   try{
-    directSolverModule = await import(new URL('./solver.js?v=uas-load-histories-20260704f', import.meta.url).href);
+    directSolverModule = await import(new URL('./solver.js?v=uas-pressure-potentials-20260704j', import.meta.url).href);
   } catch(error){
     console.warn('Versioned solver import failed; falling back to plain solver import.', error);
     directSolverModule = await import('./solver.js');
@@ -1066,7 +1066,7 @@ async function runSolverInWorker(params, hooks){
 
   if (!worker){
     try{
-      worker = new Worker(new URL('./worker.js?v=uas-load-histories-20260704f', import.meta.url), { type: 'module' });
+      worker = new Worker(new URL('./worker.js?v=uas-pressure-potentials-20260704j', import.meta.url), { type: 'module' });
     } catch(error){
       console.warn('Worker construction failed; falling back to direct solver.', error);
       return runSolverDirect(params, hooks);
@@ -1209,7 +1209,7 @@ runBtn.addEventListener('click', async ()=>{
     populateFourierPairSelector();
     GLOBAL_GSCALE = null;
     GLOBAL_FLOW_BOUNDS = null;
-    GLOBAL_DISTRIBUTION_BOUNDS = null;
+    FIXED_DISTRIBUTION_BOUNDS = null;
     getGlobalFlowBounds();
 
     setStatus(out.stopped ? 'status_stopped' : 'status_done');
@@ -1574,6 +1574,7 @@ function drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, xlabel, ylabel, options 
   // axes: left + bottom, with ticks and labels
   const showYTicks = options.showYTicks !== false;
   const showYTickLabels = options.showYTickLabels !== false;
+  const invertY = options.invertY === true;
   const ylabelOffset = Number.isFinite(options.ylabelOffset) ? options.ylabelOffset : 52;
   ctx.save();
   ctx.fillStyle = COLORS.canvasText;
@@ -1593,7 +1594,8 @@ function drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, xlabel, ylabel, options 
 
   // x-axis/baseline: dashed and located at the physical y = 0 level.
   if (ymin <= 0 && ymax >= 0 && yRange > 0){
-    const zeroY = box.y + (1 - ((0 - ymin) / yRange)) * box.h;
+    const zeroFraction = (0 - ymin) / yRange;
+    const zeroY = box.y + (invertY ? zeroFraction : 1 - zeroFraction) * box.h;
     ctx.save();
     ctx.strokeStyle = COLORS.canvasAxis;
     ctx.globalAlpha = 0.86;
@@ -1631,7 +1633,7 @@ function drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, xlabel, ylabel, options 
     for (let yv = yStart; yv <= ymax + 1e-12; yv += yStep){
       const v = (yv - ymin) / (ymax - ymin);
       const X = box.x;
-      const Y = box.y + (1 - v) * box.h;
+      const Y = box.y + (invertY ? v : 1 - v) * box.h;
       ctx.beginPath();
       ctx.moveTo(X - 5, Y);
       ctx.lineTo(X, Y);
@@ -2686,75 +2688,55 @@ function panelCenterX(){
   return x;
 }
 
-let GLOBAL_DISTRIBUTION_BOUNDS = null;
-
-function niceDistributionBounds(ymin, ymax, fallbackSpan = 1, symmetric = false){
-  if (!Number.isFinite(ymin) || !Number.isFinite(ymax) || ymin === ymax){
-    ymin = -fallbackSpan;
-    ymax = fallbackSpan;
-  }
-
-  if (symmetric){
-    const lim = Math.max(Math.abs(ymin), Math.abs(ymax), fallbackSpan);
-    const step = niceStep(2 * lim, 4);
-    const niceLim = Math.max(step, Math.ceil(lim / step) * step);
-    return { ymin: -niceLim, ymax: niceLim };
-  }
-
-  ymin = Math.min(ymin, 0);
-  ymax = Math.max(ymax, 0);
-  const span = Math.max(ymax - ymin, fallbackSpan);
-  const pad = 0.12 * span;
-  const step = niceStep(span + 2 * pad, 5);
-  return {
-    ymin: Math.floor((ymin - pad) / step) * step,
-    ymax: Math.ceil((ymax + pad) / step) * step
-  };
-}
-
-function computeDistributionBounds(kind){
-  const frames = kind === 'velocity' ? out?.surfaceVelocity : out?.pressure;
-  if (!Array.isArray(frames) || !frames.length){
-    return kind === 'velocity' ? { ymin: -2, ymax: 2 } : { ymin: -4, ymax: 4 };
-  }
-
+function fittedDistributionBounds(seriesInput, kind){
   let ymin = Infinity;
   let ymax = -Infinity;
-  let sampleCount = 0;
-  for (const frameValues of frames){
-    const series = [frameValues?.upper, frameValues?.lower];
-    for (const valuesInput of series){
-      const values = Array.from(valuesInput || []);
-      for (const value of values){
-        const v = Number(value);
-        if (!Number.isFinite(v)) continue;
-        ymin = Math.min(ymin, v);
-        ymax = Math.max(ymax, v);
-        sampleCount++;
-      }
+  for (const entry of seriesInput || []){
+    for (const rawValue of entry?.y || []){
+      const value = Number(rawValue);
+      if (!Number.isFinite(value)) continue;
+      ymin = Math.min(ymin, value);
+      ymax = Math.max(ymax, value);
     }
   }
 
-  if (sampleCount < 8){
-    return kind === 'velocity' ? { ymin: -2, ymax: 2 } : { ymin: -4, ymax: 4 };
+  if (!Number.isFinite(ymin) || !Number.isFinite(ymax)){
+    return kind === 'velocity' ? { ymin:-1, ymax:1 } : { ymin:-2, ymax:2 };
+  }
+  if (Math.abs(ymax - ymin) < 1e-12){
+    const center = 0.5*(ymin + ymax);
+    const halfSpan = Math.max(
+      kind === 'velocity' ? 0.02 : 0.05,
+      0.05*Math.abs(center),
+      1e-4
+    );
+    ymin = center - halfSpan;
+    ymax = center + halfSpan;
   }
 
-  return niceDistributionBounds(
-    ymin,
-    ymax,
-    kind === 'velocity' ? 0.5 : 1,
-    false
-  );
+  const span = ymax - ymin;
+  const pad = 0.10*span;
+  const step = niceStep(span + 2*pad, 6);
+  return {
+    ymin:Math.floor((ymin - pad)/step)*step,
+    ymax:Math.ceil((ymax + pad)/step)*step
+  };
 }
 
-function distributionBounds(kind){
-  if (!GLOBAL_DISTRIBUTION_BOUNDS){
-    GLOBAL_DISTRIBUTION_BOUNDS = {
-      pressure: computeDistributionBounds('pressure'),
-      velocity: computeDistributionBounds('velocity')
-    };
+let FIXED_DISTRIBUTION_BOUNDS = null;
+function fixedDistributionBounds(kind){
+  if (FIXED_DISTRIBUTION_BOUNDS?.[kind]) return FIXED_DISTRIBUTION_BOUNDS[kind];
+
+  const frames = kind === 'velocity' ? out?.surfaceVelocity : out?.pressure;
+  const allFrames = [];
+  for (const frame of frames || []){
+    if (frame?.upper?.length) allFrames.push({ y:frame.upper });
+    if (frame?.lower?.length) allFrames.push({ y:frame.lower });
   }
-  return GLOBAL_DISTRIBUTION_BOUNDS[kind] || { ymin: -1, ymax: 1 };
+
+  FIXED_DISTRIBUTION_BOUNDS ||= {};
+  FIXED_DISTRIBUTION_BOUNDS[kind] = fittedDistributionBounds(allFrames, kind);
+  return FIXED_DISTRIBUTION_BOUNDS[kind];
 }
 
 function drawDistributionPlot(canvas, x, y, title, ylabel, hoverIdx = null, kind = 'pressure'){
@@ -2776,10 +2758,15 @@ function drawDistributionPlot(canvas, x, y, title, ylabel, hoverIdx = null, kind
   const box = {x:62,y:38,w:w-90,h:h-78};
   const xmin = 0;
   const xmax = 1;
-  const { ymin, ymax } = distributionBounds(kind);
-  const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
+  const { ymin, ymax } = fixedDistributionBounds(kind);
+  const invertY = kind === 'pressure';
+  const bounds = {
+    xmin, xmax,
+    zmin:invertY ? ymax : ymin,
+    zmax:invertY ? ymin : ymax
+  };
 
-  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 'x/c', ylabel);
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 'x/c', ylabel, { invertY });
 
   canvas.__distributionState = {
     x: xPlot,
@@ -2871,9 +2858,14 @@ function drawDistributionMultiPlot(canvas, x, seriesInput, title, ylabel, hoverI
   series.forEach((entry)=>{ entry.y = entry.y.slice(0, n); });
   const box = {x:62,y:38,w:w-90,h:h-78};
   const xmin = 0, xmax = 1;
-  const { ymin, ymax } = distributionBounds(kind);
-  const bounds = {xmin,xmax,zmin:ymin,zmax:ymax};
-  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 'x/c', ylabel);
+  const { ymin, ymax } = fixedDistributionBounds(kind);
+  const invertY = kind === 'pressure';
+  const bounds = {
+    xmin, xmax,
+    zmin:invertY ? ymax : ymin,
+    zmax:invertY ? ymin : ymax
+  };
+  drawPlotAxes(ctx, box, xmin, xmax, ymin, ymax, 'x/c', ylabel, { invertY });
 
   canvas.__distributionState = {
     x: xPlot, series, title, ylabel, kind,
@@ -2994,7 +2986,7 @@ function plotDistributions(frame = Number(frameSlider.value || 0)){
   const nFrames = getFrameCount();
   if (!nFrames) return;
   const k = Math.max(0, Math.min(nFrames - 1, Number(frame) || 0));
-  const x = panelCenterX();
+  const x = Array.from(out.surfaceX || panelCenterX(), Number);
   const pressure = out.pressure?.[k];
   const surfaceVelocity = out.surfaceVelocity?.[k];
 
@@ -3121,7 +3113,7 @@ function historyExportData(){
 }
 
 function distributionExportData(){
-  const x = panelCenterX();
+  const x = Array.from(out.surfaceX || panelCenterX(), Number);
   const pressureRows = [];
   const velocityRows = [];
   const frameCount = Math.max(out.pressure?.length || 0, out.surfaceVelocity?.length || 0);
@@ -3137,7 +3129,9 @@ function distributionExportData(){
       const prefix = [frame, Number(SIM.t?.[frame]), Number(SIM.tau?.[frame]), index, Number(x[index])];
       pressureRows.push([
         ...prefix,
-        Number(pressure?.delta?.[index]), Number(pressure?.upper?.[index]), Number(pressure?.lower?.[index])
+        Number(pressure?.delta?.[index]), Number(pressure?.upper?.[index]), Number(pressure?.lower?.[index]),
+        Number(pressure?.mean?.[index]), Number(pressure?.meanPotential?.[index]),
+        Number(pressure?.meanPotentialDerivative?.[index])
       ]);
       velocityRows.push([
         ...prefix,
@@ -3146,7 +3140,10 @@ function distributionExportData(){
     }
   }
   return {
-    pressure:exportTable('frame,t_s,tau,panel,x_over_c,delta_cp,upper_cp,lower_cp', pressureRows),
+    pressure:exportTable(
+      'frame,t_s,tau,panel,x_over_c,delta_cp,upper_cp,lower_cp,mean_cp,mean_surface_potential,mean_surface_potential_dtau',
+      pressureRows
+    ),
     surface_velocity:exportTable('frame,t_s,tau,panel,x_over_c,upper_V_over_Uref,lower_V_over_Uref', velocityRows)
   };
 }
@@ -3184,7 +3181,11 @@ function buildExportPayload(scope){
     solver:{
       stopped:!!out.stopped,
       wake_save_stride:Number(out.flowfield?.wakeSaveStride ?? 1),
-      max_abs_wake_circulation_m2_per_s:Number(out.flowfield?.maxAbsG ?? NaN)
+      max_abs_wake_circulation_m2_per_s:Number(out.flowfield?.maxAbsG ?? NaN),
+      pressure_reference_mode:String(out.pressureReference?.mode || ''),
+      pressure_reference_Cp_s:Number(out.pressureReference?.Cp_s ?? NaN),
+      pressure_coordinate:String(out.pressureReference?.coordinate || ''),
+      pressure_time_derivative:String(out.pressureReference?.timeDerivative || '')
     }
   };
   const histories = historyExportData();

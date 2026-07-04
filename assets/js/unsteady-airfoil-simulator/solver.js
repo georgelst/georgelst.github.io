@@ -130,7 +130,14 @@ export function aeroSolver(params, hooks = {}) {
     stagnationPoint: new Float64Array(it),
     kelvinResidual: new Float64Array(it),
     fourier: new Array(it),    // A_0 ... A_N at every time step
-    pressure: new Array(it),   // {delta, upper, lower}
+    pressure: new Array(it),   // {delta, upper, lower, mean, meanPotential, meanPotentialDerivative}
+    pressureReference: {
+      mode: "quasi-steady stagnation reference with unsteady mean-potential correction",
+      Cp_s: 1,
+      coordinate: "x/c",
+      timeDerivative: "forward at first frame, backward thereafter"
+    },
+    surfaceX: Float64Array.from(xc),
     surfaceVelocity: new Array(it), // {upper, lower}, normalized by Uref
     flowfield: {
       TE: new Array(it),              // sparse wake snapshots for animation
@@ -331,8 +338,10 @@ export function aeroSolver(params, hooks = {}) {
     const deltaCp = new Float64Array(m);
     const velocityUpper = new Float64Array(m);
     const velocityLower = new Float64Array(m);
+    const velocityMean = new Float64Array(m);
     const cpUpper = new Float64Array(m);
     const cpLower = new Float64Array(m);
+    const cpMean = new Float64Array(m);
     for (let i=0;i<m;i++){
       const th = theta[i];
       const s = Math.sin(th);
@@ -360,13 +369,17 @@ export function aeroSolver(params, hooks = {}) {
       );
       velocityUpper[i] = baseVelocity + matchedLiftingVelocity;
       velocityLower[i] = baseVelocity - matchedLiftingVelocity;
-      const meanCp = 1 - 0.5*(
-        velocityUpper[i]*velocityUpper[i] + velocityLower[i]*velocityLower[i]
-      );
-      cpUpper[i] = meanCp - 0.5*pressureJump;
-      cpLower[i] = meanCp + 0.5*pressureJump;
+      velocityMean[i] = 0.5*(velocityUpper[i] + velocityLower[i]);
     }
-    out.pressure[k] = { delta: deltaCp, upper: cpUpper, lower: cpLower };
+    const meanPotential = integrateFromReference(xc, velocityMean, out.stagnationPoint[k]);
+    out.pressure[k] = {
+      delta: deltaCp,
+      upper: cpUpper,
+      lower: cpLower,
+      mean: cpMean,
+      meanPotential,
+      meanPotentialDerivative: new Float64Array(m)
+    };
     out.surfaceVelocity[k] = { upper: velocityUpper, lower: velocityLower };
 
     // General cambered-airfoil loads, thesis Eqs. (82), (83), and (99)-(104).
@@ -403,6 +416,7 @@ export function aeroSolver(params, hooks = {}) {
     }
   }
   out.flowfield.maxAbsG = maxAbsG;
+  reconstructSurfacePressureHistory(out, 2*Uref*dt/c);
   out.stopped = stop;
   return out;
 }
@@ -418,6 +432,84 @@ function validSeries(arr, n){
     if (!Number.isFinite(Number(arr[i]))) return false;
   }
   return true;
+}
+
+function integrateFromReference(x, values, reference){
+  const count = Math.min(x?.length || 0, values?.length || 0);
+  const integral = new Float64Array(count);
+  if (!count) return integral;
+
+  for (let i=1; i<count; i++){
+    const dx = Number(x[i]) - Number(x[i - 1]);
+    integral[i] = integral[i - 1] + 0.5*(Number(values[i - 1]) + Number(values[i]))*dx;
+  }
+
+  const xFirst = Number(x[0]);
+  const xLast = Number(x[count - 1]);
+  const xReference = Number.isFinite(Number(reference))
+    ? Math.max(0, Math.min(1, Number(reference)))
+    : 0;
+  let referenceIntegral = integral[0];
+  if (xReference <= xFirst){
+    referenceIntegral = integral[0] + Number(values[0])*(xReference - xFirst);
+  } else if (xReference >= xLast){
+    referenceIntegral = integral[count - 1]
+      + Number(values[count - 1])*(xReference - xLast);
+  } else if (xReference > xFirst){
+    let lower = 0;
+    while (lower < count - 2 && Number(x[lower + 1]) < xReference) lower++;
+    const x0 = Number(x[lower]);
+    const x1 = Number(x[lower + 1]);
+    const fraction = Math.abs(x1 - x0) > 1e-14 ? (xReference - x0)/(x1 - x0) : 0;
+    const v0 = Number(values[lower]);
+    const vReference = v0 + fraction*(Number(values[lower + 1]) - v0);
+    referenceIntegral = integral[lower] + 0.5*(v0 + vReference)*(xReference - x0);
+  }
+
+  for (let i=0; i<count; i++) integral[i] -= referenceIntegral;
+  return integral;
+}
+
+function reconstructSurfacePressureHistory(out, dtau){
+  const frames = out?.pressure || [];
+  const validDtau = Number.isFinite(dtau) && dtau > 0 ? dtau : 1;
+  let previousFrame = -1;
+
+  for (let frame=0; frame<frames.length; frame++){
+    const pressure = frames[frame];
+    const velocity = out.surfaceVelocity?.[frame];
+    if (!pressure || !velocity) continue;
+    const potential = pressure.meanPotential;
+    const derivative = pressure.meanPotentialDerivative;
+
+    if (previousFrame >= 0){
+      const previousPotential = frames[previousFrame].meanPotential;
+      const deltaTau = (frame - previousFrame)*validDtau;
+      for (let i=0; i<derivative.length; i++){
+        derivative[i] = (potential[i] - previousPotential[i])/deltaTau;
+      }
+    } else {
+      let nextFrame = frame + 1;
+      while (nextFrame < frames.length && !frames[nextFrame]) nextFrame++;
+      if (nextFrame < frames.length){
+        const nextPotential = frames[nextFrame].meanPotential;
+        const deltaTau = (nextFrame - frame)*validDtau;
+        for (let i=0; i<derivative.length; i++){
+          derivative[i] = (nextPotential[i] - potential[i])/deltaTau;
+        }
+      }
+    }
+
+    for (let i=0; i<pressure.delta.length; i++){
+      const meanCp = out.pressureReference.Cp_s
+        - 0.5*(velocity.upper[i]*velocity.upper[i] + velocity.lower[i]*velocity.lower[i])
+        - 4*derivative[i];
+      pressure.mean[i] = meanCp;
+      pressure.upper[i] = meanCp - 0.5*pressure.delta[i];
+      pressure.lower[i] = meanCp + 0.5*pressure.delta[i];
+    }
+    previousFrame = frame;
+  }
 }
 
 function finiteSeries(values, fallback){
