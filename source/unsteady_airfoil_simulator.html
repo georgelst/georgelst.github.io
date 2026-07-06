@@ -22,7 +22,7 @@
   <link rel="icon" href="../assets/favicon-32x32.png" sizes="32x32" type="image/png"/>
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" sizes="180x180"/>
   <link rel="stylesheet" href="../assets/css/shared.css?v=20260622-flat-flags"/>
-  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-load-histories-20260704f"/>
+  <link rel="stylesheet" href="../assets/css/unsteady-airfoil-simulator.css?v=uas-v3-controls-20260704h"/>
   <link rel="stylesheet" href="../assets/css/mobile-header-fix.css?v=20260503-index"/>
   <script defer src="../assets/js/partials.js" data-root="../"></script>
   <script type="application/ld+json">
@@ -87,14 +87,14 @@
             </div>
             <div>
               <label for="xref"><span data-i18n="moment_reference">Moment ref.</span> x<sub>ref</sub>/c (%)</label>
-              <input id="xref" type="number" value="25" step="1" min="-100" max="200"/>
+              <input id="xref" type="number" value="33" step="1" min="-100" max="200"/>
             </div>
           </div>
 
           <div class="row three">
             <div>
               <label for="nAterm" data-i18n="fourier_terms">Fourier terms</label>
-              <input id="nAterm" type="number" value="50" step="1" min="10" max="300"/>
+              <input id="nAterm" type="number" value="20" step="1" min="10" max="300"/>
             </div>
             <div>
               <label for="dt" data-i18n="time_step">Time step Δτ = 2UΔt/c</label>
@@ -125,21 +125,21 @@
               </div>
               <div>
                 <label for="airfoilSections" data-i18n="airfoil_sections">Airfoil sections</label>
-                <input id="airfoilSections" type="number" value="199" step="1" min="2" max="500"/>
+                <input id="airfoilSections" type="number" value="99" step="1" min="2" max="500"/>
               </div>
             </div>
             <div id="naca4Fields" class="naca-fields" hidden>
               <div class="row three">
                 <div>
-                  <label for="nacaMaxCamber" data-i18n="naca_max_camber">Maximum camber m [%c]</label>
+                  <label for="nacaMaxCamber" data-i18n="naca_max_camber">Maximum camber [%c]</label>
                   <input id="nacaMaxCamber" type="number" value="2" step="1" min="0" max="9" inputmode="numeric"/>
                 </div>
                 <div>
-                  <label for="nacaCamberLocation" data-i18n="naca_camber_location">Camber location p [%c]</label>
-                  <input id="nacaCamberLocation" type="number" value="40" step="10" min="10" max="90" inputmode="numeric"/>
+                  <label for="nacaCamberLocation" data-i18n="naca_camber_location">Camber location [%c]</label>
+                  <input id="nacaCamberLocation" type="number" value="40" step="10" min="0" max="90" inputmode="numeric"/>
                 </div>
                 <div>
-                  <label for="nacaThickness" data-i18n="naca_thickness">Maximum thickness t [%c]</label>
+                  <label for="nacaThickness" data-i18n="naca_thickness">Maximum thickness [%c]</label>
                   <input id="nacaThickness" type="number" value="12" step="1" min="1" max="40" inputmode="numeric"/>
                 </div>
               </div>
@@ -318,8 +318,7 @@
             </div>
             <div class="run-control-panel">
               <div class="row buttons">
-                <button id="runBtn" data-i18n="run">Run</button>
-                <button id="stopBtn" class="secondary" disabled data-i18n="stop">Stop</button>
+                <button id="runStopBtn" class="secondary play-pause-btn run-stop-toggle" type="button" data-i18n="run">Run</button>
               </div>
               <div class="status run-status" id="status" data-i18n="status_ready">Ready.</div>
               <div class="progress-wrap" id="runProgress" hidden aria-hidden="true" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -425,7 +424,7 @@
             <canvas id="plotCL" width="500" height="220"></canvas>
             <canvas id="plotCD" width="500" height="220"></canvas>
             <canvas id="plotCM" width="500" height="220"></canvas>
-            <canvas id="plotLESP" width="500" height="220"></canvas>
+            <canvas id="plotCs" width="500" height="220"></canvas>
           </div>
           </div>
         </section>
@@ -521,10 +520,15 @@
     </section>
   </main>
 
+  <div id="uasScrollNav" class="uas-scroll-nav" aria-label="Scroll navigation">
+    <button id="uasBackToTopBtn" class="uas-scroll-btn" type="button" aria-label="Go to top" title="Go to top">↑</button>
+    <button id="uasScrollToBottomBtn" class="uas-scroll-btn" type="button" aria-label="Go to bottom" title="Go to bottom">↓</button>
+  </div>
+
   <!-- UNSAERO_FOOTER_START -->
 <div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
 
-  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-cp-axis-inverted-20260704m"></script>
+  <script type="module" src="../assets/js/unsteady-airfoil-simulator/app.js?v=uas-composite-pressure-20260706a"></script>
 </body>
 </html>

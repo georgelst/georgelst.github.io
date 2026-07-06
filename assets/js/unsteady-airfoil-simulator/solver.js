@@ -1,4 +1,4 @@
-// Direct linear discrete-vortex implementation of the thesis-exact attached-flow model.
+// Direct linear discrete-vortex implementation of the v3 thesis aerodynamic model.
 // Camber enters through the full B_n series. The matched-asymptotic finite-radius
 // correction regularizes pressure and surface velocity at the leading edge.
 
@@ -127,15 +127,19 @@ export function aeroSolver(params, hooks = {}) {
     loads: new Array(it),      // [Cn, Cs, CL, CD, Cm]
     LESP: new Float64Array(it),
     Gamma: new Float64Array(it),
+    GammaHat: new Float64Array(it),
     stagnationPoint: new Float64Array(it),
     kelvinResidual: new Float64Array(it),
     fourier: new Array(it),    // A_0 ... A_N at every time step
     pressure: new Array(it),   // {delta, upper, lower, mean, meanPotential, meanPotentialDerivative}
+    leadingEdge: new Array(it),
     pressureReference: {
-      mode: "quasi-steady stagnation reference with unsteady mean-potential correction",
-      Cp_s: 1,
-      coordinate: "x/c",
-      timeDerivative: "forward at first frame, backward thereafter"
+      mode: "unsteady Bernoulli reconstruction from uniformly valid finite-radius upper/lower velocities",
+      Cp_infinity: 0,
+      coordinate: "x/c approximation to surface arc length",
+      equations: "Ramesh (2020) Eq. (2.29) with unsteady Bernoulli applied to each surface",
+      potentialGauge: "upper and lower perturbation potentials share zero at the leading edge",
+      timeDerivative: "centered in the interior and one-sided at the endpoints"
     },
     surfaceX: Float64Array.from(xc),
     surfaceVelocity: new Array(it), // {upper, lower}, normalized by Uref
@@ -219,10 +223,10 @@ export function aeroSolver(params, hooks = {}) {
 
     // wake induced velocity at bound points
     const nWake = wakeG.length;
-    let W = new Float64Array(m);
+    const W = new Float64Array(m);
+    const wakeVindRe = new Float64Array(m);
+    const wakeVindIm = new Float64Array(m);
     if (nWake > 0){
-      const VindRe = new Float64Array(m);
-      const VindIm = new Float64Array(m);
       for (let j=0;j<nWake;j++){
         const vRe = wakeRe[j], vIm = wakeIm[j];
         const G = wakeG[j];
@@ -235,23 +239,23 @@ export function aeroSolver(params, hooks = {}) {
           // pv = -i*(P-V)/(2*pi*r^2) => (dy - i*dx)/(2*pi*r^2)
           const pvRe = dy*fac;
           const pvIm = -dx*fac;
-          VindRe[i] += pvRe*G;
-          VindIm[i] += pvIm*G;
+          wakeVindRe[i] += pvRe*G;
+          wakeVindIm[i] += pvIm*G;
         }
       }
       // W = -real(normal*conj(Vind))
       for (let i=0;i<m;i++){
-        W[i] = - ( norRe[i]*VindRe[i] + norIm[i]*VindIm[i] );
+        W[i] = - ( norRe[i]*wakeVindRe[i] + norIm[i]*wakeVindIm[i] );
       }
     }
 
     // Modal contribution of the previously shed wake.
-    const lambdaBase = sFourier(scaleArray(W, 1.0/Uref), dtheta, I_theta, nAterm);
-    const A0Base = -2*(lambdaBase[0] + Bk[0]);
-    const A1Base =  2*(lambdaBase[1] + Bk[1]);
+    const wakeCoefficientsBase = projectWakeDownwash(scaleArray(W, 1.0/Uref), dtheta, I_theta, nAterm);
+    const A0Base = -2*(wakeCoefficientsBase[0] + Bk[0]);
+    const A1Base =  2*(wakeCoefficientsBase[1] + Bk[1]);
     const GammaBase = 0.5*Math.PI*c*Uref*(A0Base + 0.5*A1Base);
 
-    // Nascent TE vortex placement, Eq. (122). In this fixed frame the airfoil translates
+    // Nascent TE vortex placement, v3 Eqs. (163)-(165). In this fixed frame the airfoil translates
     // through still fluid, which is equivalent to the thesis freestream/body-frame form.
     const teX = coords[nNodes - 1][0]*c - xpAbs;
     const teY = coords[nNodes - 1][1]*c;
@@ -279,9 +283,9 @@ export function aeroSolver(params, hooks = {}) {
     const Wunit = inducedDownwashFromSingleVortex(
       zRe, zIm, norRe, norIm, newVRe, newVIm, 1
     );
-    const lambdaUnit = sFourier(scaleArray(Wunit, 1.0/Uref), dtheta, I_theta, nAterm);
-    const A0Influence = -2*lambdaUnit[0];
-    const A1Influence =  2*lambdaUnit[1];
+    const wakeCoefficientsUnit = projectWakeDownwash(scaleArray(Wunit, 1.0/Uref), dtheta, I_theta, nAterm);
+    const A0Influence = -2*wakeCoefficientsUnit[0];
+    const A1Influence =  2*wakeCoefficientsUnit[1];
     const dGammaDg = 0.5*Math.PI*c*Uref*(A0Influence + 0.5*A1Influence);
     const denominator = 1 + dGammaDg;
     if (!Number.isFinite(denominator) || Math.abs(denominator) < 1e-12){
@@ -294,9 +298,9 @@ export function aeroSolver(params, hooks = {}) {
       throw new Error(`Non-finite trailing-edge circulation at time step ${k + 1}.`);
     }
 
-    const lambdaKelvin = new Float64Array(nAterm);
+    const wakeCoefficientsKelvin = new Float64Array(nAterm);
     for (let j=0;j<nAterm;j++){
-      lambdaKelvin[j] = lambdaBase[j] + g0*lambdaUnit[j];
+      wakeCoefficientsKelvin[j] = wakeCoefficientsBase[j] + g0*wakeCoefficientsUnit[j];
     }
     const GammaKelvinBound = GammaBase + g0*dGammaDg;
     out.kelvinResidual[k] = GammaKelvinBound + oldWakeGamma + g0;
@@ -308,81 +312,107 @@ export function aeroSolver(params, hooks = {}) {
     wakeRe.push(newVRe); wakeIm.push(newVIm); wakeG.push(g0);
     out.vortices.TE.push({ z:{re:newVRe, im:newVIm}, G:g0 });
 
+    // Chordwise wake velocity in the pressure/velocity reconstruction must use the
+    // same wake state as the Kelvin-closed Fourier coefficients, including the
+    // nascent trailing-edge vortex shed at this instant.
+    const wakeTangentialNormalized = new Float64Array(m);
+    for (let i=0;i<m;i++){
+      const dx = zRe[i] - newVRe;
+      const dy = zIm[i] - newVIm;
+      const r2 = dx*dx + dy*dy;
+      let inducedRe = wakeVindRe[i];
+      let inducedIm = wakeVindIm[i];
+      if (r2 > 0){
+        const factor = g0/(2*Math.PI*r2);
+        inducedRe += dy*factor;
+        inducedIm -= dx*factor;
+      }
+      wakeTangentialNormalized[i] = (tanRe[i]*inducedRe + tanIm[i]*inducedIm)/Uref;
+    }
 
     // LESP and bound circulation
-    out.LESP[k] = -2*(lambdaKelvin[0] + Bk[0]);
+    out.LESP[k] = -2*(wakeCoefficientsKelvin[0] + Bk[0]);
     out.Gamma[k] = GammaKelvinBound;
-    const vtNormalized = ca + (dh[k]/Uref)*sa;
-    out.stagnationPoint[k] = Math.abs(vtNormalized) > 1e-12
-      ? 0.25*Math.pow(out.LESP[k]/vtNormalized, 2)
+    out.GammaHat[k] = GammaKelvinBound/(Math.PI*c*Uref);
+    const bodyTangentialNormalized = ca + (dh[k]/Uref)*sa;
+    const leadingEdgeTangentialNormalized = bodyTangentialNormalized + wakeTangentialNormalized[0];
+    const stagnationEstimate = Math.abs(leadingEdgeTangentialNormalized) > 1e-12
+      ? 0.25*Math.pow(out.LESP[k]/leadingEdgeTangentialNormalized, 2)
+      : NaN;
+    out.stagnationPoint[k] = Number.isFinite(stagnationEstimate)
+      ? Math.max(0, Math.min(1, stagnationEstimate))
       : NaN;
     const fourierCoefficients = new Float64Array(nAterm);
     fourierCoefficients[0] = out.LESP[k];
     for (let mode=1; mode<nAterm; mode++){
-      fourierCoefficients[mode] = 2*(lambdaKelvin[mode] + Bk[mode]);
+      fourierCoefficients[mode] = 2*(wakeCoefficientsKelvin[mode] + Bk[mode]);
     }
     out.fourier[k] = fourierCoefficients;
 
     // gamma distribution + Gamma weights vector
     const gammaOut = calcGamma({
-      lambda: lambdaKelvin,
+      wakeCoefficients: wakeCoefficientsKelvin,
       B: Bk,
       Uref, c, theta, dtheta, I_sin_theta
     });
-    // Matched-asymptotic, finite-radius distributions: thesis Eqs. (120) and (122).
-    // These retain the complete camber B_n series while removing the sharp-edge
-    // singularity from the displayed pressure and surface velocities.
+    // Uniformly valid finite-radius velocity. The corresponding composite pressure
+    // jump is reconstructed after the time loop from the complete Fourier history.
     const tauScale = c/(2*Uref);
     const Bprime = new Float64Array(nAterm);
     for (let mode=0; mode<nAterm; mode++) Bprime[mode] = tauScale*dBk[mode];
     const deltaCp = new Float64Array(m);
+    const steadyDeltaCp = new Float64Array(m);
+    const unsteadyDeltaCp = new Float64Array(m);
     const velocityUpper = new Float64Array(m);
     const velocityLower = new Float64Array(m);
     const velocityMean = new Float64Array(m);
+    const localTangentialVelocity = new Float64Array(m);
     const cpUpper = new Float64Array(m);
     const cpLower = new Float64Array(m);
     const cpMean = new Float64Array(m);
+    const signedA0 = out.LESP[k];
     for (let i=0;i<m;i++){
       const th = theta[i];
-      const s = Math.sin(th);
-      const cs = Math.cos(th);
-      const regularizedLeadingEdge = Math.sqrt(2)/Math.sqrt(1 + leadingEdgeRadius - cs)
-        - Math.tan(th/4);
-      let pressureJump = 2*out.LESP[k]*regularizedLeadingEdge - 4*Bprime[0]*s;
-      for (let mode=1; mode<nAterm; mode++){
-        pressureJump += 4*Bk[mode]*Math.sin(mode*th);
-      }
-      if (nAterm > 1) pressureJump -= Bprime[1]*Math.sin(2*th);
-      for (let mode=2; mode<nAterm; mode++){
-        pressureJump += 2*Bprime[mode]*(
-          Math.sin((mode - 1)*th)/(mode - 1)
-          - Math.sin((mode + 1)*th)/(mode + 1)
-        );
-      }
-      deltaCp[i] = pressureJump;
-
       const x = Math.max(1e-14, xc[i]);
-      const baseVelocity = vtNormalized*Math.sqrt(x)/Math.sqrt(x + leadingEdgeRadius/2);
+      const gammaHat = gammaOut.gamma[i]/Uref;
+      const tangentialVelocity = bodyTangentialNormalized + wakeTangentialNormalized[i];
+      const thicknessVelocity = bodyTangentialNormalized*thicknessVelocityFactor(thicknessCoefficients, x);
+      const outerMeanVelocity = tangentialVelocity + thicknessVelocity;
+      const baseVelocity = outerMeanVelocity*Math.sqrt(x)/Math.sqrt(x + leadingEdgeRadius/2);
       const matchedLiftingVelocity = 0.5*(
-        gammaOut.gamma[i]/Uref
-        + out.LESP[k]*(1/Math.sqrt(x + leadingEdgeRadius/2) - 1/Math.sqrt(x))
+        gammaHat + signedA0*(1/Math.sqrt(x + leadingEdgeRadius/2) - 1/Math.sqrt(x))
       );
+
+      localTangentialVelocity[i] = tangentialVelocity;
       velocityUpper[i] = baseVelocity + matchedLiftingVelocity;
       velocityLower[i] = baseVelocity - matchedLiftingVelocity;
-      velocityMean[i] = 0.5*(velocityUpper[i] + velocityLower[i]);
+      velocityMean[i] = baseVelocity;
     }
-    const meanPotential = integrateFromReference(xc, velocityMean, out.stagnationPoint[k]);
+    const leadingEdgeVelocity = leadingEdgeRadius > 1e-12
+      ? 0.5*signedA0*Math.sqrt(2/leadingEdgeRadius)
+      : 0;
+    const upperPotential = integrateFromLeadingEdge(xc, velocityUpper, leadingEdgeVelocity);
+    const lowerPotential = integrateFromLeadingEdge(xc, velocityLower, -leadingEdgeVelocity);
+    const meanPotential = new Float64Array(m);
+    for (let i=0;i<m;i++) meanPotential[i] = 0.5*(upperPotential[i] + lowerPotential[i]);
     out.pressure[k] = {
       delta: deltaCp,
+      steadyDelta: steadyDeltaCp,
+      unsteadyDelta: unsteadyDeltaCp,
       upper: cpUpper,
       lower: cpLower,
       mean: cpMean,
       meanPotential,
-      meanPotentialDerivative: new Float64Array(m)
+      meanPotentialDerivative: new Float64Array(m),
+      upperPotential,
+      lowerPotential,
+      upperPotentialDerivative: new Float64Array(m),
+      lowerPotentialDerivative: new Float64Array(m),
+      localTangentialVelocity
     };
-    out.surfaceVelocity[k] = { upper: velocityUpper, lower: velocityLower };
+    out.surfaceVelocity[k] = { upper: velocityUpper, lower: velocityLower, mean:velocityMean };
 
-    // General cambered-airfoil loads, thesis Eqs. (82), (83), and (99)-(104).
+    // V3 loads: Eqs. (115), (116), (144), and (145).
     const B1 = Bk[1] || 0;
     const B2 = Bk[2] || 0;
     const B0prime = Bprime[0] || 0;
@@ -416,7 +446,8 @@ export function aeroSolver(params, hooks = {}) {
     }
   }
   out.flowfield.maxAbsG = maxAbsG;
-  reconstructSurfacePressureHistory(out, 2*Uref*dt/c);
+  reconstructSurfacePressureHistory(out, 2*Uref*dt/c, leadingEdgeRadius);
+  out.consistency = computeConsistencyDiagnostics(out, c, Uref);
   out.stopped = stop;
   return out;
 }
@@ -426,6 +457,21 @@ export function aeroSolver(params, hooks = {}) {
 
 function sum(arr){ let s=0; for (let i=0;i<arr.length;i++) s+=arr[i]; return s; }
 
+function thicknessVelocityFactor(coefficients, xInput){
+  const x = Math.max(1e-14, Math.min(1 - 1e-14, Number(xInput)));
+  const rootX = Math.sqrt(x);
+  let series = Number(coefficients?.[0] || 0)*Math.atanh(rootX)/rootX;
+  const logarithm = Math.log((1 - x)/x);
+  for (let mode=1; mode<(coefficients?.length || 0); mode++){
+    let bracket = Math.pow(x, mode - 1)*logarithm;
+    for (let order=1; order<mode; order++){
+      bracket += Math.pow(x, mode - 1 - order)/order;
+    }
+    series -= mode*Number(coefficients[mode] || 0)*bracket;
+  }
+  return series/Math.PI;
+}
+
 function validSeries(arr, n){
   if (!arr || typeof arr.length !== 'number' || arr.length !== n) return false;
   for (let i=0; i<n; i++){
@@ -434,81 +480,80 @@ function validSeries(arr, n){
   return true;
 }
 
-function integrateFromReference(x, values, reference){
+function integrateFromLeadingEdge(x, values, leadingEdgeValue){
   const count = Math.min(x?.length || 0, values?.length || 0);
   const integral = new Float64Array(count);
   if (!count) return integral;
 
+  integral[0] = 0.5*(Number(leadingEdgeValue) + Number(values[0]))*Number(x[0]);
   for (let i=1; i<count; i++){
     const dx = Number(x[i]) - Number(x[i - 1]);
     integral[i] = integral[i - 1] + 0.5*(Number(values[i - 1]) + Number(values[i]))*dx;
   }
-
-  const xFirst = Number(x[0]);
-  const xLast = Number(x[count - 1]);
-  const xReference = Number.isFinite(Number(reference))
-    ? Math.max(0, Math.min(1, Number(reference)))
-    : 0;
-  let referenceIntegral = integral[0];
-  if (xReference <= xFirst){
-    referenceIntegral = integral[0] + Number(values[0])*(xReference - xFirst);
-  } else if (xReference >= xLast){
-    referenceIntegral = integral[count - 1]
-      + Number(values[count - 1])*(xReference - xLast);
-  } else if (xReference > xFirst){
-    let lower = 0;
-    while (lower < count - 2 && Number(x[lower + 1]) < xReference) lower++;
-    const x0 = Number(x[lower]);
-    const x1 = Number(x[lower + 1]);
-    const fraction = Math.abs(x1 - x0) > 1e-14 ? (xReference - x0)/(x1 - x0) : 0;
-    const v0 = Number(values[lower]);
-    const vReference = v0 + fraction*(Number(values[lower + 1]) - v0);
-    referenceIntegral = integral[lower] + 0.5*(v0 + vReference)*(xReference - x0);
-  }
-
-  for (let i=0; i<count; i++) integral[i] -= referenceIntegral;
   return integral;
 }
 
-function reconstructSurfacePressureHistory(out, dtau){
+function reconstructSurfacePressureHistory(out, dtau, leadingEdgeRadius){
   const frames = out?.pressure || [];
   const validDtau = Number.isFinite(dtau) && dtau > 0 ? dtau : 1;
-  let previousFrame = -1;
-
+  const populated = [];
   for (let frame=0; frame<frames.length; frame++){
+    if (frames[frame] && out.surfaceVelocity?.[frame]) populated.push(frame);
+  }
+
+  for (let position=0; position<populated.length; position++){
+    const frame = populated[position];
     const pressure = frames[frame];
-    const velocity = out.surfaceVelocity?.[frame];
-    if (!pressure || !velocity) continue;
-    const potential = pressure.meanPotential;
-    const derivative = pressure.meanPotentialDerivative;
-
-    if (previousFrame >= 0){
-      const previousPotential = frames[previousFrame].meanPotential;
-      const deltaTau = (frame - previousFrame)*validDtau;
-      for (let i=0; i<derivative.length; i++){
-        derivative[i] = (potential[i] - previousPotential[i])/deltaTau;
-      }
-    } else {
-      let nextFrame = frame + 1;
-      while (nextFrame < frames.length && !frames[nextFrame]) nextFrame++;
-      if (nextFrame < frames.length){
-        const nextPotential = frames[nextFrame].meanPotential;
-        const deltaTau = (nextFrame - frame)*validDtau;
-        for (let i=0; i<derivative.length; i++){
-          derivative[i] = (nextPotential[i] - potential[i])/deltaTau;
-        }
-      }
-    }
-
+    const velocity = out.surfaceVelocity[frame];
+    const previousFrame = populated[Math.max(0, position - 1)];
+    const nextFrame = populated[Math.min(populated.length - 1, position + 1)];
+    const span = (nextFrame - previousFrame)*validDtau;
+    const previousPressure = frames[previousFrame];
+    const nextPressure = frames[nextFrame];
     for (let i=0; i<pressure.delta.length; i++){
-      const meanCp = out.pressureReference.Cp_s
-        - 0.5*(velocity.upper[i]*velocity.upper[i] + velocity.lower[i]*velocity.lower[i])
-        - 4*derivative[i];
-      pressure.mean[i] = meanCp;
-      pressure.upper[i] = meanCp - 0.5*pressure.delta[i];
-      pressure.lower[i] = meanCp + 0.5*pressure.delta[i];
+      const upperDerivative = span > 0
+        ? (Number(nextPressure.upperPotential[i]) - Number(previousPressure.upperPotential[i]))/span
+        : 0;
+      const lowerDerivative = span > 0
+        ? (Number(nextPressure.lowerPotential[i]) - Number(previousPressure.lowerPotential[i]))/span
+        : 0;
+      const upperVelocity = Number(velocity.upper[i]);
+      const lowerVelocity = Number(velocity.lower[i]);
+      const upperCp = 1 - upperVelocity*upperVelocity - 4*upperDerivative;
+      const lowerCp = 1 - lowerVelocity*lowerVelocity - 4*lowerDerivative;
+
+      pressure.upperPotentialDerivative[i] = upperDerivative;
+      pressure.lowerPotentialDerivative[i] = lowerDerivative;
+      pressure.meanPotentialDerivative[i] = 0.5*(upperDerivative + lowerDerivative);
+      pressure.steadyDelta[i] = upperVelocity*upperVelocity - lowerVelocity*lowerVelocity;
+      pressure.unsteadyDelta[i] = 4*(upperDerivative - lowerDerivative);
+      pressure.delta[i] = lowerCp - upperCp;
+      pressure.upper[i] = upperCp;
+      pressure.lower[i] = lowerCp;
+      pressure.mean[i] = 0.5*(upperCp + lowerCp);
     }
-    previousFrame = frame;
+
+    const coefficients = out.fourier?.[frame];
+    if (leadingEdgeRadius > 1e-12 && coefficients?.length){
+      const leadingEdgeVelocity = 0.5*Number(coefficients[0])*Math.sqrt(2/leadingEdgeRadius);
+      const leadingEdgeCp = 1 - leadingEdgeVelocity*leadingEdgeVelocity;
+      out.leadingEdge[frame] = {
+        x:0,
+        pressure:{
+          delta:0,
+          steadyDelta:0,
+          unsteadyDelta:0,
+          upper:leadingEdgeCp,
+          lower:leadingEdgeCp,
+          mean:leadingEdgeCp
+        },
+        velocity:{
+          upper:leadingEdgeVelocity,
+          lower:-leadingEdgeVelocity,
+          mean:0
+        }
+      };
+    }
   }
 }
 
@@ -544,20 +589,84 @@ function scaleArray(a, s){
   return out;
 }
 
-function sFourier(W, dtheta, I_theta, nAterm){
+function projectWakeDownwash(W, dtheta, I_theta, nAterm){
   const n = nAterm - 1;
-  const lambda = new Float64Array(nAterm);
+  const wakeCoefficients = new Float64Array(nAterm);
   let meanSum = 0;
   for (let i=0;i<W.length;i++) meanSum += W[i];
-  lambda[0] = (dtheta/Math.PI)*meanSum;
+  wakeCoefficients[0] = (dtheta/Math.PI)*meanSum;
 
   // Midpoint quadrature on the uniform theta grid.
   for (let j=0;j<n;j++){
     let modalSum = 0;
     for (let i=0;i<W.length;i++) modalSum += W[i]*I_theta[i][j];
-    lambda[j+1] = (2*dtheta/Math.PI)*modalSum;
+    wakeCoefficients[j+1] = (2*dtheta/Math.PI)*modalSum;
   }
-  return lambda;
+  return wakeCoefficients;
+}
+
+function computeConsistencyDiagnostics(out, c, Uref){
+  let maxKelvinResidualHat = 0;
+  let maxGammaScaleResidual = 0;
+  let maxGammaFourierResidual = 0;
+  let maxSuctionCoefficientResidual = 0;
+  let maxPressureJumpResidual = 0;
+  let maxLeadingEdgeJump = 0;
+  let nonfiniteOutputCount = 0;
+  const circulationScale = Math.PI*c*Uref;
+
+  for (let frame=0; frame<(out.Gamma?.length || 0); frame++){
+    const gamma = Number(out.Gamma[frame]);
+    const gammaHat = Number(out.GammaHat?.[frame]);
+    const coefficients = out.fourier?.[frame];
+    const loads = out.loads?.[frame];
+    const pressure = out.pressure?.[frame];
+    if (Number.isFinite(gamma) && Number.isFinite(gammaHat)){
+      maxGammaScaleResidual = Math.max(maxGammaScaleResidual, Math.abs(gammaHat - gamma/circulationScale));
+    }
+    if (coefficients?.length && Number.isFinite(gammaHat)){
+      const identity = 0.5*(Number(coefficients[0]) + 0.5*Number(coefficients[1] || 0));
+      maxGammaFourierResidual = Math.max(maxGammaFourierResidual, Math.abs(gammaHat - identity));
+    }
+    if (loads?.length > 1 && coefficients?.length){
+      const expectedCs = 0.5*Math.PI*Number(coefficients[0])*Number(coefficients[0]);
+      maxSuctionCoefficientResidual = Math.max(
+        maxSuctionCoefficientResidual,
+        Math.abs(Number(loads[1]) - expectedCs)
+      );
+    }
+    const kelvinHat = Number(out.kelvinResidual?.[frame])/circulationScale;
+    if (Number.isFinite(kelvinHat)) maxKelvinResidualHat = Math.max(maxKelvinResidualHat, Math.abs(kelvinHat));
+
+    for (let i=0; i<(pressure?.delta?.length || 0); i++){
+      const values = [
+        pressure.delta[i], pressure.upper[i], pressure.lower[i],
+        out.surfaceVelocity?.[frame]?.upper?.[i], out.surfaceVelocity?.[frame]?.lower?.[i]
+      ].map(Number);
+      if (values.some((value)=>!Number.isFinite(value))){
+        nonfiniteOutputCount++;
+        continue;
+      }
+      maxPressureJumpResidual = Math.max(
+        maxPressureJumpResidual,
+        Math.abs((values[2] - values[1]) - values[0])
+      );
+    }
+    const leadingEdgeJump = Number(out.leadingEdge?.[frame]?.pressure?.delta);
+    if (Number.isFinite(leadingEdgeJump)){
+      maxLeadingEdgeJump = Math.max(maxLeadingEdgeJump, Math.abs(leadingEdgeJump));
+    }
+  }
+
+  return {
+    max_kelvin_residual_hat:maxKelvinResidualHat,
+    max_gamma_scale_residual:maxGammaScaleResidual,
+    max_gamma_fourier_identity_residual:maxGammaFourierResidual,
+    max_suction_coefficient_residual:maxSuctionCoefficientResidual,
+    max_pressure_jump_residual:maxPressureJumpResidual,
+    max_leading_edge_pressure_jump:maxLeadingEdgeJump,
+    nonfinite_output_count:nonfiniteOutputCount
+  };
 }
 
 function inducedDownwashFromSingleVortex(zRe,zIm,norRe,norIm,vRe,vIm,G){
@@ -576,14 +685,14 @@ function inducedDownwashFromSingleVortex(zRe,zIm,norRe,norIm,vRe,vIm,G){
   return W;
 }
 
-function calcGamma({lambda, B, Uref, c, theta, dtheta, I_sin_theta}){
+function calcGamma({wakeCoefficients, B, Uref, c, theta, dtheta, I_sin_theta}){
   const m = theta.length;
-  const n = lambda.length - 1;
+  const n = wakeCoefficients.length - 1;
 
-  const A0 = -2*(lambda[0] + (B[0] || 0));
+  const A0 = -2*(wakeCoefficients[0] + (B[0] || 0));
   const An = new Float64Array(n);
   for (let j=0;j<n;j++){
-    An[j] = 2*(lambda[j+1] + (B[j + 1] || 0));
+    An[j] = 2*(wakeCoefficients[j+1] + (B[j + 1] || 0));
   }
 
   // gamma*sin(theta) is finite at the leading edge and is the natural integration variable.
