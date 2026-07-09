@@ -4,26 +4,26 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Airfoil Geometric Decomposition Tool | UNSAERO</title>
-<meta name="description" content="Interactive tool for airfoil geometric decomposition into camber and thickness contributions for thin-airfoil theory, analytical aerodynamics, and reduced-order modeling."/>
+<meta name="description" content="Interactive airfoil decomposition tool using parametric cubic splines with linear and nonlinear camber and thickness extraction."/>
 <meta name="robots" content="index, follow"/>
 <meta name="theme-color" content="#087fc3"/>
-<meta name="keywords" content="airfoil geometry, geometric decomposition, camber line, thickness distribution, thin airfoil theory, Bezier curves, reduced-order aerodynamics"/>
+<meta name="keywords" content="airfoil geometry, geometric decomposition, camber line, thickness distribution, cubic splines, nonlinear extraction, reduced-order aerodynamics"/>
 <meta name="author" content="UNSAERO"/>
 
 <meta property="og:type" content="article"/>
 <meta property="og:site_name" content="UNSAERO"/>
 <meta property="og:title" content="Airfoil Geometric Decomposition Tool | UNSAERO"/>
-<meta property="og:description" content="Interactive tool for airfoil geometric decomposition into camber and thickness contributions for thin-airfoil theory, analytical aerodynamics, and reduced-order modeling."/>
+<meta property="og:description" content="Cubic-spline airfoil surface fitting with comparative linear and nonlinear camber and thickness extraction."/>
 <meta property="og:url" content="https://www.unsaero.com/source/geometric_decomposition_tool.html"/>
 <meta property="og:image" content="https://www.unsaero.com/icon.png"/>
 <meta property="og:image:width" content="2048"/>
 <meta property="og:image:height" content="2048"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:locale:alternate" content="pt_BR"/>
-<meta property="article:modified_time" content="2026-04-24"/>
+<meta property="article:modified_time" content="2026-07-06"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Airfoil Geometric Decomposition Tool | UNSAERO"/>
-<meta name="twitter:description" content="Interactive tool for airfoil geometric decomposition into camber and thickness contributions for thin-airfoil theory, analytical aerodynamics, and reduced-order modeling."/>
+<meta name="twitter:description" content="Cubic-spline airfoil surface fitting with comparative linear and nonlinear camber and thickness extraction."/>
 <meta name="twitter:image" content="https://www.unsaero.com/icon.png"/>
 
 <link rel="canonical" href="https://www.unsaero.com/source/geometric_decomposition_tool.html"/>
@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 <link href="../assets/css/shared.css?v=20260622-flat-flags" rel="stylesheet"/>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"Geometric Decomposition Tool | UNSAERO","url":"https://www.unsaero.com/source/geometric_decomposition_tool.html","description":"Airfoil geometric decomposition into camber and thickness contributions, with physical and visual interpretation for thin-airfoil-based models.","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Geometric Decomposition Tool | UNSAERO","url":"https://www.unsaero.com/source/geometric_decomposition_tool.html","description":"Parametric cubic-spline airfoil fitting with linear and nonlinear camber and thickness extraction.","applicationCategory":"EducationalApplication","operatingSystem":"Web browser","isPartOf":{"@type":"WebSite","name":"UNSAERO","url":"https://www.unsaero.com/"},"publisher":{"@type":"Organization","name":"UNSAERO","url":"https://www.unsaero.com/","logo":"https://www.unsaero.com/icon.png"},"inLanguage":["en-US","pt-BR"]}
 </script>
 <style>
 :root{--bg:#f8fafc;--panel:#ffffff;--text:#334155;--title:#0f172a;--muted:#64748b;--accent:#0284c7;--accent-dark:#0369a1;--header:#2c3e50;--border:#dbe4ee;--soft-blue:#f0f9ff;--shadow:0 4px 14px rgba(15,23,42,.055);} 
@@ -52,13 +52,12 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 .breadcrumb a{color:var(--accent);text-decoration:none;}.breadcrumb a:hover{text-decoration:underline;}
 .breadcrumb .lang-content{display:none;}.breadcrumb .lang-content.active{display:block;}
 .tool-workspace{display:grid;grid-template-columns:1fr;gap:1rem;align-items:start;}
-.tool-panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);min-height:100%;}
+.primary-grid{display:grid;grid-template-columns:1fr;gap:1rem;align-items:stretch;}
+.tool-panel{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);min-height:100%;}
 .tool-panel h2{font-size:1rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
 .panel-text{font-size:.92rem;line-height:1.55;color:var(--muted);margin-bottom:1rem;}
-.input-alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;align-items:start;margin:.2rem 0 1rem;padding:.9rem .95rem;border:1px solid rgba(245,158,11,.28);border-left:4px solid #f59e0b;border-radius:12px;background:#fffbeb;color:#78350f;box-shadow:0 4px 12px rgba(245,158,11,.08);font-size:.9rem;line-height:1.5;}
-.input-alert .alert-icon{display:inline-flex;align-items:center;justify-content:center;width:1.35rem;height:1.35rem;color:#d97706;font-size:1rem;margin-top:.02rem;}
 .control-group{display:flex;flex-direction:column;gap:.45rem;margin-bottom:.95rem;}
-.control-row{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:.8rem;align-items:end;}
+.control-row{display:grid;grid-template-columns:minmax(150px,1.15fr) repeat(3,minmax(110px,.9fr));gap:.8rem;align-items:end;}
 .input-panel h2{margin:0 0 1rem;font-size:1.25rem;line-height:1.2;color:var(--title);letter-spacing:0;text-transform:none;}
 .control-label{font-size:.83rem;font-weight:750;color:var(--title);}
 select,input[type="file"],input[type="number"],textarea{width:100%;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--title);font-size:.92rem;}
@@ -69,33 +68,43 @@ textarea{height:144px;min-height:116px;max-height:240px;resize:vertical;padding:
 .method-option input{width:auto;}
 .button-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin-top:.45rem;}
 .button{width:100%;border:1px solid var(--border);border-radius:10px;padding:.68rem .78rem;background:#fff;color:var(--title);font-weight:800;font-size:.93rem;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;}
-.button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}.button:hover{transform:translateY(-1px);box-shadow:0 8px 16px rgba(15,23,42,.08);}
+.button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}.button:hover{transform:translateY(-1px);box-shadow:0 8px 16px rgba(15,23,42,.08);}.button:disabled{cursor:wait;opacity:.78;transform:none;}
+.progress-wrap{position:relative;height:10px;margin:.75rem 0 .1rem;border-radius:999px;overflow:hidden;border:1px solid rgba(2,132,199,.25);background:linear-gradient(180deg,#e0f2fe,#f0f9ff);box-shadow:inset 0 1px 3px rgba(15,23,42,.14),0 8px 18px rgba(2,132,199,.1)}.progress-wrap[hidden]{display:none}.progress-fill{position:absolute;inset:0 auto 0 0;width:8%;min-width:7%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),#22c55e,#06b6d4,var(--accent));background-size:240% 100%;box-shadow:0 0 16px rgba(2,132,199,.4);animation:progressFlow 1.2s linear infinite;transition:width .22s ease}.progress-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-100%);animation:progressSheen 1.55s ease-in-out infinite}@keyframes progressFlow{to{background-position:240% 0}}@keyframes progressSheen{55%,100%{transform:translateX(100%)}}
+.panel-collapse-btn{position:absolute;top:14px;right:14px;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:.35rem;min-width:100px;width:auto;padding:.46rem .66rem;border:1px solid var(--border);border-radius:999px;background:#fff;color:var(--muted);font-size:.77rem;font-weight:800;cursor:pointer}.panel-collapse-btn:hover{color:var(--accent);border-color:rgba(2,132,199,.45)}.panel-collapse-btn svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}.panel-collapse-btn[aria-expanded="false"] svg{transform:rotate(180deg)}.tool-panel.is-collapsed{min-height:0}.tool-panel.is-collapsed>.visual-header{margin-bottom:0}.tool-panel.is-collapsed>h2{margin-bottom:0}
 .visual-panel{padding:20px;}
-.visual-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem;}
+.visual-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem;padding-right:112px;}
 .visual-header h2{margin:0;font-size:1.25rem;line-height:1.2;color:var(--title);letter-spacing:0;text-transform:none;}
 .symbol{font-family:Georgia,'Times New Roman',serif;font-style:italic;}
 .visual-caption{font-size:.9rem;color:var(--muted);line-height:1.45;margin-top:.35rem;}
-.status-pill{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid rgba(2,132,199,.22);background:var(--soft-blue);color:var(--accent-dark);font-weight:800;font-size:.78rem;border-radius:999px;padding:.42rem .68rem;}
-.plot-frame{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#fff,#fbfdff);min-height:310px;padding:18px;display:flex;align-items:center;justify-content:center;}
-.plot-placeholder{width:100%;max-width:760px;}.plot-placeholder svg{width:100%;height:auto;display:block;}.analysis-svg{width:100%;height:auto;display:block;}
+.plot-frame{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#fff,#fbfdff);min-height:360px;padding:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.plot-placeholder{width:100%;max-width:760px;}.plot-placeholder svg{width:100%;height:auto;display:block;}.analysis-svg{width:100%;display:block;}
 .legend{display:flex;flex-wrap:wrap;gap:.7rem 1rem;margin-top:.95rem;color:var(--muted);font-size:.86rem;}
-.legend-item{display:inline-flex;align-items:center;gap:.4rem;}.legend-line{width:26px;height:2px;border-radius:2px;background:#111827;}.legend-line.surface-fit{background:#111827;}.legend-line.camber{background:#0284c7;}.legend-line.thickness{background:#dc2626;}.legend-dot{width:7px;height:7px;border-radius:50%;background:#334155;box-shadow:9px 0 0 #334155,18px 0 0 #334155;margin-right:18px;opacity:.75;flex:0 0 auto;}
+.legend-item{display:inline-flex;align-items:center;gap:.4rem;}.legend-line{width:26px;height:2px;border-radius:2px;background:#111827;}.legend-line.surface-fit{background:#000;}.legend-dot{width:7px;height:7px;border-radius:50%;background:#334155;box-shadow:9px 0 0 #334155,18px 0 0 #334155;margin-right:18px;opacity:.75;flex:0 0 auto;}.airfoil-surface-panel .legend-dot,.reconstruction-panel .legend-dot{background:#ef4444;box-shadow:9px 0 0 #ef4444,18px 0 0 #ef4444;}
 .layer-toggles{display:flex;flex-wrap:wrap;gap:.55rem;margin:.95rem 0 0;}
 .toggle-pill{display:inline-flex;align-items:center;gap:.42rem;border:1px solid var(--border);background:#fff;border-radius:999px;padding:.42rem .68rem;font-size:.84rem;font-weight:750;color:var(--text);cursor:pointer;user-select:none;}
-.toggle-pill input{width:auto;accent-color:var(--accent);}.summary-actions{margin-top:1rem;display:flex;justify-content:center;align-items:center;}.summary-actions .button{width:auto;min-width:230px;}.button.download{background:#0f766e;border-color:#0f766e;color:#ffffff;box-shadow:0 8px 18px rgba(15,118,110,.16);}.button.download:hover{border-color:#0f766e;box-shadow:0 10px 22px rgba(15,118,110,.22);}
-.decomp-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}
-.decomp-plot-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:14px;}
-.decomp-plot-card h3{font-size:.92rem;color:var(--title);margin:0 0 .65rem;font-weight:850;}
-.mini-plot-frame{border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);min-height:230px;padding:12px;display:flex;align-items:center;justify-content:center;}
+.toggle-pill input{width:auto;accent-color:var(--accent);}.algorithm-options{display:flex;flex-wrap:wrap;gap:.55rem;margin:-.2rem 0 .95rem;}.summary-actions{margin-top:0;display:flex;justify-content:flex-start;align-items:center;}.reconstruction-actions{margin-top:.95rem;}.summary-actions .button{width:auto;min-width:230px;}.button.download{background:#0f766e;border-color:#0f766e;color:#ffffff;box-shadow:0 8px 18px rgba(15,118,110,.16);}.button.download:hover{border-color:#0f766e;box-shadow:0 10px 22px rgba(15,118,110,.22);}
+.decomp-plots{display:grid;grid-template-columns:1fr;gap:1rem;}
+.detail-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}
+.analysis-stack{display:grid;gap:1rem;}.key-line.reconstructed{border-top:2px solid #000;}.key-line.camber-only{border-top:2px dashed #2563eb;}
+.decomp-plot-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:14px;min-width:0;}
+.decomp-plot-card h3{font-size:.96rem;color:var(--title);margin:0 0 .65rem;font-weight:850;display:flex;align-items:center;gap:.55rem;}
+.comparison-key{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin:.1rem 0 .7rem;color:var(--muted);font-size:.8rem;font-weight:750;}.comparison-key span{display:inline-flex;align-items:center;gap:.38rem;}.key-line{width:25px;height:0;border-top:2px dashed #2563eb;}.key-line.linear{border-top-color:#dc2626;border-top-style:solid;}
+.mini-plot-frame{border:1px solid var(--border);border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);min-height:344px;padding:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.detail-plot-frame{min-height:269px;}
+.coefficient-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}.coefficient-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px;}.coefficient-table{width:100%;border-collapse:collapse;font-size:.83rem;font-variant-numeric:tabular-nums;}.coefficient-table th,.coefficient-table td{padding:.52rem .62rem;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}.coefficient-table thead th{background:#f8fafc;color:var(--muted);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;position:sticky;top:0;}.coefficient-table th:first-child{text-align:left;color:var(--title);}.coefficient-table tbody tr:last-child th,.coefficient-table tbody tr:last-child td{border-bottom:0;}
 .full-plot{min-height:300px;}
-.results-list{display:grid;gap:.75rem;margin-top:.2rem;}
-.result-item{padding:.8rem .85rem;border:1px solid var(--border);border-radius:12px;background:#fff;}
+.results-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:.2rem;}.summary-panel .results-list{margin-bottom:1rem;}
+.result-item{padding:.8rem .85rem;border:1px solid var(--border);border-radius:12px;background:#fff;min-width:0;}
+.result-item.warning{border-color:rgba(217,119,6,.32);background:#fffbeb;}
 .result-label{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:.22rem;}
 .result-value{font-size:1.02rem;font-weight:850;color:var(--title);}.result-value.muted{color:var(--muted);font-weight:700;}
+.result-line{display:block;}.result-line+.result-line{margin-top:.18rem;}
 .micro-note{margin-top:1rem;padding:.85rem .9rem;border-left:3px solid var(--accent);background:var(--soft-blue);border-radius:10px;color:var(--text);font-size:.9rem;line-height:1.52;}
 .back-link{display:inline-flex;margin-top:1.1rem;color:var(--accent);font-weight:750;text-decoration:none;}.back-link:hover{text-decoration:underline;}
-@media (max-width:1060px){.plot-frame{min-height:320px;}}
-@media (max-width:720px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:28px 22px;border-radius:10px;}.visual-header{flex-direction:column;}.plot-frame{min-height:260px;padding:12px;}.tool-panel{padding:18px;}.control-row{grid-template-columns:1fr;}.button-row{grid-template-columns:1fr;}.decomp-plots{grid-template-columns:1fr;}}
+.geom-scroll-nav{position:fixed;right:30px;bottom:30px;z-index:9999;display:flex;flex-direction:column;gap:12px;--nav-btn-size:50px;--nav-gap:12px;pointer-events:none}.geom-scroll-btn{--dock-shift:0px;pointer-events:none;display:flex;align-items:center;justify-content:center;width:var(--nav-btn-size);height:var(--nav-btn-size);padding:0;border:0;border-radius:50%;background:#d35400;color:#fff;font-size:18px;line-height:1;box-shadow:0 4px 10px rgba(0,0,0,.3);opacity:0;cursor:pointer;transform:translateY(var(--dock-shift));transition:opacity .25s ease,transform .25s ease,background-color .3s}.geom-scroll-btn.show{opacity:1;pointer-events:auto}.geom-scroll-btn:hover{background:#b84300;transform:translateY(var(--dock-shift)) scale(1.06)}.geom-scroll-btn:focus-visible{outline:3px solid color-mix(in srgb,#d35400 38%,transparent);outline-offset:3px}.geom-scroll-nav.at-bottom #geomBackToTopBtn{--dock-shift:calc(var(--nav-btn-size) + var(--nav-gap))}
+@media (max-width:960px){.results-list{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:720px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:28px 22px;border-radius:10px;}.visual-header{flex-direction:column;}.plot-frame{min-height:350px;padding:8px;}.tool-panel{padding:16px;}.control-row{grid-template-columns:1fr;}.button-row{grid-template-columns:1fr;}.decomp-plots,.detail-plots,.coefficient-grid{grid-template-columns:1fr;}.results-list{grid-template-columns:1fr;}.mini-plot-frame{min-height:334px;padding:4px;}.detail-plot-frame{min-height:259px;}.summary-actions .button{width:100%;min-width:0;}.geom-scroll-nav{right:20px;bottom:20px;--nav-btn-size:45px;}}
+@media print{.geom-scroll-nav{display:none!important;}}
 </style>
 <link href="../assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
   <script defer src="../assets/js/partials.js" data-root="../"></script>
@@ -122,42 +131,94 @@ textarea{height:144px;min-height:116px;max-height:240px;resize:vertical;padding:
 
 <div class="lang-content active" id="content-en">
   <section class="tool-workspace" aria-label="Geometric decomposition interface">
-    <aside class="tool-panel input-panel">
-      <h2>Input</h2>
-      <p class="panel-text">Select file or paste coordinates.</p>
-      <div class="input-alert"><span class="alert-icon"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span><span>Linear decomposition introduces deviations near the leading edge. Nonlinear geometric decomposition is under development.</span></div>
-      <div class="control-row">
-        <div class="control-group"><label class="control-label" for="file-input">Coordinate file</label><input accept=".dat,.txt,.csv,text/plain" id="file-input" type="file"/></div>
-        <div class="control-group"><label class="control-label" for="samples-input">Surface points</label><input id="samples-input" type="number" min="40" max="999" step="1" value="500"/></div>
-      </div>
-      <div class="control-group"><label class="control-label" for="points-input">Coordinates</label><textarea id="points-input" spellcheck="false" placeholder="x/c    z/c"></textarea></div>
-      <div class="button-row"><button class="button primary" id="run-btn" type="button">Run</button><button class="button" id="sample-btn" type="button">Reload sample</button></div>
-    </aside>
+    <div class="primary-grid">
+      <aside class="tool-panel input-panel">
+        <h2>Input</h2>
+        <p class="panel-text">Choose a preset or paste an ordered airfoil contour.</p>
+        <div class="control-row">
+          <div class="control-group"><label class="control-label" for="airfoil-preset-input">Airfoil preset</label><select id="airfoil-preset-input"><option value="SD7003">SD7003</option><option value="E387">E387</option><option value="S809">S809</option><option value="CLARK_Y">Clark Y</option><option value="RAE2822">RAE 2822</option><option value="NASA_SC20714">NASA SC(2)-0714</option><option value="S1223" selected>Selig S1223</option><option value="FX63137">Wortmann FX 63-137</option></select></div>
+          <div class="control-group"><label class="control-label" for="samples-input">Camber stations</label><input id="samples-input" type="number" min="30" max="80" step="1" value="60"/></div>
+          <div class="control-group"><label class="control-label" for="eta-order-input">Camber order n<sub>η</sub></label><input id="eta-order-input" type="number" min="1" max="20" step="1" value="6"/></div>
+          <div class="control-group"><label class="control-label" for="beta-order-input">Thickness order n<sub>β</sub></label><input id="beta-order-input" type="number" min="1" max="12" step="1" value="4"/></div>
+        </div>
+        <div class="algorithm-options"><label class="toggle-pill"><input id="zero-te-thickness-input" type="checkbox" checked/> Zero TE thickness</label></div>
+        <div class="control-group"><label class="control-label" for="points-input">Coordinates</label><textarea id="points-input" spellcheck="false" placeholder="x/c    z/c"></textarea></div>
+        <div class="button-row"><button class="button primary" id="run-btn" type="button">Run</button><button class="button" id="sample-btn" type="button">Reload selected</button></div>
+        <div class="progress-wrap" id="run-progress" hidden aria-hidden="true" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="run-progress-fill"></div></div>
+      </aside>
+
+      <section class="tool-panel visual-panel airfoil-surface-panel">
+        <div class="visual-header"><div><h2>Airfoil surface</h2></div></div>
+        <div class="plot-frame" aria-label="Airfoil surface plot"><svg class="analysis-svg" id="plot-geom" role="img" aria-label="Discrete airfoil points and cubic-spline surface"></svg></div>
+        <div class="layer-toggles" aria-label="Geometry layers">
+          <label class="toggle-pill"><input id="toggle-points" type="checkbox" checked/> Discrete points <span class="legend-dot"></span></label>
+          <label class="toggle-pill"><input id="toggle-surface" type="checkbox" checked/> Cubic-spline surface <span class="legend-line surface-fit"></span></label>
+        </div>
+      </section>
+    </div>
 
     <section class="tool-panel visual-panel">
-      <div class="visual-header"><div><h2>Geometry view</h2></div></div>
-      <div class="plot-frame" aria-label="Geometry plot"><svg class="analysis-svg" id="plot-geom" role="img" aria-label="Geometry decomposition plot" viewBox="0 0 1000 340"></svg></div>
-      <div class="layer-toggles" aria-label="Geometry layers">
-        <label class="toggle-pill"><input id="toggle-points" type="checkbox" checked/> Discrete points <span class="legend-dot"></span></label>
-        <label class="toggle-pill"><input id="toggle-surface" type="checkbox" checked/> Fitted surface <span class="legend-line surface-fit"></span></label>
-        <label class="toggle-pill"><input id="toggle-camber" type="checkbox" checked/> Camber line <span class="legend-line camber"></span></label>
+      <div class="visual-header"><div><h2>Thickness analysis</h2></div></div>
+      <div class="comparison-key"><span><i class="key-line linear"></i>Linear</span><span><i class="key-line"></i>Nonlinear</span></div>
+      <div class="analysis-stack">
+        <article class="decomp-plot-card"><h3>Thickness, <span class="symbol">z<sub>t</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-thickness" role="img" aria-label="Linear vertical and nonlinear normal thickness comparison"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Leading-edge detail, <span class="symbol">z<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-le" role="img" aria-label="Thickness leading-edge detail"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Trailing-edge detail, <span class="symbol">z<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-te" role="img" aria-label="Thickness trailing-edge detail"></svg></div></article>
+        </div>
+        <article class="decomp-plot-card"><h3>Thickness slope, <span class="symbol">z′<sub>t</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-thickness-derivative" role="img" aria-label="Linear and nonlinear thickness slope comparison"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Leading-edge detail, <span class="symbol">z′<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-derivative-le" role="img" aria-label="Thickness slope leading-edge detail"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Trailing-edge detail, <span class="symbol">z′<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-derivative-te" role="img" aria-label="Thickness slope trailing-edge detail"></svg></div></article>
+        </div>
       </div>
     </section>
 
-    <section class="tool-panel visual-panel summary-panel">
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Camber analysis</h2></div></div>
+      <div class="comparison-key"><span><i class="key-line linear"></i>Linear</span><span><i class="key-line"></i>Nonlinear</span></div>
+      <div class="analysis-stack">
+        <article class="decomp-plot-card"><h3>Camber line, <span class="symbol">z<sub>c</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-camber" role="img" aria-label="Linear and nonlinear camber comparison"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Leading-edge detail, <span class="symbol">z<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-le" role="img" aria-label="Camber leading-edge detail"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Trailing-edge detail, <span class="symbol">z<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-te" role="img" aria-label="Camber trailing-edge detail"></svg></div></article>
+        </div>
+        <article class="decomp-plot-card"><h3>Camber-line slope, <span class="symbol">z′<sub>c</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-camber-derivative" role="img" aria-label="Linear and nonlinear camber slope comparison"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Leading-edge detail, <span class="symbol">z′<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-derivative-le" role="img" aria-label="Camber-slope leading-edge detail"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Trailing-edge detail, <span class="symbol">z′<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-derivative-te" role="img" aria-label="Camber-slope trailing-edge detail"></svg></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-panel visual-panel">
       <div class="visual-header"><div><h2>Summary</h2></div></div>
+      <div class="analysis-stack">
+        <div class="coefficient-grid">
+          <article class="decomp-plot-card"><h3>Geometric quantities</h3><div id="geometric-quantities"></div></article>
+          <article class="decomp-plot-card"><h3>Aerodynamic quantities</h3><div id="aero-quantities"></div></article>
+        </div>
+        <div class="coefficient-grid">
+          <article class="decomp-plot-card"><h3>Camber coefficients, <span class="symbol">η<sub>n</sub></span></h3><div id="eta-coefficients"></div></article>
+          <article class="decomp-plot-card"><h3>Thickness coefficients, <span class="symbol">β<sub>n</sub></span></h3><div id="beta-coefficients"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-panel visual-panel summary-panel reconstruction-panel">
+      <div class="visual-header"><div><h2>Nonlinear reconstruction</h2><p class="visual-caption">Surface reconstruction from discrete coordinates, nonlinear camber, and normal half-thickness.</p></div></div>
       <div class="results-list" id="summary-cards"></div>
-      <div class="button-row summary-actions"><button class="button download" id="download-data-btn" type="button">Download generated data</button></div>
-    </section>
-
-    <section class="tool-panel visual-panel">
-      <div class="visual-header"><div><h2>Camber, <span class="symbol">z<sub>c</sub></span></h2></div></div>
-      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-camber" role="img" aria-label="Camber line plot" viewBox="0 0 1000 420"></svg></div>
-    </section>
-
-    <section class="tool-panel visual-panel">
-      <div class="visual-header"><div><h2>Thickness, <span class="symbol">z<sub>t</sub></span></h2></div></div>
-      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-thickness" role="img" aria-label="Thickness distribution plot" viewBox="0 0 1000 420"></svg></div>
+      <div class="plot-frame" aria-label="Nonlinear airfoil reconstruction plot"><svg class="analysis-svg" id="plot-reconstruction" role="img" aria-label="Surface points, nonlinear camber, and reconstructed airfoil surface"></svg></div>
+      <div class="detail-plots">
+        <article class="decomp-plot-card"><h3>Leading-edge detail</h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-reconstruction-le" role="img" aria-label="Nonlinear reconstruction leading-edge detail"></svg></div></article>
+        <article class="decomp-plot-card"><h3>Trailing-edge detail</h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-reconstruction-te" role="img" aria-label="Nonlinear reconstruction trailing-edge detail"></svg></div></article>
+      </div>
+      <div class="layer-toggles" aria-label="Reconstruction layers">
+        <label class="toggle-pill"><input id="toggle-reconstruction-points" type="checkbox" checked/> Surface points <span class="legend-dot"></span></label>
+        <label class="toggle-pill"><input id="toggle-reconstruction-camber" type="checkbox" checked/> Nonlinear camber <span class="key-line camber-only"></span></label>
+        <label class="toggle-pill"><input id="toggle-reconstruction-surface" type="checkbox" checked/> Reconstructed surface <span class="key-line reconstructed"></span></label>
+      </div>
+      <div class="summary-actions reconstruction-actions"><button class="button download" id="download-data-btn" type="button">Download generated data</button></div>
     </section>
 
   </section>
@@ -166,48 +227,104 @@ textarea{height:144px;min-height:116px;max-height:240px;resize:vertical;padding:
 
 <div class="lang-content" id="content-pt">
   <section class="tool-workspace" aria-label="Interface de decomposição geométrica">
-    <aside class="tool-panel input-panel">
-      <h2>Entrada</h2>
-      <p class="panel-text">Selecione um arquivo ou cole as coordenadas.</p>
-      <div class="input-alert"><span class="alert-icon"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span><span>A decomposição linear introduz desvios próximos ao bordo de ataque. A decomposição geométrica não linear está em desenvolvimento.</span></div>
-      <div class="control-row">
-        <div class="control-group"><label class="control-label" for="file-input-pt">Arquivo de coordenadas</label><input accept=".dat,.txt,.csv,text/plain" id="file-input-pt" type="file"/></div>
-        <div class="control-group"><label class="control-label" for="samples-input-pt">Pontos da superfície</label><input id="samples-input-pt" type="number" min="40" max="999" step="1" value="500"/></div>
-      </div>
-      <div class="control-group"><label class="control-label" for="points-input-pt">Coordenadas</label><textarea id="points-input-pt" spellcheck="false" placeholder="x/c    z/c"></textarea></div>
-      <div class="button-row"><button class="button primary" id="run-btn-pt" type="button">Executar</button><button class="button" id="sample-btn-pt" type="button">Recarregar amostra</button></div>
-    </aside>
+    <div class="primary-grid">
+      <aside class="tool-panel input-panel">
+        <h2>Entrada</h2>
+        <p class="panel-text">Escolha um aerofólio ou cole um contorno ordenado.</p>
+        <div class="control-row">
+          <div class="control-group"><label class="control-label" for="airfoil-preset-input-pt">Aerofólio</label><select id="airfoil-preset-input-pt"><option value="SD7003">SD7003</option><option value="E387">E387</option><option value="S809">S809</option><option value="CLARK_Y">Clark Y</option><option value="RAE2822">RAE 2822</option><option value="NASA_SC20714">NASA SC(2)-0714</option><option value="S1223" selected>Selig S1223</option><option value="FX63137">Wortmann FX 63-137</option></select></div>
+          <div class="control-group"><label class="control-label" for="samples-input-pt">Estações de cambagem</label><input id="samples-input-pt" type="number" min="30" max="80" step="1" value="60"/></div>
+          <div class="control-group"><label class="control-label" for="eta-order-input-pt">Ordem de cambagem n<sub>η</sub></label><input id="eta-order-input-pt" type="number" min="1" max="20" step="1" value="6"/></div>
+          <div class="control-group"><label class="control-label" for="beta-order-input-pt">Ordem de espessura n<sub>β</sub></label><input id="beta-order-input-pt" type="number" min="1" max="12" step="1" value="4"/></div>
+        </div>
+        <div class="algorithm-options"><label class="toggle-pill"><input id="zero-te-thickness-input-pt" type="checkbox" checked/> Espessura nula no BF</label></div>
+        <div class="control-group"><label class="control-label" for="points-input-pt">Coordenadas</label><textarea id="points-input-pt" spellcheck="false" placeholder="x/c    z/c"></textarea></div>
+        <div class="button-row"><button class="button primary" id="run-btn-pt" type="button">Executar</button><button class="button" id="sample-btn-pt" type="button">Recarregar selecionado</button></div>
+        <div class="progress-wrap" id="run-progress-pt" hidden aria-hidden="true" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="run-progress-fill-pt"></div></div>
+      </aside>
+
+      <section class="tool-panel visual-panel airfoil-surface-panel">
+        <div class="visual-header"><div><h2>Superfície do aerofólio</h2></div></div>
+        <div class="plot-frame" aria-label="Gráfico da superfície do aerofólio"><svg class="analysis-svg" id="plot-geom-pt" role="img" aria-label="Pontos discretos do aerofólio e superfície spline cúbica"></svg></div>
+        <div class="layer-toggles" aria-label="Camadas da geometria">
+          <label class="toggle-pill"><input id="toggle-points-pt" type="checkbox" checked/> Pontos discretos <span class="legend-dot"></span></label>
+          <label class="toggle-pill"><input id="toggle-surface-pt" type="checkbox" checked/> Superfície spline cúbica <span class="legend-line surface-fit"></span></label>
+        </div>
+      </section>
+    </div>
 
     <section class="tool-panel visual-panel">
-      <div class="visual-header"><div><h2>Visualização geométrica</h2></div></div>
-      <div class="plot-frame" aria-label="Gráfico de geometria"><svg class="analysis-svg" id="plot-geom-pt" role="img" aria-label="Gráfico da decomposição geométrica" viewBox="0 0 1000 340"></svg></div>
-      <div class="layer-toggles" aria-label="Camadas da geometria">
-        <label class="toggle-pill"><input id="toggle-points-pt" type="checkbox" checked/> Pontos discretos <span class="legend-dot"></span></label>
-        <label class="toggle-pill"><input id="toggle-surface-pt" type="checkbox" checked/> Superfície ajustada <span class="legend-line surface-fit"></span></label>
-        <label class="toggle-pill"><input id="toggle-camber-pt" type="checkbox" checked/> Linha de cambagem <span class="legend-line camber"></span></label>
+      <div class="visual-header"><div><h2>Análise de espessura</h2></div></div>
+      <div class="comparison-key"><span><i class="key-line linear"></i>Linear</span><span><i class="key-line"></i>Não linear</span></div>
+      <div class="analysis-stack">
+        <article class="decomp-plot-card"><h3>Espessura, <span class="symbol">z<sub>t</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-thickness-pt" role="img" aria-label="Comparação de espessura linear vertical e não linear normal"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de ataque, <span class="symbol">z<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-le-pt" role="img" aria-label="Detalhe da espessura no bordo de ataque"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de fuga, <span class="symbol">z<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-te-pt" role="img" aria-label="Detalhe da espessura no bordo de fuga"></svg></div></article>
+        </div>
+        <article class="decomp-plot-card"><h3>Inclinação da espessura, <span class="symbol">z′<sub>t</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-thickness-derivative-pt" role="img" aria-label="Comparação das inclinações de espessura linear e não linear"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de ataque, <span class="symbol">z′<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-derivative-le-pt" role="img" aria-label="Detalhe da inclinação da espessura no bordo de ataque"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de fuga, <span class="symbol">z′<sub>t</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-thickness-derivative-te-pt" role="img" aria-label="Detalhe da inclinação da espessura no bordo de fuga"></svg></div></article>
+        </div>
       </div>
     </section>
 
-    <section class="tool-panel visual-panel summary-panel">
+    <section class="tool-panel visual-panel">
+      <div class="visual-header"><div><h2>Análise de cambagem</h2></div></div>
+      <div class="comparison-key"><span><i class="key-line linear"></i>Linear</span><span><i class="key-line"></i>Não linear</span></div>
+      <div class="analysis-stack">
+        <article class="decomp-plot-card"><h3>Linha de cambagem, <span class="symbol">z<sub>c</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-camber-pt" role="img" aria-label="Comparação de cambagem linear e não linear"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de ataque, <span class="symbol">z<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-le-pt" role="img" aria-label="Detalhe da cambagem no bordo de ataque"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de fuga, <span class="symbol">z<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-te-pt" role="img" aria-label="Detalhe da cambagem no bordo de fuga"></svg></div></article>
+        </div>
+        <article class="decomp-plot-card"><h3>Inclinação da linha de cambagem, <span class="symbol">z′<sub>c</sub></span></h3><div class="mini-plot-frame"><svg class="analysis-svg" id="plot-camber-derivative-pt" role="img" aria-label="Comparação das inclinações de cambagem linear e não linear"></svg></div></article>
+        <div class="detail-plots">
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de ataque, <span class="symbol">z′<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-derivative-le-pt" role="img" aria-label="Detalhe da inclinação da cambagem no bordo de ataque"></svg></div></article>
+          <article class="decomp-plot-card"><h3>Detalhe do bordo de fuga, <span class="symbol">z′<sub>c</sub></span></h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-camber-derivative-te-pt" role="img" aria-label="Detalhe da inclinação da cambagem no bordo de fuga"></svg></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-panel visual-panel">
       <div class="visual-header"><div><h2>Resumo</h2></div></div>
+      <div class="analysis-stack">
+        <div class="coefficient-grid">
+          <article class="decomp-plot-card"><h3>Grandezas geométricas</h3><div id="geometric-quantities-pt"></div></article>
+          <article class="decomp-plot-card"><h3>Grandezas aerodinâmicas</h3><div id="aero-quantities-pt"></div></article>
+        </div>
+        <div class="coefficient-grid">
+          <article class="decomp-plot-card"><h3>Coeficientes de cambagem, <span class="symbol">η<sub>n</sub></span></h3><div id="eta-coefficients-pt"></div></article>
+          <article class="decomp-plot-card"><h3>Coeficientes de espessura, <span class="symbol">β<sub>n</sub></span></h3><div id="beta-coefficients-pt"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-panel visual-panel summary-panel reconstruction-panel">
+      <div class="visual-header"><div><h2>Reconstrução não linear</h2><p class="visual-caption">Reconstrução da superfície a partir das coordenadas discretas, cambagem não linear e semi-espessura normal.</p></div></div>
       <div class="results-list" id="summary-cards-pt"></div>
-      <div class="button-row summary-actions"><button class="button download" id="download-data-btn-pt" type="button">Baixar dados gerados</button></div>
-    </section>
-
-    <section class="tool-panel visual-panel">
-      <div class="visual-header"><div><h2>Cambagem, <span class="symbol">z<sub>c</sub></span></h2></div></div>
-      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-camber-pt" role="img" aria-label="Gráfico da linha de cambagem" viewBox="0 0 1000 420"></svg></div>
-    </section>
-
-    <section class="tool-panel visual-panel">
-      <div class="visual-header"><div><h2>Espessura, <span class="symbol">z<sub>t</sub></span></h2></div></div>
-      <div class="mini-plot-frame full-plot"><svg class="analysis-svg" id="plot-thickness-pt" role="img" aria-label="Gráfico da distribuição de espessura" viewBox="0 0 1000 420"></svg></div>
+      <div class="plot-frame" aria-label="Gráfico da reconstrução não linear do aerofólio"><svg class="analysis-svg" id="plot-reconstruction-pt" role="img" aria-label="Pontos da superfície, cambagem não linear e superfície reconstruída do aerofólio"></svg></div>
+      <div class="detail-plots">
+        <article class="decomp-plot-card"><h3>Detalhe do bordo de ataque</h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-reconstruction-le-pt" role="img" aria-label="Detalhe da reconstrução não linear no bordo de ataque"></svg></div></article>
+        <article class="decomp-plot-card"><h3>Detalhe do bordo de fuga</h3><div class="mini-plot-frame detail-plot-frame"><svg class="analysis-svg" id="plot-reconstruction-te-pt" role="img" aria-label="Detalhe da reconstrução não linear no bordo de fuga"></svg></div></article>
+      </div>
+      <div class="layer-toggles" aria-label="Camadas da reconstrução">
+        <label class="toggle-pill"><input id="toggle-reconstruction-points-pt" type="checkbox" checked/> Pontos da superfície <span class="legend-dot"></span></label>
+        <label class="toggle-pill"><input id="toggle-reconstruction-camber-pt" type="checkbox" checked/> Cambagem não linear <span class="key-line camber-only"></span></label>
+        <label class="toggle-pill"><input id="toggle-reconstruction-surface-pt" type="checkbox" checked/> Superfície reconstruída <span class="key-line reconstructed"></span></label>
+      </div>
+      <div class="summary-actions reconstruction-actions"><button class="button download" id="download-data-btn-pt" type="button">Baixar dados gerados</button></div>
     </section>
 
   </section>
   <a class="back-link" href="../tools.html">← Voltar para Ferramentas</a>
 </div>
 </main>
+<div class="geom-scroll-nav" id="geomScrollNav" aria-label="Scroll navigation">
+  <button class="geom-scroll-btn" id="geomBackToTopBtn" type="button" aria-label="Go to top" title="Go to top">↑</button>
+  <button class="geom-scroll-btn" id="geomScrollToBottomBtn" type="button" aria-label="Go to bottom" title="Go to bottom">↓</button>
+</div>
 <!-- UNSAERO_FOOTER_START -->
 <div id="unsaero-footer"></div>
 <!-- UNSAERO_FOOTER_END -->
@@ -230,569 +347,647 @@ function setLang(lang){
 document.addEventListener('DOMContentLoaded',()=>{const saved=localStorage.getItem('unsaero-lang'); setLang(['pt','en'].includes(saved)?saved:'en');});
 </script>
 <script>
-const SD7003_SAMPLE_DATA = `# SD7003 sample set
+function initializeGeometricScrollNavigation(){
+  const nav=document.getElementById('geomScrollNav');
+  const up=document.getElementById('geomBackToTopBtn');
+  const down=document.getElementById('geomScrollToBottomBtn');
+  if(!nav||!up||!down) return;
+  const threshold=140;
+  const documentHeight=()=>Math.max(document.documentElement.scrollHeight,document.body?.scrollHeight||0,document.documentElement.offsetHeight,document.body?.offsetHeight||0);
+  const update=()=>{
+    const y=window.scrollY||document.documentElement.scrollTop||0;
+    const height=documentHeight();
+    const viewport=window.innerHeight||document.documentElement.clientHeight||0;
+    if(height<=viewport+2){up.classList.remove('show');down.classList.remove('show');return;}
+    const atTop=y<=threshold;
+    const atBottom=y>=height-viewport-threshold;
+    nav.classList.toggle('at-bottom',atBottom);
+    up.classList.toggle('show',!atTop);
+    down.classList.toggle('show',!atBottom);
+  };
+  up.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  down.addEventListener('click',()=>window.scrollTo({top:documentHeight(),behavior:'smooth'}));
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update);
+  update();
+  setTimeout(update,250);
+}
+document.addEventListener('DOMContentLoaded',initializeGeometricScrollNavigation);
+</script>
+<script>
+const SD7003_SAMPLE_DATA = `# SD7003 preset
+# Source: UIUC/Selig coordinate database entry sd7003.dat; AirfoilTools mirror sd7003-il
 SD7003-085-88
-  1.00000  0.0
-  0.99681  0.00031
-  0.98745  0.00132
-  0.97235  0.00310
-  0.95193  0.00547
-  0.92639  0.00824
-  0.89600  0.01139
-  0.86112  0.01494
-  0.82224  0.01884
-  0.77985  0.02304
-  0.73449  0.02744
-  0.68673  0.03197
-  0.63717  0.03649
-  0.58641  0.04086
-  0.53499  0.04494
-  0.48350  0.04859
-  0.43249  0.05171
-  0.38250  0.05415
-  0.33405  0.05581
-  0.28760  0.05658
-  0.24358  0.05639
-  0.20240  0.05518
-  0.16442  0.05292
-  0.12993  0.04961
-  0.09921  0.04526
-  0.07244  0.03993
-  0.04978  0.03372
-  0.03130  0.02677
-  0.01702  0.01932
-  0.00697  0.01172
-  0.00127  0.00438
-  0.00025 -0.00186
-  0.00457 -0.00741
-  0.01408 -0.01285
-  0.02839 -0.01759
-  0.04763 -0.02141
-  0.07182 -0.02438
-  0.10073 -0.02660
-  0.13407 -0.02809
-  0.17150 -0.02888
-  0.21268 -0.02900
-  0.25719 -0.02852
-  0.30456 -0.02752
-  0.35426 -0.02608
-  0.40572 -0.02428
-  0.45837 -0.02217
-  0.51161 -0.01980
-  0.56484 -0.01723
-  0.61748 -0.01450
-  0.66898 -0.01167
-  0.71883 -0.00887
-  0.76644 -0.00628
-  0.81118 -0.00403
-  0.85241 -0.00220
-  0.88957 -0.00082
-  0.92210  0.00008
-  0.94952  0.00052
-  0.97134  0.00057
-  0.98718  0.00037
-  0.99679  0.00011
-  1.00001 -0.00000`;
-
-function preloadSD7003(){
-  ['points-input','points-input-pt'].forEach((id)=>{
-    const el=document.getElementById(id);
-    if(el && !el.value.trim()) el.value=SD7003_SAMPLE_DATA;
-  });
-}
-function parseCoordinateText(text, forceClosure) {
-  const lines = text.split(/\r?\n/);
-  const points = [];
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line || line.startsWith('#')) continue;
-    const tokens = line.split(/[\s,;]+/).filter(Boolean);
-    if (tokens.length < 2) continue;
-    const x = Number(tokens[0]), y = Number(tokens[1]);
-    if (Number.isFinite(x) && Number.isFinite(y)) points.push({x, y});
-  }
-  if (points.length < 3) throw new Error('At least three valid points are required.');
-  if (forceClosure) {
-    const a = points[0], b = points[points.length - 1];
-    if (Math.hypot(a.x - b.x, a.y - b.y) > 1e-12) points.push({x: a.x, y: a.y});
-  }
-  return points;
-}
-
-function cumulativeS(points) {
-  const s = [0];
-  for (let i = 1; i < points.length; i++) s.push(s[i-1] + Math.hypot(points[i].x-points[i-1].x, points[i].y-points[i-1].y));
-  return s;
-}
-
-function normalizeChord(points) {
-  let xmin = Infinity, xmax = -Infinity;
-  for (const p of points) { xmin = Math.min(xmin, p.x); xmax = Math.max(xmax, p.x); }
-  const chord = xmax - xmin;
-  if (!(chord > 0)) throw new Error('Chord length is zero.');
-  return points.map(p => ({ x: (p.x - xmin) / chord, y: p.y / chord }));
-}
-
-function compressSurface(points, ascending=true) {
-  const tol = 1e-10;
-  const arr = points.slice().sort((a,b) => ascending ? a.x - b.x : b.x - a.x);
-  const out = [];
-  for (const p of arr) {
-    if (!out.length || Math.abs(p.x - out[out.length-1].x) > tol) out.push({x:p.x, y:p.y, count:1});
-    else {
-      const q = out[out.length-1];
-      q.y = (q.y * q.count + p.y) / (q.count + 1);
-      q.count += 1;
-    }
-  }
-  return out.map(({x,y}) => ({x,y}));
-}
-
-function splitSurfaces(points) {
-  let leIndex = 0;
-  for (let i = 1; i < points.length; i++) if (points[i].x < points[leIndex].x) leIndex = i;
-  const upperRaw = points.slice(0, leIndex + 1).reverse();
-  const lowerRaw = points.slice(leIndex);
-  if (upperRaw.length < 2 || lowerRaw.length < 2) throw new Error('Could not split the contour into upper and lower surfaces.');
-  const upper = compressSurface(upperRaw, true);
-  const lower = compressSurface(lowerRaw, true);
-  if (upper.length < 2 || lower.length < 2) throw new Error('Insufficient unique surface points after preprocessing.');
-  return { upper, lower, leIndex };
-}
-
-// Shape-preserving PCHIP-like Hermite slopes (Fritsch-Carlson/Fritsch-Butland style).
-function computePchipDerivatives(x, y) {
-  const n = x.length;
-  if (n === 2) {
-    const slope = (y[1]-y[0])/(x[1]-x[0]);
-    return [slope, slope];
-  }
-  const h = new Array(n-1), delta = new Array(n-1), d = new Array(n).fill(0);
-  for (let i=0;i<n-1;i++) { h[i]=x[i+1]-x[i]; delta[i]=(y[i+1]-y[i])/h[i]; }
-  for (let i=1;i<n-1;i++) {
-    if (delta[i-1] === 0 || delta[i] === 0 || Math.sign(delta[i-1]) !== Math.sign(delta[i])) d[i] = 0;
-    else {
-      const w1 = 2*h[i] + h[i-1], w2 = h[i] + 2*h[i-1];
-      d[i] = (w1+w2)/(w1/delta[i-1] + w2/delta[i]);
-    }
-  }
-  function endpoint(h0,h1,d0,d1) {
-    let v = ((2*h0 + h1)*d0 - h0*d1)/(h0 + h1);
-    if (Math.sign(v) !== Math.sign(d0)) return 0;
-    if (Math.sign(d0) !== Math.sign(d1) && Math.abs(v) > Math.abs(3*d0)) return 3*d0;
-    return v;
-  }
-  d[0] = endpoint(h[0], h[1], delta[0], delta[1]);
-  d[n-1] = endpoint(h[n-2], h[n-3], delta[n-2], delta[n-3]);
-  return d;
-}
-
-function computeNaturalCubicSecondDerivatives(x, y) {
-  const n = x.length;
-  const m = new Array(n).fill(0);
-  if (n <= 2) return m;
-  const a = new Array(n).fill(0), b = new Array(n).fill(0), c = new Array(n).fill(0), r = new Array(n).fill(0);
-  for (let i=1;i<n-1;i++) {
-    const h0 = x[i]-x[i-1], h1 = x[i+1]-x[i];
-    a[i]=h0; b[i]=2*(h0+h1); c[i]=h1; r[i]=6*((y[i+1]-y[i])/h1 - (y[i]-y[i-1])/h0);
-  }
-  for (let i=1;i<n-2;i++) {
-    const factor = a[i+1]/b[i];
-    b[i+1] -= factor*c[i];
-    r[i+1] -= factor*r[i];
-  }
-  for (let i=n-2;i>=1;i--) m[i] = (r[i] - c[i]*m[i+1])/b[i];
-  return m;
-}
-
-function evalInterpolator(mode, x, y, query) {
-  const n = x.length;
-  const aux = mode === 'pchip' ? computePchipDerivatives(x,y) : mode === 'cubic' ? computeNaturalCubicSecondDerivatives(x,y) : null;
-  const out = [];
-  let seg = 0;
-  for (const xv of query) {
-    while (seg < n - 2 && xv > x[seg+1]) seg++;
-    const x0 = x[seg], x1 = x[seg+1], h = x1 - x0;
-    const u = h === 0 ? 0 : (xv - x0)/h;
-    let val;
-    if (mode === 'linear') val = y[seg]*(1-u) + y[seg+1]*u;
-    else if (mode === 'pchip') {
-      const d0 = aux[seg], d1 = aux[seg+1];
-      const h00 = 2*u*u*u - 3*u*u + 1, h10 = u*u*u - 2*u*u + u, h01 = -2*u*u*u + 3*u*u, h11 = u*u*u - u*u;
-      val = h00*y[seg] + h10*h*d0 + h01*y[seg+1] + h11*h*d1;
-    } else {
-      const m0 = aux[seg], m1 = aux[seg+1];
-      const a = (x1 - xv)/h, b = (xv - x0)/h;
-      val = a*y[seg] + b*y[seg+1] + ((a*a*a - a)*m0 + (b*b*b - b)*m1)*h*h/6;
-    }
-    out.push(val);
-  }
-  return out;
-}
-
-function createGrid(n, x0, x1) {
-  const out = [];
-  for (let i=0;i<n;i++) out.push(x0 + (x1 - x0) * i / (n - 1));
-  return out;
-}
-
-function formatNumber(v) { return Number(v).toFixed(6); }
-
-function estimateLeadingEdgeRadius(surfaces) {
-  const pts = surfaces.upper.concat(surfaces.lower).sort((a,b) => a.x - b.x);
-  if (pts.length < 5) return NaN;
-  const near = pts.slice(0, Math.min(11, pts.length));
-  const n = near.length;
-  const sx = near.reduce((a,p)=>a+p.x,0), sy = near.reduce((a,p)=>a+p.y,0);
-  const sxx = near.reduce((a,p)=>a+p.x*p.x,0), sxy = near.reduce((a,p)=>a+p.x*p.y,0);
-  const sxxx = near.reduce((a,p)=>a+p.x*p.x*p.x,0), sxxxx = near.reduce((a,p)=>a+p.x*p.x*p.x*p.x,0);
-  const sxxy = near.reduce((a,p)=>a+p.x*p.x*p.y,0);
-  const A = [[n,sx,sxx],[sx,sxx,sxxx],[sxx,sxxx,sxxxx]];
-  const b = [sy,sxy,sxxy];
-  function det3(m){return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);}
-  const D = det3(A);
-  if (!Number.isFinite(D) || Math.abs(D) < 1e-14) return NaN;
-  const A0 = [[b[0],A[0][1],A[0][2]],[b[1],A[1][1],A[1][2]],[b[2],A[2][1],A[2][2]]];
-  const A1 = [[A[0][0],b[0],A[0][2]],[A[1][0],b[1],A[1][2]],[A[2][0],b[2],A[2][2]]];
-  const A2 = [[A[0][0],A[0][1],b[0]],[A[1][0],A[1][1],b[1]],[A[2][0],A[2][1],b[2]]];
-  const c1 = det3(A1)/D, c2 = det3(A2)/D;
-  const x0 = Math.min(...near.map(p=>p.x));
-  const dy = c1 + 2*c2*x0;
-  const ddy = 2*c2;
-  const kappa = Math.abs(ddy) / Math.pow(1 + dy*dy, 1.5);
-  return kappa > 1e-12 ? 1/kappa : NaN;
-}
-
-function computeSummary(rows, surfaces) {
-  const thickness = rows.map(r => r.thickness);
-  const camberAbs = rows.map(r => Math.abs(r.ycamber));
-  let imaxT = 0, imaxC = 0;
-  for (let i=1;i<rows.length;i++) {
-    if (thickness[i] > thickness[imaxT]) imaxT = i;
-    if (camberAbs[i] > camberAbs[imaxC]) imaxC = i;
-  }
-  return {
-    pointsUpper: surfaces.upper.length,
-    pointsLower: surfaces.lower.length,
-    xmaxThickness: rows[imaxT].x,
-    maxThickness: rows[imaxT].thickness,
-    xmaxCamber: rows[imaxC].x,
-    maxCamber: rows[imaxC].ycamber,
-    leadingEdgeRadius: estimateLeadingEdgeRadius(surfaces),
-    xLE: Math.min(...rows.map(r => r.x)),
-    xTE: Math.max(...rows.map(r => r.x))
-  };
-}
-
-function makeStatCards(summary, lang) {
-  const labels = lang === 'en'
-    ? [
-        ['Upper surface points', summary.pointsUpper],
-        ['Lower surface points', summary.pointsLower],
-        ['Maximum z_t', `${(100*summary.maxThickness).toFixed(2)}% at x/c = ${(100*summary.xmaxThickness).toFixed(1)}%`],
-        ['Maximum |camber|', `${(100*summary.maxCamber).toFixed(2)}% at x/c = ${(100*summary.xmaxCamber).toFixed(1)}%`]
-      ]
-    : [
-        ['Pontos na superfície superior', summary.pointsUpper],
-        ['Pontos na superfície inferior', summary.pointsLower],
-        ['Máximo z_t', `${(100*summary.maxThickness).toFixed(2)}% em x/c = ${(100*summary.xmaxThickness).toFixed(1)}%`],
-        ['Máximo |linha média|', `${(100*summary.maxCamber).toFixed(2)}% em x/c = ${(100*summary.xmaxCamber).toFixed(1)}%`]
-      ];
-  return labels.map(([title, value]) => `<div class="stat-card"><h3>${title}</h3><p>${value}</p></div>`).join('');
-}
-
-function updateTable(rows, tableBody) {
-  tableBody.innerHTML = rows.map((r, i) => `<tr><td>${i+1}</td><td>${formatNumber(r.x)}</td><td>${formatNumber(r.yu)}</td><td>${formatNumber(r.yl)}</td><td>${formatNumber(r.ycamber)}</td><td>${formatNumber(r.thickness)}</td></tr>`).join('');
-}
-
-function setStatus(el, lines) { el.innerHTML = lines.map(line => `<div class="status-line">${line}</div>`).join(''); }
-
-function drawAxesAndSeries(svg, series, options) {
-  const width = Number(svg.viewBox.baseVal.width || 1000), height = Number(svg.viewBox.baseVal.height || 560);
-  const left = options.leftMargin || 108, right = 34, top = 26, bottom = 56;
-  svg.innerHTML = '';
-  const allX = series.flatMap(s => s.data.map(p => p.x));
-  const allY = series.flatMap(s => s.data.map(p => p.y));
-  let xMin = Math.min(...allX), xMax = Math.max(...allX), yMin = Math.min(...allY), yMax = Math.max(...allY);
-  if (xMin === xMax) { xMin -= 1; xMax += 1; }
-  if (yMin === yMax) { yMin -= 1; yMax += 1; }
-  let xRange = xMax-xMin, yRange = yMax-yMin;
-  const padX = 0.03 * xRange;
-  const padY = 0.05 * yRange;
-  xMin -= padX; xMax += padX;
-  if (Number.isFinite(options.yMin) && Number.isFinite(options.yMax) && options.yMax > options.yMin) {
-    yMin = options.yMin;
-    yMax = options.yMax;
-  } else {
-    yMin -= padY;
-    yMax += padY;
-  }
-  if (options.equalScale) {
-    const plotW = width-left-right, plotH = height-top-bottom;
-    const sx = plotW/(xMax-xMin), sy = plotH/(yMax-yMin);
-    const scale = options.preserveFullX ? sx : Math.min(sx, sy);
-    const cx = 0.5*(xMin+xMax), cy = options.yCenter ?? 0.5*(yMin+yMax), halfW = plotW/(2*scale), halfH = plotH/(2*scale);
-    xMin = cx-halfW; xMax = cx+halfW; yMin = cy-halfH; yMax = cy+halfH;
-  }
-  const px = x => left + (x-xMin)/(xMax-xMin)*(width-left-right);
-  const py = y => height-bottom - (y-yMin)/(yMax-yMin)*(height-top-bottom);
-  const NS = 'http://www.w3.org/2000/svg';
-  const make = (name, attrs={}) => { const el = document.createElementNS(NS, name); for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); return el; };
-  svg.appendChild(make('rect', {x:0,y:0,width,height,fill:'#ffffff'}));
-  svg.appendChild(make('rect', {x:left,y:top,width:width-left-right,height:height-top-bottom,fill:'#ffffff',stroke:'#dbe4ee','stroke-width':1}));
-  const gridGroup = make('g', {stroke:'#e2e8f0','stroke-width':1});
-  const ticks = 6;
-  for (let i=0;i<=ticks;i++) {
-    const gx = left + i*(width-left-right)/ticks, gy = top + i*(height-top-bottom)/ticks;
-    gridGroup.appendChild(make('line', {x1:gx,y1:top,x2:gx,y2:height-bottom}));
-    gridGroup.appendChild(make('line', {x1:left,y1:gy,x2:width-right,y2:gy}));
-  }
-  svg.appendChild(gridGroup);
-  const axisGroup = make('g', {stroke:'#64748b','stroke-width':1.1});
-  if (xMin <= 0 && xMax >= 0) axisGroup.appendChild(make('line', {x1:px(0),y1:top,x2:px(0),y2:height-bottom}));
-  if (yMin <= 0 && yMax >= 0) axisGroup.appendChild(make('line', {x1:left,y1:py(0),x2:width-right,y2:py(0)}));
-  svg.appendChild(axisGroup);
-  const labels = make('g', {fill:'#475569','font-size':15,'font-family':'Segoe UI, sans-serif'});
-  for (let i=0;i<=ticks;i++) {
-    const xv = xMin + i*(xMax-xMin)/ticks;
-    const yv = yMin + (ticks-i)*(yMax-yMin)/ticks;
-    const tx = make('text', {x:left + i*(width-left-right)/ticks, y:height-bottom+24, 'text-anchor':'middle'}); tx.textContent = xv.toFixed(4); labels.appendChild(tx);
-    const ty = make('text', {x:left-10, y:top + i*(height-top-bottom)/ticks + 5, 'text-anchor':'end'}); ty.textContent = yv.toFixed(4); labels.appendChild(ty);
-  }
-  const xlab = make('text', {x:(left + width-right)/2, y:height-14, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}); xlab.textContent = options.xlabel || 'x'; labels.appendChild(xlab);
-  const ylab = make('text', {x:24, y:(top+height-bottom)/2, transform:`rotate(-90 24 ${(top+height-bottom)/2})`, 'text-anchor':'middle', fill:'#0f172a', 'font-weight':700}); ylab.textContent = options.ylabel || 'y'; labels.appendChild(ylab);
-  svg.appendChild(labels);
-  for (const s of series) {
-    if (s.type === 'line') {
-      const d = s.data.map((p,i) => `${i===0?'M':'L'} ${px(p.x).toFixed(2)} ${py(p.y).toFixed(2)}`).join(' ');
-      svg.appendChild(make('path', {d, fill:'none', stroke:s.color, 'stroke-width':s.width || 2.3, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
-    } else if (s.type === 'points') {
-      const g = make('g', {fill:s.color, stroke:'#ffffff', 'stroke-width':1.2});
-      s.data.forEach(p => g.appendChild(make('circle', {cx:px(p.x), cy:py(p.y), r:s.radius || 4.2})));
-      svg.appendChild(g);
-    }
-  }
-
-  if (options.inset && options.inset.xMax > options.inset.xMin) {
-    const insetSeries = series.map(s => ({
-      ...s,
-      data: s.data.filter(p => p.x >= options.inset.xMin && p.x <= options.inset.xMax)
-    })).filter(s => s.data.length >= (s.type === 'line' ? 2 : 1));
-
-    if (insetSeries.length) {
-      const iw = 250, ih = 130;
-      const ix = (width - iw) / 2;
-      const iy = height - bottom - ih - 10;
-      let ixMin = options.inset.xMin, ixMax = options.inset.xMax;
-      const insetY = insetSeries.flatMap(s => s.data.map(p => p.y));
-      let iyMin = Math.min(...insetY), iyMax = Math.max(...insetY);
-      if (iyMin === iyMax) { iyMin -= 1e-6; iyMax += 1e-6; }
-      const iDx = ixMax - ixMin, iDy = iyMax - iyMin;
-      ixMin -= 0.04 * iDx; ixMax += 0.04 * iDx; iyMin -= 0.12 * iDy; iyMax += 0.12 * iDy;
-
-      const iPX = x => ix + (x-ixMin)/(ixMax-ixMin)*iw;
-      const iPY = y => iy + ih - (y-iyMin)/(iyMax-iyMin)*ih;
-
-      svg.appendChild(make('rect', {x:ix-8, y:iy-8, width:iw+16, height:ih+16, rx:10, fill:'#ffffff', stroke:'#cbd5e1', 'stroke-width':1.2}));
-      svg.appendChild(make('rect', {x:ix, y:iy, width:iw, height:ih, fill:'#ffffff', stroke:'#dbe4ee', 'stroke-width':1}));
-
-      const insetGrid = make('g', {stroke:'#e2e8f0', 'stroke-width':1});
-      const iTicks = 4;
-      for (let i=0;i<=iTicks;i++) {
-        const gx = ix + i*iw/iTicks, gy = iy + i*ih/iTicks;
-        insetGrid.appendChild(make('line', {x1:gx, y1:iy, x2:gx, y2:iy+ih}));
-        insetGrid.appendChild(make('line', {x1:ix, y1:gy, x2:ix+iw, y2:gy}));
-      }
-      svg.appendChild(insetGrid);
-
-      const insetAxes = make('g', {stroke:'#64748b', 'stroke-width':1.05});
-      if (ixMin <= 0 && ixMax >= 0) insetAxes.appendChild(make('line', {x1:iPX(0), y1:iy, x2:iPX(0), y2:iy+ih}));
-      if (iyMin <= 0 && iyMax >= 0) insetAxes.appendChild(make('line', {x1:ix, y1:iPY(0), x2:ix+iw, y2:iPY(0)}));
-      svg.appendChild(insetAxes);
-
-      for (const s of insetSeries) {
-        if (s.type === 'line') {
-          const d = s.data.map((p,i) => `${i===0?'M':'L'} ${iPX(p.x).toFixed(2)} ${iPY(p.y).toFixed(2)}`).join(' ');
-          svg.appendChild(make('path', {d, fill:'none', stroke:s.color, 'stroke-width':s.width || 2.2, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
-        } else if (s.type === 'points') {
-          const g = make('g', {fill:s.color, stroke:'#ffffff', 'stroke-width':1});
-          s.data.forEach(p => g.appendChild(make('circle', {cx:iPX(p.x), cy:iPY(p.y), r:Math.max(2.5, (s.radius || 4.2) - 1.2)})));
-          svg.appendChild(g);
-        }
-      }
-
-      const insetTitle = make('text', {x:ix+8, y:iy-12, fill:'#0f172a', 'font-size':13, 'font-weight':700, 'font-family':'Segoe UI, sans-serif'});
-      insetTitle.textContent = options.inset.title || 'Leading edge detail';
-      svg.appendChild(insetTitle);
-    }
-  }
-}
-
-function toCsv(rows) {
-  const head = 'x;z_upper;z_lower;z_c;z_t';
-  const body = rows.map(r => [r.x, r.yu, r.yl, r.ycamber, r.thickness].map(v => Number(v).toPrecision(12)).join(';'));
-  return '\ufeffsep=;\n' + [head, ...body].join('\n');
-}
-
-function downloadText(content, filename, mime='text/plain;charset=utf-8') {
-  const blob = new Blob([content], {type:mime});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url; link.download = filename; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
-}
-
-function runExtraction(rawText, opts) {
-  let points = parseCoordinateText(rawText, opts.forceClosure);
-  if (opts.normalizeChord) points = normalizeChord(points);
-  const surfaces = splitSurfaces(points);
-  const xStart = Math.max(surfaces.upper[0].x, surfaces.lower[0].x);
-  const xEnd = Math.min(surfaces.upper[surfaces.upper.length-1].x, surfaces.lower[surfaces.lower.length-1].x);
-  if (!(xEnd > xStart)) throw new Error('Upper and lower surfaces do not overlap on a valid chordwise interval.');
-  const xUpper = surfaces.upper.map(p=>p.x), yUpper = surfaces.upper.map(p=>p.y);
-  const xLower = surfaces.lower.map(p=>p.x), yLower = surfaces.lower.map(p=>p.y);
-  const n = Math.max(40, Math.min(999, Number(opts.samples) || 500));
-  const grid = createGrid(n, xStart, xEnd);
-  const yu = evalInterpolator(opts.mode, xUpper, yUpper, grid);
-  const yl = evalInterpolator(opts.mode, xLower, yLower, grid);
-  const rows = grid.map((x,i) => ({ x, yu: yu[i], yl: yl[i], ycamber: 0.5*(yu[i]+yl[i]), thickness: yu[i]-yl[i] }));
-  const summary = computeSummary(rows, surfaces);
-  return { points, surfaces, rows, summary };
-}
-
-
-function makeSummaryCards(summary, lang, samples) {
-  const labels = lang === 'en'
-    ? [
-        ['MAXIMUM CAMBER', `${(Math.abs(summary.maxCamber)*100).toFixed(2)}% at x/c = ${(summary.xmaxCamber*100).toFixed(1)}%`],
-        ['MAXIMUM THICKNESS', `${(summary.maxThickness*100).toFixed(2)}% at x/c = ${(summary.xmaxThickness*100).toFixed(1)}%`],
-        ['SURFACE POINTS', `${summary.pointsUpper + summary.pointsLower} surface points`]
-      ]
-    : [
-        ['CAMBAGEM MÁXIMA', `${(Math.abs(summary.maxCamber)*100).toFixed(2)}% em x/c = ${(summary.xmaxCamber*100).toFixed(1)}%`],
-        ['ESPESSURA MÁXIMA', `${(summary.maxThickness*100).toFixed(2)}% em x/c = ${(summary.xmaxThickness*100).toFixed(1)}%`],
-        ['PONTOS DA SUPERFÍCIE', `${summary.pointsUpper + summary.pointsLower} pontos de superfície`]
-      ];
-  return labels.map(([label,value]) => `<div class="result-item"><div class="result-label">${label}</div><div class="result-value">${value}</div></div>`).join('');
-}
-
-function drawPlot(svg, series, options={}) {
-  if (!svg) return;
-  drawAxesAndSeries(svg, series, options);
-}
-
-function wireLinearExtraction(ids, lang) {
-  const textarea = document.getElementById(ids.textarea);
-  const fileInput = document.getElementById(ids.file);
-  const runBtn = document.getElementById(ids.runBtn);
-  const sampleBtn = document.getElementById(ids.sampleBtn);
-  const samplesInput = document.getElementById(ids.samples);
-  const svgGeom = document.getElementById(ids.svgGeom);
-  const svgCamber = document.getElementById(ids.svgCamber);
-  const svgThickness = document.getElementById(ids.svgThickness);
-  const summaryCards = document.getElementById(ids.summaryCards);
-  const downloadBtn = document.getElementById(ids.downloadBtn);
-  let latestCsv = '';
-  window.__unsaeroToolRenders = window.__unsaeroToolRenders || {};
-  window.__unsaeroToolRenders[lang] = render;
-  const togglePoints = document.getElementById(ids.togglePoints);
-  const toggleSurface = document.getElementById(ids.toggleSurface);
-  const toggleCamber = document.getElementById(ids.toggleCamber);
-
-  function render() {
-    if (!textarea) return;
-    try {
-      const samples = Math.max(40, Math.min(999, Number(samplesInput?.value) || 500));
-      const result = runExtraction(textarea.value, {mode:'pchip', samples, normalizeChord:true, forceClosure:false});
-      const upperCurve = result.rows.map(r => ({x:r.x, y:r.yu}));
-      const lowerCurve = result.rows.map(r => ({x:r.x, y:r.yl}));
-      const contourCurve = upperCurve.concat(lowerCurve.slice().reverse());
-      const camberCurve = result.rows.map(r => ({x:r.x, y:r.ycamber}));
-      const thickCurve = result.rows.map(r => ({x:r.x, y:r.thickness}));
-      const rawPoints = result.points.map(p => ({x:p.x, y:p.y}));
-
-      const geometrySeries = [];
-      if (!togglePoints || togglePoints.checked) geometrySeries.push({type:'points', data:rawPoints, color:'#334155'});
-      if (!toggleSurface || toggleSurface.checked) geometrySeries.push({type:'line', data:contourCurve, color:'#111827'});
-      if (!toggleCamber || toggleCamber.checked) geometrySeries.push({type:'line', data:camberCurve, color:'#0284c7'});
-
-      drawPlot(svgGeom, geometrySeries.length ? geometrySeries : [{type:'line', data:camberCurve, color:'#0284c7'}],
-        {xlabel:'x/c', ylabel:'z/c', equalScale:true, preserveFullX:true, yCenter:0, yMin:-0.16, yMax:0.16, leftMargin:108});
-
-      drawPlot(svgCamber, [
-        {type:'line', data:camberCurve, color:'#0284c7'}
-      ], {xlabel:'x/c', ylabel:'z_c/c', leftMargin:108, inset:{xMin:0, xMax:0.10, title: lang === 'en' ? 'Leading edge' : 'Bordo de ataque'}});
-
-      drawPlot(svgThickness, [
-        {type:'line', data:thickCurve, color:'#dc2626'}
-      ], {xlabel:'x/c', ylabel:'z_t/c', leftMargin:108, inset:{xMin:0, xMax:0.10, title: lang === 'en' ? 'Leading edge' : 'Bordo de ataque'}});
-
-      latestCsv = toCsv(result.rows);
-      if (summaryCards) summaryCards.innerHTML = makeSummaryCards(result.summary, lang, samples);
-    } catch (error) {
-      if (summaryCards) {
-        const msg = lang === 'en' ? 'Could not process coordinates.' : 'Não foi possível processar as coordenadas.';
-        summaryCards.innerHTML = `<div class="result-item"><div class="result-label">${lang==='en'?'Error':'Erro'}</div><div class="result-value muted">${msg}</div></div>`;
-      }
-      console.error(error);
-    }
-  }
-
-  runBtn?.addEventListener('click', render);
-  samplesInput?.addEventListener('change', render);
-  [togglePoints, toggleSurface, toggleCamber].forEach(el => el?.addEventListener('change', render));
-  downloadBtn?.addEventListener('click', () => {
-    if (!latestCsv) render();
-    if (latestCsv) downloadText(latestCsv, 'unsaero_geometric_decomposition_data.csv', 'text/csv;charset=utf-8');
-  });
-  sampleBtn?.addEventListener('click', () => { if (textarea) textarea.value = SD7003_SAMPLE_DATA; render(); });
-  fileInput?.addEventListener('change', async (event) => {
-    const file = event.target.files && event.target.files[0];
-    if (!file || !textarea) return;
-    textarea.value = await file.text();
-    render();
-  });
-  render();
-}
-
-
-window.__unsaeroToolRenders = window.__unsaeroToolRenders || {};
-function getToolIdsByLang(lang) {
-  const suffix = lang === 'pt' ? '-pt' : '';
-  return {
-    textarea: `points-input${suffix}`,
-    samples: `samples-input${suffix}`,
-    togglePoints: `toggle-points${suffix}`,
-    toggleSurface: `toggle-surface${suffix}`,
-    toggleCamber: `toggle-camber${suffix}`
-  };
-}
-function syncInputValue(fromId, toId) {
-  const from = document.getElementById(fromId);
-  const to = document.getElementById(toId);
-  if (from && to) to.value = from.value;
-}
-function syncChecked(fromId, toId) {
-  const from = document.getElementById(fromId);
-  const to = document.getElementById(toId);
-  if (from && to) to.checked = from.checked;
-}
-window.syncGeometricToolState = function(fromLang, toLang) {
-  const from = getToolIdsByLang(fromLang);
-  const to = getToolIdsByLang(toLang);
-  syncInputValue(from.textarea, to.textarea);
-  syncInputValue(from.samples, to.samples);
-  syncChecked(from.togglePoints, to.togglePoints);
-  syncChecked(from.toggleSurface, to.toggleSurface);
-  syncChecked(from.toggleCamber, to.toggleCamber);
-  window.__unsaeroToolRenders?.[toLang]?.();
+  1.000000  0.000000
+  0.996810  0.000310
+  0.987450  0.001320
+  0.972350  0.003100
+  0.951930  0.005470
+  0.926390  0.008240
+  0.896000  0.011390
+  0.861120  0.014940
+  0.822240  0.018840
+  0.779850  0.023040
+  0.734490  0.027440
+  0.686730  0.031970
+  0.637170  0.036490
+  0.586410  0.040860
+  0.534990  0.044940
+  0.483500  0.048590
+  0.432490  0.051710
+  0.382500  0.054150
+  0.334050  0.055810
+  0.287600  0.056580
+  0.243580  0.056390
+  0.202400  0.055180
+  0.164420  0.052920
+  0.129930  0.049610
+  0.099210  0.045260
+  0.072440  0.039930
+  0.049780  0.033720
+  0.031300  0.026770
+  0.017020  0.019320
+  0.006970  0.011720
+  0.001270  0.004380
+  0.000250 -0.001860
+  0.004570 -0.007410
+  0.014080 -0.012850
+  0.028390 -0.017590
+  0.047630 -0.021410
+  0.071820 -0.024380
+  0.100730 -0.026600
+  0.134070 -0.028090
+  0.171500 -0.028880
+  0.212680 -0.029000
+  0.257190 -0.028520
+  0.304560 -0.027520
+  0.354260 -0.026080
+  0.405720 -0.024280
+  0.458370 -0.022170
+  0.511610 -0.019800
+  0.564840 -0.017230
+  0.617480 -0.014500
+  0.668980 -0.011670
+  0.718830 -0.008870
+  0.766440 -0.006280
+  0.811180 -0.004030
+  0.852410 -0.002200
+  0.889570 -0.000820
+  0.922100  0.000080
+  0.949520  0.000520
+  0.971340  0.000570
+  0.987180  0.000370
+  0.996790  0.000110
+  1.000010  0.000000`;
+const E387_SAMPLE_DATA = `# E387 preset
+# Source: UIUC/Selig coordinate database entry e387.dat; AirfoilTools mirror e387-il
+E387
+  1.000000  0.000000
+  0.996770  0.000430
+  0.987290  0.001800
+  0.971980  0.004230
+  0.951280  0.007630
+  0.925540  0.011840
+  0.895100  0.016790
+  0.860350  0.022420
+  0.821830  0.028660
+  0.780070  0.035400
+  0.735670  0.042490
+  0.689220  0.049750
+  0.641360  0.056960
+  0.592720  0.063900
+  0.543940  0.070200
+  0.495490  0.075460
+  0.447670  0.079360
+  0.400770  0.081730
+  0.355050  0.082470
+  0.310780  0.081560
+  0.268130  0.079080
+  0.227420  0.075290
+  0.189060  0.070370
+  0.153450  0.064480
+  0.120940  0.057750
+  0.091850  0.050330
+  0.066430  0.042380
+  0.044930  0.034080
+  0.027480  0.025620
+  0.014230  0.017260
+  0.005190  0.009310
+  0.000440  0.002340
+  0.000910 -0.002860
+  0.007170 -0.006820
+  0.018900 -0.010170
+  0.035960 -0.012650
+  0.058270 -0.014250
+  0.085690 -0.015000
+  0.118000 -0.015020
+  0.154900 -0.014410
+  0.195990 -0.013290
+  0.240830 -0.011770
+  0.288920 -0.009980
+  0.339680 -0.008040
+  0.392520 -0.006050
+  0.446790 -0.004100
+  0.501820 -0.002280
+  0.556940 -0.000650
+  0.611470  0.000740
+  0.664720  0.001860
+  0.716020  0.002680
+  0.764750  0.003200
+  0.810270  0.003420
+  0.852020  0.003370
+  0.889440  0.003070
+  0.922050  0.002580
+  0.949420  0.001960
+  0.971180  0.001320
+  0.987050  0.000710
+  0.996740  0.000210
+  1.000000  0.000000`;
+const S809_SAMPLE_DATA = `# S809 preset
+# Source: AirfoilTools entry s809-nr, NREL's S809 Airfoil
+NREL's S809 Airfoil
+  1.000000  0.000000
+  0.996203  0.000487
+  0.985190  0.002373
+  0.967844  0.005960
+  0.945073  0.011024
+  0.917488  0.017033
+  0.885293  0.023458
+  0.848455  0.030280
+  0.807470  0.037766
+  0.763042  0.045974
+  0.715952  0.054872
+  0.667064  0.064353
+  0.617331  0.074214
+  0.567830  0.084095
+  0.519832  0.093268
+  0.474243  0.099392
+  0.428461  0.101760
+  0.382612  0.101840
+  0.337260  0.100070
+  0.292970  0.096703
+  0.250247  0.091908
+  0.209576  0.085851
+  0.171409  0.078687
+  0.136174  0.070580
+  0.104263  0.061697
+  0.076035  0.052224
+  0.051823  0.042352
+  0.031910  0.032299
+  0.016590  0.022290
+  0.006026  0.012615
+  0.000658  0.003723
+  0.000204  0.001942
+  0.000000 -0.000020
+  0.000213 -0.001794
+  0.001045 -0.003477
+  0.001208 -0.003724
+  0.002398 -0.005266
+  0.009313 -0.011499
+  0.023230 -0.020399
+  0.042320 -0.030269
+  0.065877 -0.040821
+  0.093426 -0.051923
+  0.124111 -0.063082
+  0.157653 -0.073730
+  0.193738 -0.083567
+  0.231914 -0.092442
+  0.271438 -0.099905
+  0.311968 -0.105281
+  0.353370 -0.108181
+  0.395329 -0.108011
+  0.438273 -0.104552
+  0.481920 -0.097347
+  0.527928 -0.086571
+  0.576211 -0.073979
+  0.626092 -0.060644
+  0.676744 -0.047441
+  0.727211 -0.035100
+  0.776432 -0.024204
+  0.823285 -0.015163
+  0.866630 -0.008204
+  0.905365 -0.003363
+  0.938474 -0.000487
+  0.965086  0.000743
+  0.984478  0.000775
+  0.996141  0.000290
+  1.000000  0.000000`;
+const CLARK_Y_SAMPLE_DATA = `# Clark Y preset
+# Source: UIUC/Selig coordinate database, compact embedded set from clarky.dat
+Clark Y
+  1.000000  0.000599
+  0.990000  0.002969
+  0.980000  0.005334
+  0.960000  0.010023
+  0.940000  0.014624
+  0.920000  0.019116
+  0.900000  0.023503
+  0.880000  0.027789
+  0.860000  0.031974
+  0.840000  0.036054
+  0.820000  0.040025
+  0.800000  0.043884
+  0.760000  0.051257
+  0.720000  0.058160
+  0.680000  0.064584
+  0.640000  0.070482
+  0.600000  0.075763
+  0.560000  0.080348
+  0.520000  0.084215
+  0.480000  0.087357
+  0.440000  0.089718
+  0.400000  0.091171
+  0.360000  0.091627
+  0.320000  0.091186
+  0.280000  0.090002
+  0.240000  0.087831
+  0.200000  0.083920
+  0.160000  0.077571
+  0.120000  0.068620
+  0.080000  0.056431
+  0.040000  0.039128
+  0.020000  0.025374
+  0.008000  0.013735
+  0.004000  0.008924
+  0.002000  0.005803
+  0.001000  0.003727
+  0.000500  0.002339
+  0.000000  0.000000
+  0.000500 -0.004670
+  0.001000 -0.005942
+  0.002000 -0.007811
+  0.004000 -0.010513
+  0.008000 -0.014286
+  0.020000 -0.020272
+  0.040000 -0.024521
+  0.080000 -0.028460
+  0.120000 -0.029963
+  0.160000 -0.030255
+  0.200000 -0.029666
+  0.240000 -0.028518
+  0.280000 -0.027070
+  0.320000 -0.025557
+  0.360000 -0.024087
+  0.400000 -0.022634
+  0.440000 -0.021171
+  0.480000 -0.019699
+  0.520000 -0.018226
+  0.560000 -0.016757
+  0.600000 -0.015289
+  0.640000 -0.013821
+  0.680000 -0.012352
+  0.720000 -0.010882
+  0.760000 -0.009413
+  0.800000 -0.007944
+  0.840000 -0.006475
+  0.880000 -0.005006
+  0.920000 -0.003537
+  0.960000 -0.002068
+  0.980000 -0.001334
+  0.990000 -0.000967
+  1.000000 -0.000599`;
+const RAE2822_SAMPLE_DATA = `# RAE 2822 preset
+# Source: UIUC/Selig coordinate database, compact embedded set from rae2822.dat
+RAE 2822
+  1.000000  0.000000
+  0.997592  0.000510
+  0.990393  0.002001
+  0.978470  0.004401
+  0.961940  0.007622
+  0.940961  0.011562
+  0.915735  0.016113
+  0.886505  0.021153
+  0.853553  0.026554
+  0.817197  0.032176
+  0.777785  0.037847
+  0.735698  0.043377
+  0.691342  0.048575
+  0.645142  0.053258
+  0.597545  0.057218
+  0.549009  0.060194
+  0.500000  0.062029
+  0.450991  0.062774
+  0.402455  0.062562
+  0.354858  0.061497
+  0.308658  0.059629
+  0.264302  0.057026
+  0.222215  0.053753
+  0.182803  0.049874
+  0.146447  0.045457
+  0.113495  0.040585
+  0.084265  0.035360
+  0.059039  0.029874
+  0.038060  0.024219
+  0.021530  0.018441
+  0.009607  0.012480
+  0.002408  0.006306
+  0.000602  0.003165
+  0.000000  0.000000
+  0.000602 -0.003160
+  0.002408 -0.006308
+  0.009607 -0.012559
+  0.021530 -0.018707
+  0.038060 -0.024685
+  0.059039 -0.030416
+  0.084265 -0.035843
+  0.113495 -0.040929
+  0.146447 -0.045610
+  0.182803 -0.049805
+  0.222215 -0.053427
+  0.264302 -0.056376
+  0.308658 -0.058459
+  0.354858 -0.059236
+  0.402455 -0.058224
+  0.450991 -0.055257
+  0.500000 -0.050563
+  0.549009 -0.044642
+  0.597545 -0.038043
+  0.645142 -0.031207
+  0.691342 -0.024495
+  0.735698 -0.018232
+  0.777785 -0.012690
+  0.817197 -0.008027
+  0.853553 -0.004314
+  0.886505 -0.001592
+  0.901604 -0.000600
+  0.915735  0.000157
+  0.928864  0.000694
+  0.951995  0.001197
+  0.978470  0.000935
+  0.994588  0.000296
+  1.000000  0.000000`;
+const NASA_SC20714_SAMPLE_DATA = `# NASA SC(2)-0714 preset
+# Source: UIUC/Selig coordinate database, compact embedded set from sc20714.dat
+NASA SC(2)-0714
+  1.000000 -0.009500
+  0.990000 -0.006300
+  0.980000 -0.003200
+  0.970000 -0.000200
+  0.960000  0.002700
+  0.950000  0.005600
+  0.940000  0.008400
+  0.920000  0.013700
+  0.900000  0.018700
+  0.880000  0.023400
+  0.860000  0.027800
+  0.840000  0.031900
+  0.820000  0.035800
+  0.800000  0.039400
+  0.760000  0.045800
+  0.720000  0.051300
+  0.680000  0.055900
+  0.640000  0.059700
+  0.600000  0.062800
+  0.560000  0.065300
+  0.520000  0.067200
+  0.480000  0.068600
+  0.440000  0.069500
+  0.400000  0.069900
+  0.360000  0.069800
+  0.320000  0.069200
+  0.280000  0.067900
+  0.240000  0.066000
+  0.200000  0.063300
+  0.160000  0.059700
+  0.120000  0.054900
+  0.080000  0.048400
+  0.040000  0.038300
+  0.020000  0.029600
+  0.010000  0.022400
+  0.005000  0.016580
+  0.002000  0.010770
+  0.000000  0.000000
+  0.002000 -0.010770
+  0.005000 -0.016580
+  0.010000 -0.022400
+  0.020000 -0.029600
+  0.040000 -0.038200
+  0.080000 -0.048300
+  0.120000 -0.054900
+  0.160000 -0.059700
+  0.200000 -0.063300
+  0.240000 -0.066100
+  0.280000 -0.068100
+  0.320000 -0.069300
+  0.360000 -0.069700
+  0.400000 -0.069300
+  0.440000 -0.068100
+  0.480000 -0.066100
+  0.520000 -0.062700
+  0.560000 -0.057700
+  0.600000 -0.051100
+  0.640000 -0.043300
+  0.680000 -0.034800
+  0.720000 -0.026000
+  0.760000 -0.017300
+  0.800000 -0.009500
+  0.840000 -0.003800
+  0.880000 -0.001000
+  0.900000 -0.000900
+  0.920000 -0.001700
+  0.940000 -0.003600
+  0.960000 -0.006700
+  0.980000 -0.011000
+  1.000000 -0.016500`;
+const S1223_SAMPLE_DATA = `# Selig S1223 preset
+# Source: UIUC/Selig coordinate database entry s1223.dat
+Selig S1223
+  1.000000  0.000000
+  0.998380  0.001260
+  0.994170  0.004940
+  0.988250  0.010370
+  0.980750  0.016460
+  0.971110  0.022500
+  0.958840  0.028530
+  0.943890  0.034760
+  0.926390  0.041160
+  0.906410  0.047680
+  0.884060  0.054270
+  0.859470  0.060890
+  0.832770  0.067490
+  0.804120  0.074020
+  0.773690  0.080440
+  0.741660  0.086710
+  0.708230  0.092770
+  0.673600  0.098590
+  0.637980  0.104120
+  0.601580  0.109350
+  0.564650  0.114250
+  0.527440  0.118810
+  0.490250  0.123030
+  0.453400  0.126830
+  0.417210  0.130110
+  0.381930  0.132710
+  0.347770  0.134470
+  0.314880  0.135260
+  0.283470  0.135050
+  0.253700  0.133460
+  0.225410  0.130370
+  0.198460  0.125940
+  0.172860  0.120260
+  0.148630  0.113550
+  0.125910  0.105980
+  0.104820  0.097700
+  0.085450  0.088790
+  0.067890  0.079400
+  0.052230  0.069650
+  0.038550  0.059680
+  0.026940  0.049660
+  0.017550  0.039610
+  0.010280  0.029540
+  0.004950  0.019690
+  0.001550  0.010330
+  0.000050  0.001780
+  0.000440 -0.005610
+  0.002640 -0.011200
+  0.007890 -0.014270
+  0.017180 -0.015500
+  0.030060 -0.015840
+  0.046270 -0.015320
+  0.065610 -0.014040
+  0.087870 -0.012020
+  0.112820 -0.009250
+  0.140200 -0.005630
+  0.170060 -0.000750
+  0.202780  0.005350
+  0.238400  0.012130
+  0.276730  0.019280
+  0.317500  0.026520
+  0.360440  0.033580
+  0.405190  0.040210
+  0.451390  0.046180
+  0.498600  0.051290
+  0.546390  0.055340
+  0.594280  0.058200
+  0.641760  0.059760
+  0.688320  0.059940
+  0.733440  0.058720
+  0.776600  0.056120
+  0.817290  0.052190
+  0.855000  0.047060
+  0.889280  0.040880
+  0.919660  0.033870
+  0.945730  0.026240
+  0.966930  0.018220
+  0.982550  0.010600
+  0.992680  0.004680
+  0.998250  0.001150
+  1.000000  0.000000`;
+const FX63137_SAMPLE_DATA = `# Wortmann FX 63-137 preset
+# Source: UIUC/Selig coordinate database, compact embedded set from fx63137.dat
+Wortmann FX 63-137
+  1.000000  0.000000
+  0.998930  0.000820
+  0.995720  0.002490
+  0.990390  0.005010
+  0.982960  0.008180
+  0.973470  0.011890
+  0.961940  0.016010
+  0.948440  0.020430
+  0.933010  0.025160
+  0.915730  0.030180
+  0.896680  0.035530
+  0.875920  0.041140
+  0.853550  0.047110
+  0.829670  0.053230
+  0.804380  0.059620
+  0.777790  0.066050
+  0.750000  0.072730
+  0.721140  0.079270
+  0.691340  0.085900
+  0.660720  0.092040
+  0.629410  0.098040
+  0.597550  0.103310
+  0.565260  0.108230
+  0.532700  0.112210
+  0.500000  0.115780
+  0.467300  0.118330
+  0.434740  0.120420
+  0.402450  0.121370
+  0.370590  0.121910
+  0.339280  0.121280
+  0.308660  0.120240
+  0.278860  0.117920
+  0.250000  0.115220
+  0.222210  0.111220
+  0.195620  0.107040
+  0.170330  0.101650
+  0.146450  0.096220
+  0.124080  0.089610
+  0.103320  0.083130
+  0.084270  0.075550
+  0.066990  0.068360
+  0.051560  0.060050
+  0.038060  0.052480
+  0.026530  0.044800
+  0.017040  0.036250
+  0.009610  0.027400
+  0.004280  0.017500
+  0.001070  0.009000
+  0.000000  0.000000
+  0.001070 -0.002320
+  0.004280 -0.005660
+  0.009610 -0.009950
+  0.017040 -0.012540
+  0.026530 -0.015370
+  0.038060 -0.016980
+  0.051560 -0.018870
+  0.066990 -0.019920
+  0.084270 -0.021220
+  0.103320 -0.021800
+  0.124080 -0.022560
+  0.146450 -0.022630
+  0.170330 -0.022770
+  0.195620 -0.022200
+  0.222210 -0.021610
+  0.250000 -0.020340
+  0.278860 -0.018950
+  0.308660 -0.016880
+  0.339280 -0.014600
+  0.370590 -0.011670
+  0.402450 -0.008480
+  0.434740 -0.004860
+  0.467300 -0.001030
+  0.500000  0.003070
+  0.532700  0.007160
+  0.565260  0.011120
+  0.597550  0.014750
+  0.629410  0.018130
+  0.660720  0.020980
+  0.691340  0.023450
+  0.721140  0.025300
+  0.750000  0.026680
+  0.777790  0.027450
+  0.804380  0.027680
+  0.829670  0.027290
+  0.853550  0.026310
+  0.875920  0.024790
+  0.896680  0.022840
+  0.915730  0.020520
+  0.933010  0.017940
+  0.948440  0.015140
+  0.961940  0.012190
+  0.973470  0.009210
+  0.982960  0.006300
+  0.990390  0.003730
+  0.995720  0.001690
+  0.998930  0.000400
+  1.000000  0.000000`;
+const AIRFOIL_PRESET_DATA = {
+  SD7003: { label: 'SD7003', data: SD7003_SAMPLE_DATA },
+  E387: { label: 'E387', data: E387_SAMPLE_DATA },
+  S809: { label: 'S809', data: S809_SAMPLE_DATA },
+  CLARK_Y: { label: 'Clark Y', data: CLARK_Y_SAMPLE_DATA },
+  RAE2822: { label: 'RAE 2822', data: RAE2822_SAMPLE_DATA },
+  NASA_SC20714: { label: 'NASA SC(2)-0714', data: NASA_SC20714_SAMPLE_DATA },
+  S1223: { label: 'Selig S1223', data: S1223_SAMPLE_DATA },
+  FX63137: { label: 'Wortmann FX 63-137', data: FX63137_SAMPLE_DATA }
 };
 
-document.addEventListener('DOMContentLoaded',()=>{
-  preloadSD7003();
-  wireLinearExtraction({textarea:'points-input', file:'file-input', samples:'samples-input', runBtn:'run-btn', sampleBtn:'sample-btn', svgGeom:'plot-geom', svgCamber:'plot-camber', svgThickness:'plot-thickness', summaryCards:'summary-cards', togglePoints:'toggle-points', toggleSurface:'toggle-surface', toggleCamber:'toggle-camber', downloadBtn:'download-data-btn'}, 'en');
-  wireLinearExtraction({textarea:'points-input-pt', file:'file-input-pt', samples:'samples-input-pt', runBtn:'run-btn-pt', sampleBtn:'sample-btn-pt', svgGeom:'plot-geom-pt', svgCamber:'plot-camber-pt', svgThickness:'plot-thickness-pt', summaryCards:'summary-cards-pt', togglePoints:'toggle-points-pt', toggleSurface:'toggle-surface-pt', toggleCamber:'toggle-camber-pt', downloadBtn:'download-data-btn-pt'}, 'pt');
-});
+window.SD7003_SAMPLE_DATA = SD7003_SAMPLE_DATA;
+window.AIRFOIL_PRESET_DATA = AIRFOIL_PRESET_DATA;
 </script>
+<script defer src="../assets/js/geometric-decomposition-tool.js?v=20260709-s1223-default-scroll-cursor"></script>
 <script>
 (function () {
   const chromeTranslations = {
