@@ -752,13 +752,14 @@
     const eta1MinusEta0 = eta1 - eta0;
     const eta2MinusEta1 = eta2 - eta1;
     const zeroLiftAngle = Math.atan(eta0 - eta1);
-    return {
+    const quantities = {
       eta1MinusEta0,
       eta2MinusEta1,
       zeroLiftAngle,
       zeroLiftAngleDegrees: zeroLiftAngle * 180 / Math.PI,
       quarterChordMoment: 0.5 * Math.PI * eta2MinusEta1
     };
+    return { ...quantities, ...aerodynamicMaximumLift(quantities) };
   }
 
   function aerodynamicCoefficientsAtAlpha(aerodynamics, alpha, xReference = 0.25) {
@@ -774,13 +775,46 @@
     const quarterChordMoment = 0.5 * Math.PI * cosAlpha2 * eta2MinusEta1;
     return {
       normalForce,
-      lift: normalForce,
+      lift: normalForce * cosAlpha,
       moment: (xReference - 0.25) * normalForce + quarterChordMoment,
       quarterChordMoment
     };
   }
 
-  function aerodynamicAlphaGrid(minDegrees = 0, maxDegrees = 40, count = 161) {
+  function aerodynamicMaximumLift(aerodynamics) {
+    const minAlpha = -0.5 * Math.PI + 1e-8;
+    const maxAlpha = 0.5 * Math.PI - 1e-8;
+    const sampleCount = 900;
+    const step = (maxAlpha - minAlpha) / sampleCount;
+    const liftAt = alpha => aerodynamicCoefficientsAtAlpha(aerodynamics, alpha, 0.25).lift;
+    let bestAlpha = minAlpha;
+    let bestLift = liftAt(bestAlpha);
+    for (let i = 1; i <= sampleCount; i++) {
+      const alpha = minAlpha + step * i;
+      const lift = liftAt(alpha);
+      if (lift > bestLift) {
+        bestAlpha = alpha;
+        bestLift = lift;
+      }
+    }
+    let lower = Math.max(minAlpha, bestAlpha - step);
+    let upper = Math.min(maxAlpha, bestAlpha + step);
+    for (let i = 0; i < 80; i++) {
+      const left = lower + (upper - lower) / 3;
+      const right = upper - (upper - lower) / 3;
+      if (liftAt(left) < liftAt(right)) lower = left;
+      else upper = right;
+    }
+    const alpha = 0.5 * (lower + upper);
+    const maxLift = liftAt(alpha);
+    return {
+      maximumLift: maxLift,
+      maximumLiftAlpha: alpha,
+      maximumLiftAlphaDegrees: alpha * 180 / Math.PI
+    };
+  }
+
+  function aerodynamicAlphaGrid(minDegrees = -10, maxDegrees = 50, count = 241) {
     const safeCount = Math.max(2, Math.floor(Number(count) || 121));
     return Array.from({ length: safeCount }, (_, index) => {
       const degrees = minDegrees + (maxDegrees - minDegrees) * index / (safeCount - 1);
@@ -1326,6 +1360,13 @@
     const pad = Math.max(0.06 * (yMax - yMin), 2e-4);
     yMin = Number.isFinite(options.yMin) ? options.yMin : yMin - pad;
     yMax = Number.isFinite(options.yMax) ? options.yMax : yMax + pad;
+    if (options.includeZeroY) {
+      yMin = Math.min(yMin, 0);
+      yMax = Math.max(yMax, 0);
+      const zeroPad = Math.max(0.02 * (yMax - yMin || 1), 2e-4);
+      if (Math.abs(yMin) < EPS) yMin = -zeroPad;
+      if (Math.abs(yMax) < EPS) yMax = zeroPad;
+    }
     if (options.equalScale) {
       const requiredHalf = Math.max(Math.abs(yMin - (options.yCenter || 0)), Math.abs(yMax - (options.yCenter || 0)));
       const geometricHalf = 0.5 * (xMax - xMin) * (height - top - bottom) / (width - left - right);
@@ -1436,6 +1477,8 @@
       '# surface_fit=parametric_natural_cubic_spline',
       '# nonlinear_method=normal_midpoint_iteration',
       '# aerodynamic_model_equations=51-54',
+      '# aerodynamic_lift_definition=C_l=C_n*cos(alpha)',
+      '# aerodynamic_polar_alpha_range_deg=-10,50',
       `# initial_camber_model=z_c=x(1-x)(a+b*x)`,
       `# initial_camber_coefficients=${s.initialCubicCoefficients.map(value => value.toExponential(8)).join(',')}`,
       `# leading_edge_radius=${s.leadingEdgeRadius.toExponential(8)}`,
@@ -1443,6 +1486,10 @@
       `# alpha_zero_lift_nonlinear_rad=${s.aerodynamic.nonlinear.zeroLiftAngle.toExponential(8)}`,
       `# cm_quarter_chord_linear=${s.aerodynamic.linear.quarterChordMoment.toExponential(8)}`,
       `# cm_quarter_chord_nonlinear=${s.aerodynamic.nonlinear.quarterChordMoment.toExponential(8)}`,
+      `# cl_max_inviscid_linear=${s.aerodynamic.linear.maximumLift.toExponential(8)}`,
+      `# alpha_cl_max_linear_deg=${s.aerodynamic.linear.maximumLiftAlphaDegrees.toExponential(8)}`,
+      `# cl_max_inviscid_nonlinear=${s.aerodynamic.nonlinear.maximumLift.toExponential(8)}`,
+      `# alpha_cl_max_nonlinear_deg=${s.aerodynamic.nonlinear.maximumLiftAlphaDegrees.toExponential(8)}`,
       `# leading_edge_inclination_linear_deg=${s.edge.linear.leadingEdgeInclinationDegrees.toExponential(8)}`,
       `# leading_edge_inclination_nonlinear_deg=${s.edge.nonlinear.leadingEdgeInclinationDegrees.toExponential(8)}`,
       `# trailing_edge_angle_linear_deg=${s.edge.linear.trailingEdgeAngleDegrees.toExponential(8)}`,
@@ -1463,6 +1510,14 @@
     }
     if (Array.isArray(result.coefficients.beta.exact)) {
       metadata.push(`# beta_exact=${result.coefficients.beta.exact.map(value => value.toExponential(8)).join(',')}`);
+    }
+    if (s.exact?.aerodynamic) {
+      metadata.push(
+        `# alpha_zero_lift_exact_rad=${s.exact.aerodynamic.zeroLiftAngle.toExponential(8)}`,
+        `# cm_quarter_chord_exact=${s.exact.aerodynamic.quarterChordMoment.toExponential(8)}`,
+        `# cl_max_inviscid_exact=${s.exact.aerodynamic.maximumLift.toExponential(8)}`,
+        `# alpha_cl_max_exact_deg=${s.exact.aerodynamic.maximumLiftAlphaDegrees.toExponential(8)}`
+      );
     }
     const header = 'x_c;z_c_linear;dz_c_linear_dx;z_t_linear_vertical;dz_t_linear_dx;z_c_initial_cubic;z_c_nonlinear;dz_c_nonlinear_dx;z_t_nonlinear_normal;dz_t_nonlinear_dx;x_upper;z_upper;x_lower;z_lower';
     const body = result.rows.map(row => [row.x, row.linearCamber, row.linearCamberSlope, row.linearThickness, row.linearThicknessSlope, row.initialCamber, row.ycamber, row.slope, row.thickness, row.thicknessSlope, row.xu, row.yu, row.xl, row.yl].map(csvNumber).join(';'));
@@ -1565,12 +1620,16 @@
     const exactAerodynamics = summary.exact?.aerodynamic;
     const exactAngle = exactAerodynamics ? `${exactAerodynamics.zeroLiftAngleDegrees.toFixed(3)}°` : null;
     const exactMoment = exactAerodynamics ? exactAerodynamics.quarterChordMoment.toFixed(5) : null;
+    const maxLiftAt = aerodynamics => `${aerodynamics.maximumLift.toFixed(4)} @ α = ${aerodynamics.maximumLiftAlphaDegrees.toFixed(2)}°`;
+    const exactMaxLift = exactAerodynamics ? maxLiftAt(exactAerodynamics) : null;
     const rows = lang === 'en' ? [
       ['Zero-lift angle, α<sub>L=0</sub>', `${linearAerodynamics.zeroLiftAngleDegrees.toFixed(3)}°`, `${nonlinearAerodynamics.zeroLiftAngleDegrees.toFixed(3)}°`, exactAngle],
-      ['Quarter-chord moment, C<sub>m,c/4</sub>', linearAerodynamics.quarterChordMoment.toFixed(5), nonlinearAerodynamics.quarterChordMoment.toFixed(5), exactMoment]
+      ['Quarter-chord moment, C<sub>m,c/4</sub>', linearAerodynamics.quarterChordMoment.toFixed(5), nonlinearAerodynamics.quarterChordMoment.toFixed(5), exactMoment],
+      ['Maximum inviscid lift, C<sub>l,max</sub>', maxLiftAt(linearAerodynamics), maxLiftAt(nonlinearAerodynamics), exactMaxLift]
     ] : [
       ['Ângulo de sustentação nula, α<sub>L=0</sub>', `${linearAerodynamics.zeroLiftAngleDegrees.toFixed(3)}°`, `${nonlinearAerodynamics.zeroLiftAngleDegrees.toFixed(3)}°`, exactAngle],
-      ['Momento no quarto de corda, C<sub>m,c/4</sub>', linearAerodynamics.quarterChordMoment.toFixed(5), nonlinearAerodynamics.quarterChordMoment.toFixed(5), exactMoment]
+      ['Momento no quarto de corda, C<sub>m,c/4</sub>', linearAerodynamics.quarterChordMoment.toFixed(5), nonlinearAerodynamics.quarterChordMoment.toFixed(5), exactMoment],
+      ['Sustentação invíscida máxima, C<sub>l,max</sub>', maxLiftAt(linearAerodynamics), maxLiftAt(nonlinearAerodynamics), exactMaxLift]
     ];
     return quantityTableMarkup(rows, lang);
   }
@@ -1840,8 +1899,8 @@
             aerodynamicCurveData(latest.summary.aerodynamic.nonlinear, quantity)
           );
         };
-        drawAxesAndSeries(get('svgAeroLift'), aerodynamicSeriesFor('lift'), { xMin: 0, xMax: 40, xlabel: 'α (deg)', ylabel: 'C_l', height: 260 });
-        drawAxesAndSeries(get('svgAeroMoment'), aerodynamicSeriesFor('moment'), { xMin: 0, xMax: 40, xlabel: 'α (deg)', ylabel: 'C_m,c/4', height: 260 });
+        drawAxesAndSeries(get('svgAeroLift'), aerodynamicSeriesFor('lift'), { xMin: -10, xMax: 50, xlabel: 'α (deg)', ylabel: 'C_l', height: 260, includeZeroY: true });
+        drawAxesAndSeries(get('svgAeroMoment'), aerodynamicSeriesFor('moment'), { xMin: -10, xMax: 50, xlabel: 'α (deg)', ylabel: 'C_m,c/4', height: 260, includeZeroY: true });
         drawReconstructionPlot();
       } catch (error) {
         latest = null;
