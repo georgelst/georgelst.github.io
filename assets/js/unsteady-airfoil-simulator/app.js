@@ -4,7 +4,7 @@ const TRANSLATIONS = {
   en: {
     document_title: 'Unsteady Airfoil Simulator | UNSAERO',
     breadcrumb_tools: 'Tools', page_title: 'Unsteady Airfoil Simulator',
-    hero_subtitle: 'Explore pitching and heaving thin-airfoil cases through wake-vortex animation and time-resolved aerodynamic loads.',
+    hero_subtitle: 'Explore pitching and plunging thin-airfoil cases through wake-vortex animation and time-resolved aerodynamic loads.',
     run_case: 'Run case', simulator: 'Unsteady Airfoil Simulator (UAS)', inputs: 'Inputs',
     kinematics: 'Kinematics', kinematic_inputs: 'Kinematic inputs', airfoil: 'Airfoil', airfoil_sections: 'Airfoil sections',
     naca_4_digit: 'NACA 4-Digit', naca_max_camber: 'Maximum camber [%c]',
@@ -351,7 +351,7 @@ function flowPlotBox(){
 }
 
 async function loadData(){
-  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json?v=uas-airfoil-legend-20260703f', import.meta.url)).then(r=>r.json());
+  const air = await fetch(new URL('../../data/unsteady-airfoil-simulator/airfoils.json?v=uas-geometric-presets-20260725', import.meta.url)).then(r=>r.json());
   DATA = { air };
   Object.keys(air).forEach(k=>{
     const opt=document.createElement('option');

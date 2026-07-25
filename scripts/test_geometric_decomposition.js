@@ -115,6 +115,7 @@ assert.ok(toolHtml.includes('id="toggle-camber-exact"') && toolHtml.includes('id
 assert.ok(toolHtml.includes('id="plot-aero-cl"') && toolHtml.includes('id="plot-aero-cm"') && toolHtml.includes('id="plot-aero-cl-pt"') && toolHtml.includes('id="plot-aero-cm-pt"'), 'Aerodynamic quantities must include Cl-alpha and Cm-alpha plots in both languages.');
 assert.ok(toolHtml.includes('id="toggle-aero-exact"') && toolHtml.includes('id="toggle-aero-linear"') && toolHtml.includes('id="toggle-aero-nonlinear"') && toolHtml.includes('id="toggle-aero-exact-pt"') && toolHtml.includes('id="toggle-aero-linear-pt"') && toolHtml.includes('id="toggle-aero-nonlinear-pt"'), 'Aerodynamic polar legends must expose Exact/Linear/Nonlinear checkbox toggles in both languages.');
 assert.ok(toolHtml.indexOf('id="plot-aero-cl"') < toolHtml.indexOf('id="aero-quantities"') && toolHtml.indexOf('id="plot-aero-cl-pt"') < toolHtml.indexOf('id="aero-quantities-pt"'), 'Aerodynamic polar plots must appear before the quantity table in both languages.');
+assert.ok(toolHtml.includes('.toggle-pill[hidden],.exact-key[hidden]{display:none!important;}'), 'Hidden Exact toggle pills must stay hidden for generic airfoils despite toggle-pill display styles.');
 assert.ok(toolHtml.includes('plot-layer-toggles{justify-content:center') && toolHtml.includes('border-top:1.5px dashed #1874cd') && toolHtml.includes('repeating-linear-gradient(to right,#d946ef') && toolHtml.includes('border-top:1.4px solid #000000'), 'The analysis toggle legends must be centered and use thin black Exact, thin dashed DodgerBlue3 Linear, and thick dot-dashed magenta Nonlinear keys.');
 assert.ok(toolJs.includes("const LINEAR_COLOR = '#1874cd'") && toolJs.includes("const NONLINEAR_COLOR = '#d946ef'") && toolJs.includes("const EXACT_COLOR = '#000000'") && toolJs.includes("const CHORD_COLOR = '#0f766e'") && toolJs.includes("width: 1.25, dash: '7 5'") && toolJs.includes("width: 2.45, dash: '9 4 1.5 4'") && toolJs.includes('denseExactXValues(count = 1001)'), 'Exact NACA plots must use dense analytical curves with the requested analysis colors and line styles.');
 assert.ok(!toolHtml.includes('Surface reconstruction from discrete coordinates') && !toolHtml.includes('Reconstrução da superfície a partir das coordenadas discretas'), 'The nonlinear-reconstruction explanatory caption must be removed in both languages.');
@@ -135,6 +136,11 @@ assert.ok(toolJs.includes('aerodynamic_polar_alpha_range_deg=-10,50') && toolJs.
 assert.ok(toolJs.includes('includeZeroY') && toolJs.includes('zeroPad') && toolJs.includes('svgAeroLift') && toolJs.includes('svgAeroMoment'), 'Aerodynamic plots must force a visible y=0 horizontal reference line.');
 assert.ok(toolJs.includes('analysisToggles.aerodynamic') && toolJs.includes("'toggle-aero-exact'") && toolJs.includes("'toggle-aero-nonlinear'"), 'Aerodynamic polar checkbox state must be wired into rendering and language sync.');
 assert.ok(toolJs.includes('function aerodynamicMaximumLift') && toolJs.includes('Maximum inviscid lift, C<sub>l,max</sub>') && toolJs.includes('Sustentação invíscida máxima, C<sub>l,max</sub>'), 'Aerodynamic table must include maximum inviscid lift and its angle of attack.');
+assert.equal(api.naca4CodeFromCoordinateText('# NACA 2412 in a comment only\n1 0\n0 0'), null, 'NACA exact detection must ignore comments.');
+assert.equal(api.naca4CodeFromCoordinateText('SD7003\n1 0\n0 0'), null, 'Generic airfoil names must not enable exact NACA results.');
+assert.equal(api.naca4CodeFromCoordinateText('E387\n1 0\n0 0'), null, 'E387 must not enable exact NACA results.');
+assert.equal(api.naca4CodeFromCoordinateText('NACA 2412\n1 0\n0 0'), '2412', 'NACA exact detection must require an actual NACA 4-digit marker line.');
+assert.ok(toolJs.includes('naca4CodeFromCoordinateText(textarea?.value') && !toolJs.includes("if (presetSelect?.value !== 'NACA4') return null;"), 'Exact plots/results must be gated by actual NACA coordinate text rather than generic preset state.');
 const nacaGenerated40 = api.generateNaca4SurfaceNodes('2412', 40).trim().split(/\n/);
 assert.equal(nacaGenerated40.length, 40, 'NACA UI generation must emit the requested total number of surface nodes.');
 const nacaGeneratedSample = api.runExtraction(`# NACA 2412 generated preset\n# surface_nodes=40\nNACA 2412\n${nacaGenerated40.join('\n')}`, { stations: 60, etaOrder: 8, betaOrder: 4 });
@@ -183,7 +189,7 @@ assert.ok(Math.max(...nacaCamberErrors.map(Math.abs)) < 1e-4, 'FDM-B NACA 2412 c
 assert.equal(nacaExactDense.coefficients.eta.length, 7, 'NACA exact eta coefficients must be available for the requested eta order.');
 assert.equal(nacaExactDense.coefficients.beta.length, 5, 'NACA exact beta coefficients must be available for the UI table.');
 assert.ok(!toolJs.includes('prepared?.transformPoint'), 'The UI Exact NACA plot must use native closed-form coordinates, not the fitted-spline transform.');
-assert.ok(toolHtml.includes('v=20260710-aero-clmax'), 'The page must load the aerodynamic maximum-lift script version.');
+assert.ok(toolHtml.includes('v=20260710-exact-naca-only'), 'The page must load the exact-NACA-only script version.');
 const defaultSample = api.runExtraction(`# NACA 2412 generated preset\n# surface_nodes=40\nNACA 2412\n${nacaGenerated40.join('\n')}`, { stations: 60, etaOrder: 8, betaOrder: 4, reconstructionNodes: 401 });
 assert.equal(defaultSample.summary.inputPoints, 40, 'The default generated NACA 2412 sample must use 40 surface nodes.');
 assert.equal(defaultSample.reconstruction.count, 401, 'The default page sample must complete dense reconstruction.');

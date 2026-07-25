@@ -7,12 +7,12 @@
 <meta name="description" content="A native HTML paper-style teaching note on harmonic oscillating airfoils, reduced frequency, thin-airfoil theory, Theodorsen theory, and wake memory."/>
 <meta name="robots" content="noindex, nofollow"/>
 <meta name="theme-color" content="#087fc3"/>
-<meta name="keywords" content="harmonic oscillating airfoils, Theodorsen function, Sears function, unsteady thin airfoil theory, reduced frequency, heaving airfoil, pitching airfoil, UNSAERO"/>
+<meta name="keywords" content="harmonic oscillating airfoils, Theodorsen function, Sears function, unsteady thin airfoil theory, reduced frequency, plunging airfoil, pitching airfoil, UNSAERO"/>
 <meta name="author" content="UNSAERO"/>
 <meta property="og:type" content="article"/>
 <meta property="og:site_name" content="UNSAERO"/>
 <meta property="og:title" content="Harmonic Oscillating Airfoils | UNSAERO"/>
-<meta property="og:description" content="A native HTML paper-style teaching note on harmonic heaving and pitching airfoils and the frequency-domain interpretation of unsteady lift."/>
+<meta property="og:description" content="A native HTML paper-style teaching note on harmonic plunging and pitching airfoils and the frequency-domain interpretation of unsteady lift."/>
 <meta property="og:url" content="https://www.unsaero.com/source/harmonic_oscillating_airfoils.html"/>
 <meta property="og:image" content="https://www.unsaero.com/icon.png"/>
 <meta property="og:image:width" content="2048"/>
@@ -22,7 +22,7 @@
 <meta property="article:modified_time" content="2026-05-03"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Harmonic Oscillating Airfoils | UNSAERO"/>
-<meta name="twitter:description" content="A native HTML paper-style teaching note on harmonic heaving and pitching airfoils."/>
+<meta name="twitter:description" content="A native HTML paper-style teaching note on harmonic plunging and pitching airfoils."/>
 <meta name="twitter:image" content="https://www.unsaero.com/icon.png"/>
 <link rel="canonical" href="https://www.unsaero.com/source/harmonic_oscillating_airfoils.html"/>
 <link rel="icon" href="../favicon.ico" type="image/x-icon"/>
@@ -66,7 +66,7 @@ window.MathJax={tex:{tags:'ams',inlineMath:[['$','$'],['\\(','\\)']],displayMath
 </div>
 <section class="paper-abstract">
 <h2>Abstract</h2>
-<p>This note introduces harmonic heaving and pitching airfoils as a compact route into unsteady thin-airfoil theory. The central idea is to replace arbitrary time histories by complex harmonic amplitudes, so that aerodynamic memory appears through frequency-domain transfer functions. The resulting framework clarifies the role of reduced frequency, separates circulatory and non-circulatory effects, and prepares the ground for Theodorsen and Sears theory.</p>
+<p>This note introduces harmonic plunging and pitching airfoils as a compact route into unsteady thin-airfoil theory. The central idea is to replace arbitrary time histories by complex harmonic amplitudes, so that aerodynamic memory appears through frequency-domain transfer functions. The resulting framework clarifies the role of reduced frequency, separates circulatory and non-circulatory effects, and prepares the ground for Theodorsen and Sears theory.</p>
 </section>
 <nav class="paper-toc" aria-label="Table of contents">
 <h2>Contents</h2>
@@ -75,12 +75,12 @@ window.MathJax={tex:{tags:'ams',inlineMath:[['$','$'],['\\(','\\)']],displayMath
 </header>
 <section id="motivation-en">
 <h2>Motivation</h2>
-<p>Harmonic motion is the canonical experiment of linear unsteady aerodynamics. Instead of asking how an airfoil responds to every possible motion, one studies sinusoidal heaving, pitching, or gust inputs and reconstructs more general responses by superposition. This turns a transient aerodynamic problem into a frequency-response problem.</p>
+<p>Harmonic motion is the canonical experiment of linear unsteady aerodynamics. Instead of asking how an airfoil responds to every possible motion, one studies sinusoidal plunging, pitching, or gust inputs and reconstructs more general responses by superposition. This turns a transient aerodynamic problem into a frequency-response problem.</p>
 <p>For teaching purposes, this is especially useful because amplitude attenuation and phase lag become visible. The wake is no longer an abstract downstream object: it becomes the mechanism that delays and reshapes the circulatory lift.</p>
 </section>
 <section id="kinematics-en">
 <h2>Kinematics</h2>
-<p>Consider a thin airfoil of chord $c$ in a uniform stream of speed $U$. A harmonic heaving motion $h(t)$ and a harmonic pitching motion $\alpha(t)$ may be represented by complex amplitudes, with the physical motion recovered from the real part.</p>
+<p>Consider a thin airfoil of chord $c$ in a uniform stream of speed $U$. A harmonic plunging motion $h(t)$ and a harmonic pitching motion $\alpha(t)$ may be represented by complex amplitudes, with the physical motion recovered from the real part.</p>
 <div class="equation-block" id="eq-harmonic-kinematics-en" data-label="eq:harmonic-kinematics" data-cref="Eq.">
 \begin{equation}
 h(t)=\Re\{\hat{h}e^{i\omega t}\},\qquad
@@ -93,7 +93,7 @@ k=\frac{\omega c}{2U}.
 \end{equation}
 It compares the convective time scale $c/(2U)$ with the oscillation time scale $1/\omega$.</div>
 <figure class="paper-figure">
-<svg viewBox="0 0 760 300" role="img" aria-label="Schematic of a harmonically pitching and heaving airfoil with a wake">
+<svg viewBox="0 0 760 300" role="img" aria-label="Schematic of a harmonically pitching and plunging airfoil with a wake">
 <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker></defs>
 <rect x="0" y="0" width="760" height="300" fill="#ffffff"/>
 <line x1="70" y1="150" x2="190" y2="150" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
@@ -110,7 +110,7 @@ It compares the convective time scale $c/(2U)$ with the oscillation time scale $
 <text x="285" y="270" font-family="Georgia" font-size="22" fill="#334155">h(t)</text>
 <text x="544" y="112" font-family="Georgia" font-size="20" fill="#334155">wake memory</text>
 </svg>
-<figcaption><strong>Figure 1.</strong> Harmonic heaving and pitching introduce a periodic boundary condition at the airfoil. The shed wake convects downstream and stores the history of circulation, producing phase lag in the aerodynamic response.</figcaption>
+<figcaption><strong>Figure 1.</strong> Harmonic plunging and pitching introduce a periodic boundary condition at the airfoil. The shed wake convects downstream and stores the history of circulation, producing phase lag in the aerodynamic response.</figcaption>
 </figure>
 </section>
 <section id="frequency-domain-en">

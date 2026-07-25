@@ -28,6 +28,16 @@
     return points;
   }
 
+  function naca4CodeFromCoordinateText(text) {
+    for (const raw of String(text || '').split(/\r?\n/)) {
+      const line = raw.trim();
+      if (!line || line.startsWith('#')) continue;
+      const match = line.match(/^NACA\s*[-_ ]?([0-9]{4})\b/i);
+      if (match) return match[1];
+    }
+    return null;
+  }
+
   function removeConsecutiveDuplicates(points) {
     const out = [];
     for (const point of points) {
@@ -1753,9 +1763,9 @@
     }
 
     function activeNacaExact() {
-      if (presetSelect?.value !== 'NACA4') return null;
-      const parameters = naca4ParametersFromInputs(nacaInputs.maxCamber, nacaInputs.camberLocation, nacaInputs.thickness, nacaInputs.surfaceNodes);
-      return naca4ExactAnalysis(parameters.code, denseExactXValues(), {
+      const code = naca4CodeFromCoordinateText(textarea?.value || '');
+      if (!code) return null;
+      return naca4ExactAnalysis(code, denseExactXValues(), {
         etaOrder: etaOrderInput?.value,
         betaOrder: betaOrderInput?.value
       });
@@ -1773,7 +1783,6 @@
 
     function updateCoordinatesFromPreset() {
       updateNacaFieldVisibility();
-      updateExactLegend(presetSelect?.value === 'NACA4');
       if (!textarea || !presetSelect) return;
       if (presetSelect.value === 'NACA4') {
         try {
@@ -1783,11 +1792,13 @@
           setNacaValidity(error.message);
           textarea.value = `# ${error.message}\n`;
         }
+        updateExactLegend(Boolean(naca4CodeFromCoordinateText(textarea.value)));
         return;
       }
       setNacaValidity('');
       const preset = global.AIRFOIL_PRESET_DATA?.[presetSelect.value];
       if (preset?.data) textarea.value = preset.data;
+      updateExactLegend(false);
     }
 
     function drawReconstructionPlot() {
@@ -1942,6 +1953,7 @@
     }
 
     runBtn?.addEventListener('click', runWithProgress);
+    textarea?.addEventListener('input', () => updateExactLegend(Boolean(naca4CodeFromCoordinateText(textarea.value))));
     samplesInput?.addEventListener('change', render);
     etaOrderInput?.addEventListener('change', render);
     betaOrderInput?.addEventListener('change', render);
@@ -2184,6 +2196,6 @@
     return generateNaca4Contour(code, upperCount, lowerCount);
   }
 
-  global.UNSAEROFdmb = { runExtraction, generateNaca4, generateNaca4SurfaceNodes, naca4ExactAnalysis, normalizeAndOrderContour, buildParametricSpline, extractLinear, extractNonlinear, toCsv };
+  global.UNSAEROFdmb = { runExtraction, generateNaca4, generateNaca4SurfaceNodes, naca4ExactAnalysis, naca4CodeFromCoordinateText, normalizeAndOrderContour, buildParametricSpline, extractLinear, extractNonlinear, toCsv };
   if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', initialize);
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -7,14 +7,14 @@
 
 <link rel="canonical" href="https://www.unsaero.com/tools.html"/>
 <title>Aerodynamic Modeling Tools | UNSAERO</title>
-<meta name="description" content="Interactive aerodynamic tools for airfoil camber and thickness decomposition, analytical aerodynamics, unsteady modeling, and reduced-order aerodynamic insight."/>
+<meta name="description" content="Interactive aerodynamic tools for airfoil camber and thickness decomposition, unsteady airfoil simulation, wake visualization, and aerodynamics history."/>
 <meta content="index, follow" name="robots"/>
 <meta content="#087fc3" name="theme-color"/>
 
 <meta content="website" property="og:type"/>
 <meta content="UNSAERO" property="og:site_name"/>
 <meta property="og:title" content="Aerodynamic Modeling Tools | UNSAERO"/>
-<meta property="og:description" content="Interactive aerodynamic tools for airfoil camber and thickness decomposition, analytical aerodynamics, unsteady modeling, and reduced-order aerodynamic insight."/>
+<meta property="og:description" content="Interactive aerodynamic tools for airfoil camber and thickness decomposition, unsteady airfoil simulation, wake visualization, and aerodynamics history."/>
 <meta property="og:url" content="https://www.unsaero.com/tools.html"/>
 <meta content="https://www.unsaero.com/icon.png" property="og:image"/>
 
@@ -38,6 +38,11 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 .resource-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,23,42,.09);border-color:#bfdbfe;}
 .resource-card.featured{grid-column:span 12;}
 .resource-card.placeholder{grid-column:span 12;background:rgba(255,255,255,.62);}
+.tool-resource-card{display:grid;grid-template-columns:minmax(220px,36%) minmax(0,1fr);gap:0;padding:0;overflow:hidden;align-items:stretch;}
+.tool-resource-visual{display:block;min-height:220px;background:#e2e8f0;border-right:1px solid var(--border);}
+.tool-resource-visual img{width:100%;height:100%;min-height:220px;display:block;object-fit:cover;object-position:center;}
+.tool-resource-visual img[src$="home-uas-flowfield.gif"]{object-position:right center;}
+.tool-resource-copy{display:flex;flex-direction:column;padding:24px;min-width:0;}
 .card-eyebrow{font-size:.76rem;letter-spacing:.11em;text-transform:uppercase;color:var(--accent-dark);font-weight:800;margin-bottom:.7rem;}
 .card-separator{width:56px;height:1px;background:rgba(2,132,199,.28);margin:0 0 1.05rem;}
 .card-tags{margin:.95rem 0 0;color:var(--muted);font-size:.93rem;line-height:1.55;}
@@ -48,11 +53,11 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 .card-action{display:inline-flex;align-items:center;align-self:flex-start;margin-top:auto;padding-top:1.25rem;color:var(--accent);font-weight:750;text-decoration:none;}
 .card-action:hover{text-decoration:underline;}
 .card-muted{color:var(--muted)!important;}
-@media (max-width: 860px){.resource-card,.resource-card.featured,.resource-card.placeholder{grid-column:span 12;}#page-top{padding:30px 24px;}.resource-card{min-height:auto;}}
-@media (max-width: 560px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:26px 20px;border-radius:10px;}.resource-card{padding:20px;}}
+@media (max-width: 860px){.resource-card,.resource-card.featured,.resource-card.placeholder{grid-column:span 12;}#page-top{padding:30px 24px;}.resource-card{min-height:auto;}.tool-resource-card{grid-template-columns:1fr;}.tool-resource-visual{border-right:0;border-bottom:1px solid var(--border);min-height:190px;}.tool-resource-visual img{min-height:190px;aspect-ratio:16/9;}}
+@media (max-width: 560px){main{padding:1.4rem 1rem 2.4rem;}#page-top{padding:26px 20px;border-radius:10px;}.resource-card{padding:20px;}.tool-resource-card{padding:0;}.tool-resource-copy{padding:20px;}}
 
 </style>
-<meta content="aerodynamics, analytical aerodynamics, unsteady aerodynamics, reduced-order models, airfoil geometry, vortex dynamics, distribution theory, thin airfoil theory, aerospace engineering" name="keywords"/><meta content="UNSAERO" name="author"/><meta content="summary_large_image" name="twitter:card"/><meta name="twitter:title" content="Aerodynamic Modeling Tools | UNSAERO"/><meta name="twitter:description" content="Interactive aerodynamic tools for airfoil camber and thickness decomposition, analytical aerodynamics, unsteady modeling, and reduced-order aerodynamic insight."/><meta content="https://www.unsaero.com/icon.png" name="twitter:image"/><link href="favicon.ico" rel="icon" type="image/x-icon"/><link href="assets/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/><link href="assets/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta content="2048" property="og:image:width"/><meta content="2048" property="og:image:height"/><meta content="en_US" property="og:locale"/><meta content="pt_BR" property="og:locale:alternate"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Aerodynamic Tools | UNSAERO", "url": "https://www.unsaero.com/tools.html", "description": "Interactive aerodynamic tools designed to provide mathematical, physical, and visual insight into airfoil geometry, aerodynamic decomposition, and reduced-order modeling.", "isPartOf": {"@type": "WebSite", "name": "UNSAERO", "url": "https://www.unsaero.com/"}, "publisher": {"@type": "Organization", "name": "UNSAERO", "url": "https://www.unsaero.com/", "logo": "https://www.unsaero.com/icon.png"}, "inLanguage": ["en-US", "pt-BR"]}</script><link href="assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
+<meta content="aerodynamics, unsteady aerodynamics, reduced-order models, airfoil geometry, vortex dynamics, wake visualization, thin airfoil theory, aerospace engineering" name="keywords"/><meta content="UNSAERO" name="author"/><meta content="summary_large_image" name="twitter:card"/><meta name="twitter:title" content="Aerodynamic Modeling Tools | UNSAERO"/><meta name="twitter:description" content="Interactive aerodynamic tools for airfoil camber and thickness decomposition, unsteady airfoil simulation, wake visualization, and aerodynamics history."/><meta content="https://www.unsaero.com/icon.png" name="twitter:image"/><link href="favicon.ico" rel="icon" type="image/x-icon"/><link href="assets/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/><link href="assets/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="assets/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta content="2048" property="og:image:width"/><meta content="2048" property="og:image:height"/><meta content="en_US" property="og:locale"/><meta content="pt_BR" property="og:locale:alternate"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Aerodynamic Tools | UNSAERO", "url": "https://www.unsaero.com/tools.html", "description": "Interactive aerodynamic tools for airfoil geometry, unsteady airfoil simulation, wake visualization, and aerodynamics history.", "isPartOf": {"@type": "WebSite", "name": "UNSAERO", "url": "https://www.unsaero.com/"}, "publisher": {"@type": "Organization", "name": "UNSAERO", "url": "https://www.unsaero.com/", "logo": "https://www.unsaero.com/icon.png"}, "inLanguage": ["en-US", "pt-BR"]}</script><link href="assets/css/mobile-header-fix.css?v=20260503-index" rel="stylesheet"/>
   <script defer src="assets/js/partials.js" data-root=""></script>
 </head>
 <body data-page="tools">
@@ -74,29 +79,38 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 <div class="page-grid">
 <div class="section-label">Interactive tools</div>
 <section aria-label="UNSAERO tools" class="resource-grid">
-<article class="resource-card featured">
+<article class="resource-card featured tool-resource-card">
+<a class="tool-resource-visual" href="source/unsteady_airfoil_simulator.html" aria-label="Open Unsteady Airfoil Simulator (UAS)"><img alt="Flowfield animation from the Unsteady Airfoil Simulator (UAS)" src="assets/img/home-uas-flowfield.gif"/></a>
+<div class="tool-resource-copy">
+<div class="card-eyebrow">Unsteady thin-airfoil theory</div>
+<div aria-hidden="true" class="card-separator"></div>
+<h2>Unsteady Airfoil Simulator (UAS)</h2>
+<p>An interactive browser-based environment for exploring unsteady airfoil motion, aerodynamic response, wake evolution, and reduced-order predictions.</p>
+<p class="card-tags">Interactive simulation · Airfoil kinematics · Unsteady loads · Wake visualization</p>
+<a class="card-action" href="source/unsteady_airfoil_simulator.html">Open page →</a>
+</div>
+</article>
+<article class="resource-card featured tool-resource-card">
+<a class="tool-resource-visual" href="source/geometric_decomposition_tool.html" aria-label="Open Geometric Decomposition Tool"><img alt="Geometric decomposition animation: points, cubic fit, camber, and thickness" src="assets/img/home-geometric-decomposition.gif"/></a>
+<div class="tool-resource-copy">
 <div class="card-eyebrow">Geometry</div>
 <div aria-hidden="true" class="card-separator"></div>
 <h2>Geometric Decomposition Tool</h2>
 <p>Decompose airfoil geometry into camber and thickness distributions with physically meaningful representations for visual and theoretical exploration.</p>
-<p class="card-tags">Geometry · Camber and thickness · Visualization</p>
+<p class="card-tags">Geometry · Camber and thickness · Surface fitting · Visualization</p>
 <a class="card-action" href="source/geometric_decomposition_tool.html">Open page →</a>
+</div>
 </article>
-<article class="resource-card featured">
-<div class="card-eyebrow">Unsteady thin-airfoil theory</div>
-<div aria-hidden="true" class="card-separator"></div>
-<h2>Unsteady Airfoil Simulator</h2>
-<p>An interactive browser-based environment for exploring unsteady airfoil motion, aerodynamic response, and reduced-order predictions.</p>
-<p class="card-tags">Interactive simulation · Airfoil kinematics · Unsteady loads</p>
-<a class="card-action" href="source/unsteady_airfoil_simulator.html">Open page →</a>
-</article>
-<article class="resource-card featured">
+<article class="resource-card featured tool-resource-card">
+<a class="tool-resource-visual" href="source/timeline.html" aria-label="Open Aerodynamics Timeline"><img alt="Preview of the Aerodynamics Timeline" src="assets/img/home-aerodynamics-timeline.png"/></a>
+<div class="tool-resource-copy">
 <div class="card-eyebrow">History of aerodynamics</div>
 <div aria-hidden="true" class="card-separator"></div>
 <h2>Aerodynamics Timeline</h2>
 <p>Explore a historical timeline of aerodynamics, mathematical modeling, vortex dynamics, and reduced-order aerodynamic thinking.</p>
 <p class="card-tags">History · Aerodynamic theory · Key contributors</p>
 <a class="card-action" href="source/timeline.html">Open page →</a>
+</div>
 </article>
 </section>
 </div>
@@ -105,29 +119,38 @@ main{width:100%;max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3rem;flex:1;
 <div class="page-grid">
 <div class="section-label">Ferramentas interativas</div>
 <section aria-label="Ferramentas UNSAERO" class="resource-grid">
-<article class="resource-card featured">
+<article class="resource-card featured tool-resource-card">
+<a class="tool-resource-visual" href="source/unsteady_airfoil_simulator.html" aria-label="Abrir Simulador de Aerofólio Não Estacionário"><img alt="Animação do campo de escoamento no Simulador de Aerofólio Não Estacionário" src="assets/img/home-uas-flowfield.gif"/></a>
+<div class="tool-resource-copy">
+<div class="card-eyebrow">Teoria de aerofólio fino não estacionária</div>
+<div aria-hidden="true" class="card-separator"></div>
+<h2>Simulador de Aerofólio Não Estacionário (UAS)</h2>
+<p>Um ambiente interativo no navegador para explorar movimentos não estacionários de aerofólios, resposta aerodinâmica, evolução da esteira e previsões de ordem reduzida.</p>
+<p class="card-tags">Simulação interativa · Cinemática de aerofólios · Cargas não estacionárias · Visualização da esteira</p>
+<a class="card-action" href="source/unsteady_airfoil_simulator.html">Abrir página →</a>
+</div>
+</article>
+<article class="resource-card featured tool-resource-card">
+<a class="tool-resource-visual" href="source/geometric_decomposition_tool.html" aria-label="Abrir Ferramenta de Decomposição Geométrica"><img alt="Animação da decomposição geométrica: pontos, ajuste cúbico, cambagem e espessura" src="assets/img/home-geometric-decomposition.gif"/></a>
+<div class="tool-resource-copy">
 <div class="card-eyebrow">Geometria</div>
 <div aria-hidden="true" class="card-separator"></div>
 <h2>Ferramenta de Decomposição Geométrica</h2>
 <p>Decompõe a geometria de aerofólios em distribuições de cambagem e espessura com representações fisicamente significativas para exploração visual e teórica.</p>
-<p class="card-tags">Geometria · Cambagem e espessura · Visualização</p>
+<p class="card-tags">Geometria · Cambagem e espessura · Ajuste de superfície · Visualização</p>
 <a class="card-action" href="source/geometric_decomposition_tool.html">Abrir página →</a>
+</div>
 </article>
-<article class="resource-card featured">
-<div class="card-eyebrow">Teoria de aerofólio fino não estacionária</div>
-<div aria-hidden="true" class="card-separator"></div>
-<h2>Simulador de Aerofólio Não Estacionário</h2>
-<p>Um ambiente interativo no navegador para explorar movimentos não estacionários de aerofólios, respostas aerodinâmicas e previsões de ordem reduzida.</p>
-<p class="card-tags">Simulação interativa · Cinemática de aerofólios · Cargas não estacionárias</p>
-<a class="card-action" href="source/unsteady_airfoil_simulator.html">Abrir página →</a>
-</article>
-<article class="resource-card featured">
+<article class="resource-card featured tool-resource-card">
+<a class="tool-resource-visual" href="source/timeline.html" aria-label="Abrir Linha do Tempo da Aerodinâmica"><img alt="Prévia da Linha do Tempo da Aerodinâmica" src="assets/img/home-aerodynamics-timeline.png"/></a>
+<div class="tool-resource-copy">
 <div class="card-eyebrow">História da aerodinâmica</div>
 <div aria-hidden="true" class="card-separator"></div>
 <h2>Linha do Tempo da Aerodinâmica</h2>
 <p>Explore uma linha do tempo histórica da aerodinâmica, da modelagem matemática, da dinâmica de vórtices e do pensamento aerodinâmico de ordem reduzida.</p>
 <p class="card-tags">História · Teoria aerodinâmica · Principais pesquisadores</p>
 <a class="card-action" href="source/timeline.html">Abrir página →</a>
+</div>
 </article>
 </section>
 </div>
